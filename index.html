@@ -1,732 +1,556 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#323c3a" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>Laser Run 6ème</title>
-  <style>
-    :root{
-      --blue:#c7dbdf;
-      --dark:#323c3a;
-      --cream:#ebe5df;
-      --orange:#f7b738;
-      --white:#fff;
-      --danger:#b34747;
-      --ok:#437a55;
-      --shadow:0 10px 30px rgba(50,60,58,.12);
-      --radius:22px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;background:var(--cream);color:var(--dark);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    .app{max-width:980px;margin:0 auto;min-height:100vh;padding:18px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
-    .brand{font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:-1.5px}
-    .subtle{opacity:.7}
-    .card{
-      background:rgba(255,255,255,.76);border:1px solid rgba(50,60,58,.08);
-      border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;
-    }
-    .role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px}
-    .role-card{
-      border:0;border-radius:28px;padding:32px 24px;min-height:230px;
-      display:flex;flex-direction:column;justify-content:space-between;text-align:left;
-      transition:.18s transform,.18s box-shadow;
-    }
-    .role-card:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(50,60,58,.16)}
-    .role-prof{background:var(--dark);color:var(--white)}
-    .role-student{background:var(--blue);color:var(--dark)}
-    .role-icon{font-size:48px}
-    .role-title{font-size:30px;font-weight:900}
-    .role-desc{opacity:.82;line-height:1.4;margin-top:6px}
-    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
-    .btn{
-      border:0;border-radius:14px;padding:13px 16px;font-weight:800;background:var(--dark);color:white;
-    }
-    .btn.secondary{background:var(--blue);color:var(--dark)}
-    .btn.orange{background:var(--orange);color:var(--dark)}
-    .btn.ghost{background:transparent;color:var(--dark);border:2px solid rgba(50,60,58,.15)}
-    .btn.danger{background:var(--danger)}
-    .btn:disabled{opacity:.45;cursor:not-allowed}
-    .section-title{font-size:24px;font-weight:900;margin:8px 0 12px}
-    .list{display:grid;gap:12px}
-    .class-row,.lesson-row,.student-row,.result-row{
-      background:white;border-radius:18px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
-      border:1px solid rgba(50,60,58,.08);
-    }
-    .class-name,.lesson-name{font-size:19px;font-weight:900}
-    .muted{opacity:.65;font-size:14px}
-    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .field{display:grid;gap:7px}
-    input,select{
-      width:100%;padding:13px 14px;border-radius:13px;border:1px solid rgba(50,60,58,.18);background:white;color:var(--dark)
-    }
-    .hidden{display:none!important}
-    .back{background:transparent;border:0;font-weight:900;color:var(--dark);padding:8px 0}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:var(--blue);font-size:13px;font-weight:800}
-    .lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .lesson-card{
-      background:white;border:0;border-radius:18px;padding:18px;text-align:left;min-height:116px;border:1px solid rgba(50,60,58,.08)
-    }
-    .lesson-card.active{outline:3px solid var(--orange)}
-    .lesson-card.disabled{opacity:.55}
-    .timer{font-size:clamp(48px,12vw,88px);font-weight:950;letter-spacing:-3px;text-align:center;margin:18px 0}
-    .shoot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
-    .target{
-      aspect-ratio:1;border-radius:50%;border:4px solid var(--dark);background:white;font-size:26px;font-weight:900
-    }
-    .target.hit{background:var(--orange)}
-    .target.miss{background:#ddd}
-    .big-action{width:100%;padding:18px;border-radius:18px;border:0;background:var(--orange);font-size:22px;font-weight:950;color:var(--dark)}
-    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .stat{background:white;border-radius:16px;padding:14px;text-align:center}
-    .stat b{display:block;font-size:22px}
-    .notice{background:var(--blue);border-radius:16px;padding:14px;margin:12px 0}
-    .warning{background:#f4e0c4;border-radius:16px;padding:14px;margin:12px 0}
-    .footer-note{text-align:center;opacity:.55;font-size:12px;margin:28px 0 10px}
-    @media(max-width:700px){
-      .role-grid,.grid-2,.lesson-grid{grid-template-columns:1fr}
-      .role-card{min-height:190px}
-      .summary{grid-template-columns:1fr}
-      .app{padding:14px}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#323c3a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Laser Run 6ème</title>
+
+<!-- Bibliothèques uniquement pour les fonctions techniques.
+     Elles sont mises en cache après la première ouverture en ligne. -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<style>
+:root{
+  --bleu:#c7dbdf;
+  --fonce:#323c3a;
+  --beige:#ebe5df;
+  --orange:#f7b738;
+  --vert:#20a447;
+  --rouge:#d92d20;
+  --blanc:#fff;
+  --ombre:0 10px 28px rgba(50,60,58,.12);
+  --rayon:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--beige);color:var(--fonce);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1050px;margin:auto;min-height:100vh;padding:16px}
+.hidden{display:none!important}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.brand{font-size:clamp(29px,5vw,48px);font-weight:950;letter-spacing:-1.5px}
+.subtitle{opacity:.7}
+.card{background:rgba(255,255,255,.82);border:1px solid rgba(50,60,58,.08);border-radius:var(--rayon);padding:18px;box-shadow:var(--ombre)}
+.role-grid,.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.role-card{border:0;border-radius:28px;padding:28px;text-align:left;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}
+.role-prof{background:var(--fonce);color:white}
+.role-eleve{background:var(--bleu);color:var(--fonce)}
+.role-icon{font-size:48px}.role-title{font-size:30px;font-weight:950}.role-desc{opacity:.78;line-height:1.35}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:900;background:var(--fonce);color:white}
+.btn.orange{background:var(--orange);color:var(--fonce)}
+.btn.light{background:var(--bleu);color:var(--fonce)}
+.btn.ghost{background:transparent;color:var(--fonce);border:2px solid rgba(50,60,58,.15)}
+.btn.red{background:var(--rouge);color:white}
+.btn.green{background:var(--vert);color:white}
+.btn:disabled{opacity:.42}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.back{border:0;background:transparent;font-weight:900;color:var(--fonce);padding:8px 0}
+.section{font-size:24px;font-weight:950;margin:16px 0 10px}
+.list{display:grid;gap:10px}
+.row{background:white;border-radius:17px;padding:15px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(50,60,58,.08)}
+.row button{flex-shrink:0}
+.big-name{font-size:19px;font-weight:950}.muted{opacity:.64;font-size:14px}
+.pill{display:inline-block;padding:7px 11px;border-radius:999px;background:var(--bleu);font-weight:850;font-size:13px}
+.field{display:grid;gap:6px}.field input,.field select{padding:13px;border-radius:13px;border:1px solid rgba(50,60,58,.2);background:white;width:100%}
+.notice{padding:13px;border-radius:15px;background:var(--bleu);margin:10px 0}
+.warn{padding:13px;border-radius:15px;background:#f8dec5;margin:10px 0}
+.lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.lesson{border:0;background:white;border-radius:18px;padding:18px;text-align:left;min-height:110px;border:1px solid rgba(50,60,58,.08)}
+.lesson.active{outline:3px solid var(--orange)}
+.lesson.locked{opacity:.5}
+.screen-title{font-size:clamp(28px,4vw,40px);font-weight:950}
+.progress{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.step{padding:7px 10px;border-radius:999px;background:#ddd;font-size:13px;font-weight:900}
+.step.done{background:var(--vert);color:white}.step.now{background:var(--orange);color:var(--fonce)}
+.target-set{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0}
+.target{
+  aspect-ratio:1;border-radius:50%;border:0;position:relative;background:#fff;
+  box-shadow:inset 0 0 0 5px #202020,inset 0 0 0 13px #fff,inset 0 0 0 18px #202020;
+  font-size:clamp(18px,4vw,30px);font-weight:950;color:#222;
+}
+.target::after{content:"";position:absolute;inset:38%;border-radius:50%;background:#202020}
+.target.hit{background:var(--vert);box-shadow:inset 0 0 0 5px #11612d,inset 0 0 0 13px #fff,inset 0 0 0 18px #11612d;color:white}
+.target.hit::after{background:#fff}
+.target.miss{background:var(--rouge);box-shadow:inset 0 0 0 5px #7e1b13,inset 0 0 0 13px #fff,inset 0 0 0 18px #7e1b13;color:white}
+.target.miss::after{background:#fff}
+.score{font-size:clamp(46px,11vw,78px);font-weight:950;text-align:center;letter-spacing:-3px}
+.timer{font-size:clamp(48px,12vw,92px);font-weight:950;text-align:center;letter-spacing:-4px;margin:14px 0}
+.shoot-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.hitbtn,.missbtn{
+  aspect-ratio:1.6;border-radius:999px;border:0;color:white;font-size:22px;font-weight:950;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:inset 0 0 0 6px rgba(255,255,255,.5),0 8px 18px rgba(0,0,0,.12)
+}
+.hitbtn{background:var(--vert)}.missbtn{background:var(--rouge)}
+.fivehits{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:15px 0}
+.dot{aspect-ratio:1;border-radius:50%;background:#ddd;border:4px solid #999}
+.dot.on{background:var(--vert);border-color:#146c34}
+.main-action{width:100%;padding:18px;border:0;border-radius:18px;background:var(--orange);color:var(--fonce);font-size:21px;font-weight:950}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:white;border-radius:15px;padding:13px;text-align:center}.stat b{display:block;font-size:23px}
+.qrbox{display:flex;justify-content:center;background:white;padding:18px;border-radius:18px;margin:16px auto;max-width:390px}
+.qrbox img,.qrbox canvas{max-width:100%!important;height:auto!important}
+.scanner{position:fixed;inset:0;background:#111;z-index:5000;display:flex;flex-direction:column}
+.scanner video{width:100%;height:calc(100vh - 100px);object-fit:cover}
+.scannerbar{height:100px;background:#111;color:white;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pinmodal{position:fixed;inset:0;background:rgba(50,60,58,.75);z-index:6000;display:flex;align-items:center;justify-content:center;padding:16px}
+.footer{text-align:center;font-size:12px;opacity:.55;margin:24px 0}
+@media(max-width:720px){
+  .role-grid,.grid2,.lesson-grid{grid-template-columns:1fr}
+  .role-card{min-height:180px}
+  .stats{grid-template-columns:1fr}
+  .app{padding:13px}
+}
+</style>
 </head>
 <body>
 <div class="app">
-  <div id="screen-home">
-    <div class="topbar">
-      <div>
-        <div class="brand">Laser Run 6ème</div>
-        <div class="subtle">Choisis ton espace</div>
-      </div>
-      <span class="pill">Hors connexion</span>
-    </div>
-    <div class="role-grid">
-      <button class="role-card role-prof" onclick="requestTeacherAccess()">
-        <div class="role-icon">👨‍🏫</div>
-        <div>
-          <div class="role-title">Professeur</div>
-          <div class="role-desc">Classes, élèves, leçons, résultats, import et export.</div>
-        </div>
-      </button>
-      <button class="role-card role-student" onclick="openStudent()">
-        <div class="role-icon">🏃</div>
-        <div>
-          <div class="role-title">Élèves</div>
-          <div class="role-desc">Importer une séance, choisir le binôme et réaliser la leçon.</div>
-        </div>
-      </button>
-    </div>
-    <div class="footer-note">Les données restent sur l’appareil tant qu’elles ne sont pas exportées.</div>
+
+<!-- ACCUEIL -->
+<section id="home">
+  <div class="topbar">
+    <div><div class="brand">Laser Run 6ème</div><div class="subtitle">Cycle EPS · fonctionnement hors connexion</div></div>
+    <span class="pill">V6</span>
+  </div>
+  <div class="role-grid">
+    <button class="role-card role-prof" onclick="teacherGate()">
+      <div class="role-icon">👨‍🏫</div>
+      <div><div class="role-title">Professeur</div><div class="role-desc">Classes, listes, résultats et scan des QR codes.</div></div>
+    </button>
+    <button class="role-card role-eleve" onclick="openStudentHome()">
+      <div class="role-icon">🏃</div>
+      <div><div class="role-title">Élèves</div><div class="role-desc">Classe → leçon → binôme → activité. Aucun fichier à envoyer.</div></div>
+    </button>
+  </div>
+  <div class="footer">Les performances restent sur la tablette jusqu’au transfert par QR code.</div>
+</section>
+
+<!-- PROF -->
+<section id="prof" class="hidden">
+  <button class="back" onclick="lockTeacher()">← Accueil et verrouiller</button>
+  <div class="topbar">
+    <div><div class="screen-title">Espace professeur</div><div class="subtitle">Gestion du cycle</div></div>
+    <span class="pill">🔒 Professeur</span>
+  </div>
+  <div class="toolbar">
+    <button class="btn orange" onclick="toggleCreateClass()">+ Nouvelle classe</button>
+    <button class="btn light" onclick="startScanner()">📷 Scanner les résultats</button>
+    <button class="btn ghost" onclick="exportClasses()">Exporter classes.json</button>
+    <button class="btn ghost" onclick="changePin()">Changer le code</button>
   </div>
 
-  <div id="screen-prof" class="hidden">
-    <button class="back" onclick="goHome()">← Accueil</button>
-    <div class="topbar">
-      <div>
-        <div class="brand">Espace professeur</div>
-        <div class="subtle">Gestion complète du cycle</div>
-      </div>
-      <button class="btn ghost" onclick="lockTeacher()">🔒 Verrouiller</button>
-    </div>
+  <div id="createClassBox" class="card hidden">
+    <div class="section">Nouvelle classe</div>
+    <div class="field"><label>Nom de la classe</label><input id="newClassName" placeholder="Ex. 6ème Avignon"></div>
+    <div class="toolbar"><button class="btn orange" onclick="createClass()">Enregistrer</button><button class="btn ghost" onclick="toggleCreateClass()">Annuler</button></div>
+  </div>
 
+  <div class="section">Classes</div>
+  <div id="profClasses" class="list"></div>
+</section>
+
+<!-- CLASSE PROF -->
+<section id="profClass" class="hidden">
+  <button class="back" onclick="openProf()">← Mes classes</button>
+  <div class="topbar">
+    <div><div class="screen-title" id="pcName"></div><div class="subtitle" id="pcMeta"></div></div>
+    <button class="btn red" onclick="deleteCurrentClass()">Supprimer</button>
+  </div>
+  <div class="card">
+    <div class="section">Élèves</div>
+    <div class="notice">Import CSV / Excel : une colonne « Nom Prénom » ou deux colonnes « Nom » et « Prénom ».</div>
     <div class="toolbar">
-      <button class="btn orange" onclick="showCreateClass()">+ Nouvelle classe</button>
-      <button class="btn secondary" onclick="importResults()">Récupérer des résultats</button>
-      <button class="btn ghost" onclick="openPinChange()">Changer le code enseignant</button>
+      <label class="btn light" for="rosterFile">Importer CSV / Excel</label>
+      <input id="rosterFile" class="hidden" type="file" accept=".csv,.xlsx,.xls">
+      <button class="btn ghost" onclick="manualStudent()">+ Ajouter un élève</button>
     </div>
-
-    <div id="create-class" class="card hidden">
-      <div class="section-title">Créer une classe</div>
-      <div class="field">
-        <label>Nom de la classe</label>
-        <input id="class-name" placeholder="Ex. 6ème Avignon">
-      </div>
-      <div class="toolbar">
-        <button class="btn orange" onclick="createClass()">Enregistrer</button>
-        <button class="btn ghost" onclick="hideCreateClass()">Annuler</button>
-      </div>
-    </div>
-
-    <div class="section-title">Mes classes</div>
-    <div id="prof-class-list" class="list"></div>
+    <div id="pcStudents" class="list"></div>
   </div>
 
-  <div id="screen-class" class="hidden">
-    <button class="back" onclick="openProf()">← Mes classes</button>
-    <div class="topbar">
-      <div>
-        <div class="brand" id="class-title">Classe</div>
-        <div class="subtle" id="class-count"></div>
-      </div>
-      <button class="btn danger" onclick="deleteCurrentClass()">Supprimer</button>
+  <div class="section">Résultats L1</div>
+  <div id="pcResults" class="list"></div>
+</section>
+
+<!-- ELEVE ACCUEIL -->
+<section id="studentHome" class="hidden">
+  <button class="back" onclick="show('home')">← Accueil</button>
+  <div class="topbar">
+    <div><div class="screen-title">Espace élèves</div><div class="subtitle">Choisis ta classe</div></div>
+    <span class="pill">Élèves</span>
+  </div>
+  <div class="notice">Les classes sont récupérées depuis GitHub lorsqu’une connexion est disponible puis conservées sur la tablette.</div>
+  <div class="toolbar">
+    <button class="btn light" onclick="refreshPublishedClasses()">↻ Actualiser les classes</button>
+    <button class="btn ghost" onclick="openTabletQR()">QR des résultats de la tablette</button>
+  </div>
+  <div id="studentClasses" class="list"></div>
+</section>
+
+<!-- LEÇONS -->
+<section id="lessons" class="hidden">
+  <button class="back" onclick="openStudentHome()">← Classes</button>
+  <div class="topbar"><div><div class="screen-title" id="lessonClassName"></div><div class="subtitle">Choisis la leçon</div></div></div>
+  <div class="lesson-grid" id="lessonGrid"></div>
+</section>
+
+<!-- BINOME -->
+<section id="pair" class="hidden">
+  <button class="back" onclick="openLessons()">← Leçons</button>
+  <div class="topbar"><div><div class="screen-title">Leçon 1</div><div class="subtitle">Centre de recrutement national</div></div></div>
+  <div class="card">
+    <div class="section">Choisis ton binôme</div>
+    <div class="grid2">
+      <div class="field"><label>Élève 1</label><select id="pairA"></select></div>
+      <div class="field"><label>Élève 2</label><select id="pairB"></select></div>
+    </div>
+    <div class="toolbar"><button class="btn orange" onclick="validatePair()">Valider le binôme</button></div>
+  </div>
+  <div id="pairWork" class="hidden">
+    <div class="section">Situation 1 · Le tir verrouillé</div>
+    <div id="s1Buttons" class="grid2"></div>
+    <div class="section">Situation principale · Centre national de recrutement</div>
+    <div id="mainButtons" class="grid2"></div>
+    <div class="toolbar"><button class="btn light" onclick="openTabletQR()">Afficher le QR des résultats</button></div>
+  </div>
+</section>
+
+<!-- SITUATION 1 -->
+<section id="s1" class="hidden">
+  <button class="back" onclick="openPair()">← Binôme</button>
+  <div class="topbar">
+    <div><div class="screen-title">Le tir verrouillé</div><div class="subtitle" id="s1Student"></div></div>
+    <span class="pill">Situation 1</span>
+  </div>
+  <div class="card">
+    <div class="notice">Après les deux Défis XP, saisis uniquement le <b>Défi Étoile</b> : 5 rechargements, sans aide du coach.</div>
+    <div class="target-set" id="s1Targets"></div>
+    <div class="score" id="s1Score">0 / 5</div>
+    <div class="muted" style="text-align:center">Appui 1 = vert (touché) · Appui 2 = rouge (raté) · Appui 3 = neutre</div>
+    <div style="margin-top:18px"><button class="main-action" onclick="saveS1()">VALIDER LE DÉFI ÉTOILE</button></div>
+  </div>
+</section>
+
+<!-- PRINCIPALE -->
+<section id="mainRace" class="hidden">
+  <button class="back" onclick="confirmLeaveRace()">← Binôme</button>
+  <div class="topbar">
+    <div><div class="screen-title">Centre national de recrutement</div><div class="subtitle" id="raceStudent"></div></div>
+    <span class="pill" id="raceStatus">Prêt</span>
+  </div>
+  <div class="card">
+    <div class="timer" id="raceTimer">00:00.0</div>
+    <div class="stats">
+      <div class="stat"><span>Boucle</span><b id="raceLap">0 / 4</b></div>
+      <div class="stat"><span>Passage tir</span><b id="raceShoot">0 / 3</b></div>
+      <div class="stat"><span>Rechargements</span><b id="raceReloads">0</b></div>
     </div>
 
-    <div class="card">
-      <div class="section-title">Élèves</div>
-      <div class="notice">Importe un fichier CSV ou Excel contenant « Nom Prénom » sur chaque ligne, ou deux colonnes Nom / Prénom.</div>
-      <div class="toolbar">
-        <label class="btn secondary" for="roster-file">Importer CSV / Excel</label>
-        <input id="roster-file" type="file" accept=".csv,.xlsx,.xls,text/csv" class="hidden">
-        <button class="btn ghost" onclick="addStudentPrompt()">+ Ajouter manuellement</button>
+    <div id="shootPanel" class="hidden">
+      <div class="section" style="text-align:center">Toucher 5 fois la cible</div>
+      <div class="fivehits" id="hitDots"></div>
+      <div class="shoot-actions">
+        <button class="hitbtn" onclick="shot(true)">◎ TOUCHÉ</button>
+        <button class="missbtn" onclick="shot(false)">◎ RATÉ</button>
       </div>
-      <div id="student-list" class="list"></div>
+      <div class="muted" style="text-align:center">Chaque pression compte comme un rechargement.</div>
     </div>
 
-    <div class="section-title" style="margin-top:22px">Leçons</div>
-    <div id="lesson-grid" class="lesson-grid"></div>
+    <div style="margin-top:18px"><button id="raceAction" class="main-action" onclick="raceAction()">DÉMARRER</button></div>
+  </div>
+</section>
 
-    <div class="toolbar">
-      <button class="btn orange" onclick="exportSession()">Partager la séance L1</button>
-      <button class="btn secondary" onclick="openClassResults()">Voir les résultats</button>
+<!-- QR -->
+<section id="qrScreen" class="hidden">
+  <button class="back" onclick="qrBack()">← Retour</button>
+  <div class="topbar"><div><div class="screen-title">Résultats de la tablette</div><div class="subtitle">Un seul QR code pour le professeur</div></div></div>
+  <div class="card">
+    <div id="qrSummary" class="notice"></div>
+    <div id="qrCode" class="qrbox"></div>
+    <div class="muted" style="text-align:center">Le professeur scanne ce QR depuis son espace. Les doublons sont ignorés.</div>
+  </div>
+</section>
+
+<!-- SCANNER PROF -->
+<div id="scanner" class="scanner hidden">
+  <video id="scanVideo" playsinline autoplay muted></video>
+  <canvas id="scanCanvas" class="hidden"></canvas>
+  <div class="scannerbar">
+    <div><b>Scanner les résultats</b><div id="scanMsg" style="opacity:.75;font-size:13px">Présente le QR d’une tablette.</div></div>
+    <div class="toolbar" style="margin:0">
+      <label class="btn light" for="qrPhoto">Photo</label>
+      <input id="qrPhoto" class="hidden" type="file" accept="image/*" capture="environment">
+      <button class="btn red" onclick="stopScanner()">Fermer</button>
     </div>
   </div>
+</div>
 
-  <div id="screen-results" class="hidden">
-    <button class="back" onclick="openCurrentClass()">← Classe</button>
-    <div class="topbar">
-      <div>
-        <div class="brand">Résultats</div>
-        <div class="subtle" id="results-subtitle"></div>
-      </div>
-    </div>
-    <div id="results-list" class="list"></div>
+<!-- PIN -->
+<div id="pinModal" class="pinmodal hidden">
+  <div class="card" style="width:min(420px,100%)">
+    <div class="section" id="pinTitle">Accès professeur</div>
+    <div id="pinNote" class="notice hidden">Première utilisation : crée un code de 4 à 6 chiffres.</div>
+    <div class="field"><label>Code enseignant</label><input id="pin1" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+    <div id="pinConfirmWrap" class="field hidden" style="margin-top:10px"><label>Confirmer</label><input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+    <div id="pinErr" class="warn hidden"></div>
+    <div class="toolbar"><button class="btn orange" onclick="validatePin()">Valider</button><button class="btn ghost" onclick="closePin()">Annuler</button></div>
   </div>
-
-  <div id="screen-student" class="hidden">
-    <button class="back" onclick="goHome()">← Accueil</button>
-    <div class="topbar">
-      <div>
-        <div class="brand">Espace élèves</div>
-        <div class="subtle">Accès limité à la séance importée</div>
-      </div>
-      <span class="pill">Élèves</span>
-    </div>
-
-    <div class="notice">🔒 Cet espace ne donne accès ni aux classes, ni aux résultats globaux, ni aux réglages professeur.</div>
-
-    <div id="student-import-card" class="card">
-      <div class="section-title">1. Importer la séance</div>
-      <div class="notice">Le professeur vous envoie un fichier de séance. Il contient uniquement le nom de la classe, la leçon et la liste des élèves.</div>
-      <label class="btn orange" for="session-file">Importer une séance</label>
-      <input id="session-file" type="file" accept=".json,application/json" class="hidden">
-    </div>
-
-    <div id="student-session" class="hidden">
-      <div class="card">
-        <div class="section-title" id="student-session-title">Séance</div>
-        <div class="grid-2">
-          <div class="field">
-            <label>Élève 1</label>
-            <select id="student-a"></select>
-          </div>
-          <div class="field">
-            <label>Élève 2</label>
-            <select id="student-b"></select>
-          </div>
-        </div>
-        <div class="toolbar">
-          <button class="btn orange" onclick="savePair()">Valider le binôme</button>
-          <button class="btn ghost" onclick="resetStudentSession()">Changer de séance</button>
-        </div>
-      </div>
-
-      <div id="pair-actions" class="hidden">
-        <div class="section-title">2. Choisir l’élève qui passe</div>
-        <div id="pair-buttons" class="grid-2"></div>
-        <div class="toolbar">
-          <button class="btn secondary" onclick="exportTabletResults()">Partager les résultats de cette tablette</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="screen-race" class="hidden">
-    <button class="back" onclick="leaveRace()">← Binôme</button>
-    <div class="topbar">
-      <div>
-        <div class="brand" id="race-name">Élève</div>
-        <div class="subtle" id="race-meta">L1 · 4 × 150 m · 3 tirs</div>
-      </div>
-      <span class="pill" id="race-step">Prêt</span>
-    </div>
-
-    <div class="card">
-      <div class="timer" id="timer">00:00.0</div>
-      <div class="summary">
-        <div class="stat"><span>Boucle</span><b id="lap-stat">0/4</b></div>
-        <div class="stat"><span>Tir</span><b id="shoot-stat">0/3</b></div>
-        <div class="stat"><span>Pénalité</span><b id="penalty-stat">0 s</b></div>
-      </div>
-      <div id="shoot-zone" class="hidden">
-        <div class="section-title" style="text-align:center">Saisie du tir</div>
-        <div class="shoot-grid" id="targets"></div>
-        <div class="muted" style="text-align:center">Touchez une cible pour indiquer une réussite. Les autres seront comptées comme ratées.</div>
-      </div>
-      <div style="margin-top:18px">
-        <button id="race-action" class="big-action" onclick="raceAction()">DÉMARRER</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="pin-modal" class="hidden" style="position:fixed;inset:0;background:rgba(50,60,58,.72);display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999">
-    <div class="card" style="width:min(420px,100%);background:#ebe5df">
-      <div class="section-title" id="pin-title">Accès professeur</div>
-      <div id="pin-first-note" class="notice hidden">
-        Première utilisation : crée un code enseignant de 4 à 6 chiffres.
-      </div>
-      <div class="field">
-        <label id="pin-label">Code enseignant</label>
-        <input id="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="6" type="password" placeholder="••••">
-      </div>
-      <div id="pin-confirm-wrap" class="field hidden" style="margin-top:12px">
-        <label>Confirmer le code</label>
-        <input id="pin-confirm" inputmode="numeric" pattern="[0-9]*" maxlength="6" type="password" placeholder="••••">
-      </div>
-      <div id="pin-error" class="warning hidden"></div>
-      <div class="toolbar">
-        <button class="btn orange" id="pin-validate" onclick="validateTeacherPin()">Valider</button>
-        <button class="btn ghost" onclick="closePinModal()">Annuler</button>
-      </div>
-    </div>
-  </div>
+</div>
 
 </div>
 
-<script src="xlsx.full.min.js"></script>
 <script>
-const DB_KEY = 'laser_run_6e_v5';
-const TABLET_KEY = 'laser_run_6e_tablet_results_v5';
-let db = loadDB();
-let currentClassId = null;
-let studentSession = null;
-let currentPair = [];
-let race = null;
-let timerHandle = null;
+const DBKEY='lr6_prof_v6';
+const RESULTKEY='lr6_tablet_results_v6';
+const PUBKEY='lr6_published_classes_v6';
+const PINKEY='lr6_pin_v6';
+let db=loadJSON(DBKEY,{classes:[]});
+let published=loadJSON(PUBKEY,{classes:[]});
+let currentClassId=null, studentClassId=null, pair=[], activeStudent=null;
+let s1States=[0,0,0,0,0];
+let race=null, timer=null;
+let teacherUnlocked=false, pinMode='unlock';
+let scannerStream=null, scannerLoop=null;
+let lastScreen='studentHome';
 
-const TEACHER_PIN_KEY = 'laser_run_teacher_pin_v5';
-let teacherUnlocked = false;
-let pinMode = 'unlock';
-
-async function hashPin(pin){
-  const data = new TextEncoder().encode(pin);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-function requestTeacherAccess(){
-  if(teacherUnlocked){ openProf(); return; }
-  const hasPin = !!localStorage.getItem(TEACHER_PIN_KEY);
-  pinMode = hasPin ? 'unlock' : 'create';
-  document.getElementById('pin-title').textContent = hasPin ? 'Accès professeur' : 'Créer le code enseignant';
-  document.getElementById('pin-first-note').classList.toggle('hidden', hasPin);
-  document.getElementById('pin-confirm-wrap').classList.toggle('hidden', hasPin);
-  document.getElementById('pin-input').value='';
-  document.getElementById('pin-confirm').value='';
-  document.getElementById('pin-error').classList.add('hidden');
-  document.getElementById('pin-modal').classList.remove('hidden');
-  setTimeout(()=>document.getElementById('pin-input').focus(),50);
-}
-
-function closePinModal(){
-  document.getElementById('pin-modal').classList.add('hidden');
-}
-
-async function validateTeacherPin(){
-  const pin = document.getElementById('pin-input').value.trim();
-  const confirmPin = document.getElementById('pin-confirm').value.trim();
-  const err = document.getElementById('pin-error');
-
-  if(!/^\d{4,6}$/.test(pin)){
-    err.textContent='Le code doit contenir 4 à 6 chiffres.';
-    err.classList.remove('hidden');
-    return;
-  }
-
-  if(pinMode==='create'){
-    if(pin !== confirmPin){
-      err.textContent='Les deux codes ne correspondent pas.';
-      err.classList.remove('hidden');
-      return;
-    }
-    localStorage.setItem(TEACHER_PIN_KEY, await hashPin(pin));
-    teacherUnlocked = true;
-    closePinModal();
-    openProf();
-    return;
-  }
-
-  if(pinMode==='change'){
-    if(pin !== confirmPin){
-      err.textContent='Les deux codes ne correspondent pas.';
-      err.classList.remove('hidden');
-      return;
-    }
-    localStorage.setItem(TEACHER_PIN_KEY, await hashPin(pin));
-    closePinModal();
-    alert('Code enseignant modifié.');
-    return;
-  }
-
-  const stored = localStorage.getItem(TEACHER_PIN_KEY);
-  if(await hashPin(pin) === stored){
-    teacherUnlocked = true;
-    closePinModal();
-    openProf();
-  } else {
-    err.textContent='Code incorrect.';
-    err.classList.remove('hidden');
-  }
-}
-
-function openPinChange(){
-  pinMode='change';
-  document.getElementById('pin-title').textContent='Changer le code enseignant';
-  document.getElementById('pin-first-note').classList.add('hidden');
-  document.getElementById('pin-confirm-wrap').classList.remove('hidden');
-  document.getElementById('pin-input').value='';
-  document.getElementById('pin-confirm').value='';
-  document.getElementById('pin-error').classList.add('hidden');
-  document.getElementById('pin-modal').classList.remove('hidden');
-}
-
-function lockTeacher(){
-  teacherUnlocked=false;
-  goHome();
-}
-
-function loadDB(){
-  try{
-    const x = JSON.parse(localStorage.getItem(DB_KEY));
-    if(x && x.classes) return x;
-  }catch(e){}
-  return {classes:[]};
-}
-function saveDB(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
-
+function loadJSON(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function show(id){
-  document.querySelectorAll('[id^="screen-"]').forEach(x=>x.classList.add('hidden'));
+  document.querySelectorAll('section').forEach(x=>x.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   window.scrollTo(0,0);
 }
-function goHome(){ show('screen-home'); }
-function openProf(){ renderProfClasses(); show('screen-prof'); }
-function openStudent(){
-  loadStudentSessionFromStorage();
-  renderStudentSession();
-  show('screen-student');
-}
+function uid(){return (crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2))}
+function shortDate(){return new Date().toISOString().slice(0,10)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function fmt(ms){ms=Math.max(0,ms||0);const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`}
+function download(obj,name){const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function getResults(){return loadJSON(RESULTKEY,[])}
+function saveResults(r){saveJSON(RESULTKEY,r)}
+function currentProfClass(){return db.classes.find(c=>c.id===currentClassId)}
+function currentStudentClass(){return published.classes.find(c=>c.id===studentClassId)}
 
-function showCreateClass(){ document.getElementById('create-class').classList.remove('hidden'); }
-function hideCreateClass(){ document.getElementById('create-class').classList.add('hidden'); }
+async function hashPin(p){if(crypto.subtle){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}return btoa(p)}
+function teacherGate(){
+  if(teacherUnlocked)return openProf();
+  pinMode=localStorage.getItem(PINKEY)?'unlock':'create';
+  document.getElementById('pinTitle').textContent=pinMode==='create'?'Créer le code enseignant':'Accès professeur';
+  document.getElementById('pinNote').classList.toggle('hidden',pinMode!=='create');
+  document.getElementById('pinConfirmWrap').classList.toggle('hidden',pinMode==='unlock');
+  document.getElementById('pin1').value='';document.getElementById('pin2').value='';document.getElementById('pinErr').classList.add('hidden');
+  document.getElementById('pinModal').classList.remove('hidden');
+}
+function closePin(){document.getElementById('pinModal').classList.add('hidden')}
+async function validatePin(){
+  const a=document.getElementById('pin1').value.trim(),b=document.getElementById('pin2').value.trim(),e=document.getElementById('pinErr');
+  if(!/^\d{4,6}$/.test(a)){e.textContent='Le code doit contenir 4 à 6 chiffres.';e.classList.remove('hidden');return}
+  if(pinMode==='create'||pinMode==='change'){
+    if(a!==b){e.textContent='Les deux codes ne correspondent pas.';e.classList.remove('hidden');return}
+    localStorage.setItem(PINKEY,await hashPin(a));teacherUnlocked=true;closePin();return openProf();
+  }
+  if(await hashPin(a)===localStorage.getItem(PINKEY)){teacherUnlocked=true;closePin();openProf()}else{e.textContent='Code incorrect.';e.classList.remove('hidden')}
+}
+function changePin(){pinMode='change';document.getElementById('pinTitle').textContent='Changer le code';document.getElementById('pinNote').classList.add('hidden');document.getElementById('pinConfirmWrap').classList.remove('hidden');document.getElementById('pin1').value='';document.getElementById('pin2').value='';document.getElementById('pinModal').classList.remove('hidden')}
+function lockTeacher(){teacherUnlocked=false;show('home')}
+
+function openProf(){renderProf();show('prof')}
+function renderProf(){
+  const el=document.getElementById('profClasses');
+  el.innerHTML=db.classes.length?db.classes.map(c=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="openProfClass('${c.id}')"><div><div class="big-name">${esc(c.name)}</div><div class="muted">${c.students.length} élèves · ${(c.results||[]).length} résultats</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe.</div>';
+}
+function toggleCreateClass(){document.getElementById('createClassBox').classList.toggle('hidden')}
 function createClass(){
-  const name = document.getElementById('class-name').value.trim();
-  if(!name) return alert('Entre le nom de la classe.');
-  db.classes.push({id:crypto.randomUUID(),name,students:[],results:[]});
-  saveDB();
-  document.getElementById('class-name').value='';
-  hideCreateClass();
-  renderProfClasses();
+  const n=document.getElementById('newClassName').value.trim();if(!n)return alert('Entre un nom de classe.');
+  db.classes.push({id:uid(),name:n,students:[],results:[]});saveJSON(DBKEY,db);document.getElementById('newClassName').value='';toggleCreateClass();renderProf();
 }
-function renderProfClasses(){
-  const el=document.getElementById('prof-class-list');
-  if(!db.classes.length){
-    el.innerHTML='<div class="card muted">Aucune classe enregistrée.</div>';
-    return;
-  }
-  el.innerHTML=db.classes.map(c=>`
-    <button class="class-row" onclick="openClass('${c.id}')" style="width:100%;text-align:left;border:0">
-      <div><div class="class-name">${escapeHtml(c.name)}</div><div class="muted">${c.students.length} élève(s) · ${c.results.length} résultat(s)</div></div>
-      <div style="font-size:28px">›</div>
-    </button>`).join('');
+function openProfClass(id){currentClassId=id;renderProfClass();show('profClass')}
+function renderProfClass(){
+  const c=currentProfClass();document.getElementById('pcName').textContent=c.name;document.getElementById('pcMeta').textContent=`${c.students.length} élèves`;
+  document.getElementById('pcStudents').innerHTML=c.students.length?c.students.map(s=>`<div class="row"><div class="big-name">${esc(s.name)}</div><button class="btn ghost" onclick="removeStudent('${s.id}')">Retirer</button></div>`).join(''):'<div class="muted">Aucun élève.</div>';
+  const rs=[...(c.results||[])].sort((a,b)=>a.studentName.localeCompare(b.studentName));
+  document.getElementById('pcResults').innerHTML=rs.length?rs.map(r=>`<div class="row"><div><div class="big-name">${esc(r.studentName)}</div><div class="muted">S1 : ${r.s1==null?'—':r.s1+'/5'} · Principal : ${r.time==null?'—':fmt(r.time)}</div></div><div style="text-align:right"><b>${r.time==null?'':(r.reloads||[]).reduce((a,b)=>a+b,0)+' recharg.'}</b><div class="muted">${r.reloads?('T1 '+r.reloads[0]+' · T2 '+r.reloads[1]+' · T3 '+r.reloads[2]):''}</div></div></div>`).join(''):'<div class="card muted">Aucun résultat scanné.</div>';
 }
-function openClass(id){
-  currentClassId=id;
-  openCurrentClass();
-}
-function openCurrentClass(){
-  const c=getCurrentClass();
-  if(!c) return openProf();
-  document.getElementById('class-title').textContent=c.name;
-  document.getElementById('class-count').textContent=`${c.students.length} élève(s)`;
-  renderStudents();
-  renderLessons();
-  show('screen-class');
-}
-function getCurrentClass(){ return db.classes.find(c=>c.id===currentClassId); }
-function deleteCurrentClass(){
-  const c=getCurrentClass(); if(!c) return;
-  if(!confirm(`Supprimer ${c.name} et toutes ses données ?`)) return;
-  db.classes=db.classes.filter(x=>x.id!==c.id); saveDB(); currentClassId=null; openProf();
-}
-function addStudentPrompt(){
-  const v=prompt('Nom Prénom de l’élève :'); if(!v) return;
-  const c=getCurrentClass(); c.students.push({id:crypto.randomUUID(),name:v.trim()}); saveDB(); renderStudents();
-}
-function renderStudents(){
-  const c=getCurrentClass(); const el=document.getElementById('student-list');
-  if(!c.students.length){ el.innerHTML='<div class="muted">Aucun élève pour le moment.</div>'; return; }
-  el.innerHTML=c.students.map((s,i)=>`
-    <div class="student-row"><div><b>${escapeHtml(s.name)}</b></div>
-    <button class="btn ghost" onclick="removeStudent('${s.id}')">Retirer</button></div>`).join('');
-}
-function removeStudent(id){
-  const c=getCurrentClass();
-  c.students=c.students.filter(s=>s.id!==id); saveDB(); renderStudents();
-}
-document.getElementById('roster-file').addEventListener('change', async e=>{
-  const f=e.target.files[0]; if(!f) return;
+function deleteCurrentClass(){const c=currentProfClass();if(confirm(`Supprimer ${c.name} ?`)){db.classes=db.classes.filter(x=>x.id!==c.id);saveJSON(DBKEY,db);openProf()}}
+function manualStudent(){const n=prompt('Nom Prénom :');if(!n)return;currentProfClass().students.push({id:uid(),name:n.trim()});saveJSON(DBKEY,db);renderProfClass()}
+function removeStudent(id){const c=currentProfClass();c.students=c.students.filter(s=>s.id!==id);saveJSON(DBKEY,db);renderProfClass()}
+document.getElementById('rosterFile').addEventListener('change',async e=>{
+  const f=e.target.files[0];if(!f)return;
   try{
-    const names = await parseRoster(f);
-    const c=getCurrentClass();
-    const existing=new Set(c.students.map(s=>s.name.toLowerCase()));
-    names.forEach(name=>{ if(name && !existing.has(name.toLowerCase())) c.students.push({id:crypto.randomUUID(),name}); });
-    saveDB(); renderStudents(); document.getElementById('class-count').textContent=`${c.students.length} élève(s)`;
-    alert(`${names.length} ligne(s) lue(s).`);
-  }catch(err){ alert('Impossible de lire ce fichier.'); console.error(err); }
+    let names=[];
+    if(f.name.toLowerCase().endsWith('.csv')){
+      const txt=await f.text();names=txt.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&p.join(' ').match(/nom|pr[eé]nom/i))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean);
+    }else{
+      const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&r.join(' ').match(/nom|pr[eé]nom/i))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])});
+    }
+    const c=currentProfClass(),seen=new Set(c.students.map(s=>s.name.toLowerCase()));
+    names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){c.students.push({id:uid(),name:n});seen.add(n.toLowerCase())}});
+    saveJSON(DBKEY,db);renderProfClass();alert(`${names.length} ligne(s) lue(s).`);
+  }catch(err){alert('Impossible de lire ce fichier.')}
   e.target.value='';
 });
-async function parseRoster(file){
-  const ext=file.name.toLowerCase().split('.').pop();
-  if(ext==='csv'){
-    const txt=await file.text();
-    return txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{
-      const parts=l.split(/[;,]/).map(x=>x.trim()).filter(Boolean);
-      if(parts.length>=2 && /nom/i.test(parts[0]) && /pr[eé]nom/i.test(parts[1])) return null;
-      if(parts.length>=2) return `${parts[0]} ${parts[1]}`.trim();
-      return parts[0];
-    }).filter(Boolean);
-  }
-  const arr=await file.arrayBuffer();
-  const wb=XLSX.read(arr,{type:'array'});
-  const ws=wb.Sheets[wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-  const out=[];
-  for(let i=0;i<rows.length;i++){
-    const row=rows[i].map(x=>String(x).trim());
-    if(!row.some(Boolean)) continue;
-    if(i===0 && row.some(x=>/nom|pr[eé]nom/i.test(x))) continue;
-    if(row[0] && row[1]) out.push(`${row[0]} ${row[1]}`.trim());
-    else if(row[0]) out.push(row[0]);
-  }
-  return out;
-}
-function renderLessons(){
-  const lessons=[
-    ['L1','Centre national de recrutement',true],
-    ['L2','Sprint individuel',false],
-    ['L3','Poursuite',false],
-    ['L4','Mass-start',false],
-    ['L5','Relais des nations',false],
-    ['L6','Qualification aux JO',false],
-    ['L7','Jeux Olympiques',false]
-  ];
-  document.getElementById('lesson-grid').innerHTML=lessons.map(l=>`
-    <div class="lesson-card ${l[2]?'active':'disabled'}">
-      <div class="muted">${l[0]}</div><div class="lesson-name">${l[1]}</div>
-      <div class="muted" style="margin-top:8px">${l[2]?'Disponible':'À construire'}</div>
-    </div>`).join('');
-}
-function exportSession(){
-  const c=getCurrentClass(); if(!c || !c.students.length) return alert('Ajoute d’abord les élèves.');
-  const payload={
-    kind:'laser-run-session',version:5,classId:c.id,className:c.name,
-    lesson:'L1',lessonName:'Centre national de recrutement',
-    students:c.students.map(s=>({id:s.id,name:s.name})),
-    createdAt:new Date().toISOString()
-  };
-  downloadJSON(payload, `${safeName(c.name)}-L1-seance.json`);
-}
-function openClassResults(){
-  const c=getCurrentClass();
-  document.getElementById('results-subtitle').textContent=c.name;
-  const arr=[...c.results].sort((a,b)=>a.correctedMs-b.correctedMs);
-  document.getElementById('results-list').innerHTML=arr.length?arr.map((r,i)=>`
-    <div class="result-row">
-      <div><b>${i+1}. ${escapeHtml(r.studentName)}</b><div class="muted">${new Date(r.createdAt).toLocaleString('fr-FR')}</div></div>
-      <div style="text-align:right"><b>${formatMs(r.correctedMs)}</b><div class="muted">${r.hits}/15 · +${r.penaltySec}s</div></div>
-    </div>`).join(''):'<div class="card muted">Aucun résultat importé.</div>';
-  show('screen-results');
-}
-function importResults(){
-  const input=document.createElement('input');
-  input.type='file'; input.accept='.json,application/json'; input.multiple=true;
-  input.onchange=async ()=>{
-    let added=0;
-    for(const f of input.files){
-      try{
-        const data=JSON.parse(await f.text());
-        if(data.kind!=='laser-run-results') continue;
-        const c=db.classes.find(x=>x.id===data.classId) || db.classes.find(x=>x.name===data.className);
-        if(!c) continue;
-        const ids=new Set(c.results.map(r=>r.id));
-        for(const r of data.results||[]){
-          if(!ids.has(r.id)){ c.results.push(r); ids.add(r.id); added++; }
-        }
-      }catch(e){}
-    }
-    saveDB(); renderProfClasses(); alert(`${added} résultat(s) ajouté(s).`);
-  };
-  input.click();
+function exportClasses(){
+  const payload={version:6,classes:db.classes.map(c=>({id:c.id,name:c.name,students:c.students}))};
+  download(payload,'classes.json');
+  alert('Dépose ensuite classes.json à la racine du dépôt GitHub Laser-Run. Les tablettes élèves pourront alors actualiser leurs classes.');
 }
 
-document.getElementById('session-file').addEventListener('change', async e=>{
-  const f=e.target.files[0]; if(!f) return;
+async function refreshPublishedClasses(silent=false){
   try{
-    const data=JSON.parse(await f.text());
-    if(data.kind!=='laser-run-session') throw new Error();
-    studentSession=data;
-    localStorage.setItem('laser_run_student_session_v5',JSON.stringify(data));
-    renderStudentSession();
-  }catch(err){ alert('Ce fichier de séance n’est pas valide.'); }
-  e.target.value='';
-});
-function loadStudentSessionFromStorage(){
-  if(studentSession) return;
-  try{ studentSession=JSON.parse(localStorage.getItem('laser_run_student_session_v5')); }catch(e){}
+    const r=await fetch('./classes.json?'+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error();
+    const x=await r.json();
+    if(!x.classes)throw new Error();
+    published=x;saveJSON(PUBKEY,published);renderStudentClasses();if(!silent)alert('Classes actualisées.');
+  }catch(e){renderStudentClasses();if(!silent)alert('Pas de nouvelle liste disponible. Les classes déjà mémorisées restent utilisables hors connexion.')}
 }
-function resetStudentSession(){
-  localStorage.removeItem('laser_run_student_session_v5'); studentSession=null; currentPair=[];
-  renderStudentSession();
+function openStudentHome(){refreshPublishedClasses(true);renderStudentClasses();show('studentHome')}
+function renderStudentClasses(){
+  const el=document.getElementById('studentClasses');
+  el.innerHTML=published.classes?.length?published.classes.map(c=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectStudentClass('${c.id}')"><div><div class="big-name">${esc(c.name)}</div><div class="muted">${c.students.length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe mémorisée sur cette tablette.</div>';
 }
-function renderStudentSession(){
-  const importCard=document.getElementById('student-import-card');
-  const sessionBox=document.getElementById('student-session');
-  if(!studentSession){
-    importCard.classList.remove('hidden'); sessionBox.classList.add('hidden'); return;
-  }
-  importCard.classList.add('hidden'); sessionBox.classList.remove('hidden');
-  document.getElementById('student-session-title').textContent=`${studentSession.className} · ${studentSession.lesson}`;
-  const opts='<option value="">Choisir...</option>'+studentSession.students.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
-  document.getElementById('student-a').innerHTML=opts;
-  document.getElementById('student-b').innerHTML=opts;
-  document.getElementById('pair-actions').classList.add('hidden');
+function selectStudentClass(id){studentClassId=id;openLessons()}
+function openLessons(){
+  const c=currentStudentClass();if(!c)return openStudentHome();
+  document.getElementById('lessonClassName').textContent=c.name;
+  const ls=[['L1','Centre national de recrutement',true],['L2','Sprint individuel',false],['L3','Poursuite',false],['L4','Mass-start',false],['L5','Relais des nations',false],['L6','Qualification aux JO',false],['L7','Jeux Olympiques',false]];
+  document.getElementById('lessonGrid').innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?'onclick="openPair()"':'disabled'}><div class="muted">${x[0]}</div><div class="big-name">${x[1]}</div><div class="muted" style="margin-top:6px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
+  show('lessons');
 }
-function savePair(){
-  const a=document.getElementById('student-a').value, b=document.getElementById('student-b').value;
-  if(!a || !b || a===b) return alert('Choisis deux élèves différents.');
-  currentPair=[studentSession.students.find(s=>s.id===a),studentSession.students.find(s=>s.id===b)];
-  document.getElementById('pair-buttons').innerHTML=currentPair.map(s=>`
-    <button class="role-card role-student" onclick="startRace('${s.id}')" style="min-height:150px">
-      <div class="role-icon">🏃</div><div class="role-title" style="font-size:24px">${escapeHtml(s.name)}</div>
-    </button>`).join('');
-  document.getElementById('pair-actions').classList.remove('hidden');
+function openPair(){
+  const c=currentStudentClass();const opt='<option value="">Choisir...</option>'+c.students.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  document.getElementById('pairA').innerHTML=opt;document.getElementById('pairB').innerHTML=opt;document.getElementById('pairWork').classList.add('hidden');show('pair');
+  if(pair.length===2){document.getElementById('pairA').value=pair[0].id;document.getElementById('pairB').value=pair[1].id;renderPairWork()}
 }
-function startRace(studentId){
-  const s=currentPair.find(x=>x.id===studentId); if(!s) return;
-  race={student:s,start:null,elapsed:0,running:false,lap:0,shoot:0,hits:0,penaltySec:0,state:'ready',shotHits:0};
-  document.getElementById('race-name').textContent=s.name;
-  resetRaceUI(); show('screen-race');
+function validatePair(){
+  const a=document.getElementById('pairA').value,b=document.getElementById('pairB').value;if(!a||!b||a===b)return alert('Choisis deux élèves différents.');
+  const c=currentStudentClass();pair=[c.students.find(s=>s.id===a),c.students.find(s=>s.id===b)];renderPairWork();
+}
+function renderPairWork(){
+  document.getElementById('pairWork').classList.remove('hidden');
+  const rs=getResults();
+  document.getElementById('s1Buttons').innerHTML=pair.map(s=>{const r=latestRecord(s.id);return `<button class="role-card role-eleve" style="min-height:140px" onclick="startS1('${s.id}')"><div class="big-name">${esc(s.name)}</div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5':'Commencer'}</div></button>`}).join('');
+  document.getElementById('mainButtons').innerHTML=pair.map(s=>{const r=latestRecord(s.id);return `<button class="role-card role-prof" style="min-height:140px" onclick="startMain('${s.id}')"><div class="big-name">${esc(s.name)}</div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('');
+}
+function latestRecord(studentId){
+  return getResults().filter(r=>r.classId===studentClassId&&r.studentId===studentId&&r.date===shortDate()&&r.lesson==='L1').sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0]||null;
+}
+function ensureRecord(student){
+  let all=getResults(),r=latestRecord(student.id);
+  if(!r){r={id:uid(),classId:studentClassId,studentId:student.id,studentName:student.name,date:shortDate(),lesson:'L1',s1:null,time:null,reloads:null,updatedAt:new Date().toISOString()};all.push(r);saveResults(all)}
+  return r;
+}
+function updateRecord(r){
+  let all=getResults(),i=all.findIndex(x=>x.id===r.id);r.updatedAt=new Date().toISOString();if(i>=0)all[i]=r;else all.push(r);saveResults(all);
+}
+
+function startS1(id){activeStudent=currentStudentClass().students.find(s=>s.id===id);s1States=[0,0,0,0,0];document.getElementById('s1Student').textContent=activeStudent.name;renderS1();show('s1')}
+function renderS1(){
+  document.getElementById('s1Targets').innerHTML=s1States.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycleTarget(${i})" aria-label="cible ${i+1}"></button>`).join('');
+  document.getElementById('s1Score').textContent=`${s1States.filter(x=>x===1).length} / 5`;
+}
+function cycleTarget(i){s1States[i]=(s1States[i]+1)%3;renderS1()}
+function saveS1(){
+  if(s1States.some(x=>x===0)&&!confirm('Certaines cibles sont encore neutres. Valider quand même ?'))return;
+  const r=ensureRecord(activeStudent);r.s1=s1States.filter(x=>x===1).length;updateRecord(r);openPair();
+}
+
+function startMain(id){
+  activeStudent=currentStudentClass().students.find(s=>s.id===id);
+  race={start:0,elapsed:0,running:false,state:'ready',lap:0,shoot:0,hits:0,attempts:0,stationAttempts:[0,0,0]};
+  clearInterval(timer);document.getElementById('raceStudent').textContent=activeStudent.name;resetRaceUI();show('mainRace');
 }
 function resetRaceUI(){
-  clearInterval(timerHandle);
-  document.getElementById('timer').textContent='00:00.0';
-  document.getElementById('lap-stat').textContent='0/4';
-  document.getElementById('shoot-stat').textContent='0/3';
-  document.getElementById('penalty-stat').textContent='0 s';
-  document.getElementById('shoot-zone').classList.add('hidden');
-  document.getElementById('race-action').textContent='DÉMARRER';
-  document.getElementById('race-step').textContent='Prêt';
+  document.getElementById('raceTimer').textContent='00:00.0';document.getElementById('raceLap').textContent='0 / 4';document.getElementById('raceShoot').textContent='0 / 3';document.getElementById('raceReloads').textContent='0';document.getElementById('raceStatus').textContent='Prêt';document.getElementById('shootPanel').classList.add('hidden');document.getElementById('raceAction').textContent='DÉMARRER';renderHitDots();
 }
+function updateClock(){race.elapsed=performance.now()-race.start;document.getElementById('raceTimer').textContent=fmt(race.elapsed)}
 function raceAction(){
   if(race.state==='ready'){
-    race.start=performance.now(); race.running=true; race.state='running';
-    timerHandle=setInterval(updateTimer,100);
-    race.lap=1; updateRaceStats();
-    document.getElementById('race-action').textContent='ARRIVÉE AU TIR 1';
-    document.getElementById('race-step').textContent='Boucle 1';
-  } else if(race.state==='running'){
-    race.running=false; race.elapsed=performance.now()-race.start;
-    clearInterval(timerHandle);
-    if(race.shoot<3){
-      race.state='shooting'; race.shotHits=0; renderTargets();
-      document.getElementById('shoot-zone').classList.remove('hidden');
-      document.getElementById('race-action').textContent='VALIDER LE TIR';
-      document.getElementById('race-step').textContent=`Tir ${race.shoot+1}`;
-    }else{
-      finishRace();
-    }
-  } else if(race.state==='shooting'){
-    const misses=5-race.shotHits;
-    race.hits+=race.shotHits; race.penaltySec+=misses*5; race.shoot++;
-    updateRaceStats(); document.getElementById('shoot-zone').classList.add('hidden');
-    race.start=performance.now()-race.elapsed; race.running=true; race.state='running';
-    timerHandle=setInterval(updateTimer,100);
-    race.lap++;
-    document.getElementById('race-action').textContent=race.shoot<3?`ARRIVÉE AU TIR ${race.shoot+1}`:'ARRIVÉE';
-    document.getElementById('race-step').textContent=`Boucle ${race.lap}`;
+    race.start=performance.now();race.running=true;race.state='run';race.lap=1;timer=setInterval(updateClock,100);document.getElementById('raceAction').textContent='ARRIVÉE AU TIR 1';document.getElementById('raceStatus').textContent='Boucle 1';updateRaceStats();return;
+  }
+  if(race.state==='run'){
+    if(race.shoot<3){race.state='shoot';race.hits=0;document.getElementById('shootPanel').classList.remove('hidden');document.getElementById('raceAction').disabled=true;document.getElementById('raceStatus').textContent=`Tir ${race.shoot+1}`;renderHitDots()}
+    else finishMain();
   }
 }
-function renderTargets(){
-  const t=document.getElementById('targets');
-  t.innerHTML=Array.from({length:5},(_,i)=>`<button class="target" id="target-${i}" onclick="toggleTarget(${i})">○</button>`).join('');
+function shot(hit){
+  if(race.state!=='shoot')return;
+  race.attempts++;race.stationAttempts[race.shoot]++;
+  if(hit&&race.hits<5)race.hits++;
+  updateRaceStats();renderHitDots();
+  if(race.hits===5){
+    race.shoot++;race.state='run';race.lap++;
+    document.getElementById('shootPanel').classList.add('hidden');document.getElementById('raceAction').disabled=false;
+    document.getElementById('raceAction').textContent=race.shoot<3?`ARRIVÉE AU TIR ${race.shoot+1}`:'ARRIVÉE';
+    document.getElementById('raceStatus').textContent=`Boucle ${race.lap}`;updateRaceStats();
+  }
 }
-function toggleTarget(i){
-  const el=document.getElementById(`target-${i}`);
-  const hit=el.classList.toggle('hit');
-  el.textContent=hit?'✓':'○';
-  race.shotHits += hit?1:-1;
+function renderHitDots(){document.getElementById('hitDots').innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('')}
+function updateRaceStats(){document.getElementById('raceLap').textContent=`${race.lap} / 4`;document.getElementById('raceShoot').textContent=`${race.shoot} / 3`;document.getElementById('raceReloads').textContent=race.attempts}
+function finishMain(){
+  clearInterval(timer);updateClock();race.running=false;race.state='done';
+  const r=ensureRecord(activeStudent);r.time=Math.round(race.elapsed);r.reloads=[...race.stationAttempts];updateRecord(r);
+  document.getElementById('raceStatus').textContent='Terminé';document.getElementById('raceAction').textContent='RÉSULTAT ENREGISTRÉ';document.getElementById('raceAction').disabled=true;
+  setTimeout(()=>openPair(),800);
 }
-function updateTimer(){
-  if(!race?.running) return;
-  race.elapsed=performance.now()-race.start;
-  document.getElementById('timer').textContent=formatMs(race.elapsed);
+function confirmLeaveRace(){if(race&&race.state!=='done'&&race.state!=='ready'&&!confirm('Abandonner cette performance ?'))return;clearInterval(timer);openPair()}
+
+function compactPayload(){
+  const recs=getResults().filter(r=>r.date===shortDate()&&r.lesson==='L1'&&r.classId===studentClassId&&(r.s1!=null||r.time!=null));
+  return {a:'LR6',v:6,c:studentClassId,d:shortDate(),r:recs.map(x=>[x.id,x.studentId,x.s1,x.time,x.reloads])};
 }
-function updateRaceStats(){
-  document.getElementById('lap-stat').textContent=`${race.lap}/4`;
-  document.getElementById('shoot-stat').textContent=`${race.shoot}/3`;
-  document.getElementById('penalty-stat').textContent=`${race.penaltySec} s`;
+function openTabletQR(){
+  lastScreen=document.getElementById('pair').classList.contains('hidden')?'studentHome':'pair';
+  const p=compactPayload();
+  if(!p.r.length)return alert('Aucun résultat du jour à afficher.');
+  document.getElementById('qrSummary').textContent=`${p.r.length} élève(s) / résultat(s) du jour · ${currentStudentClass()?.name||''}`;
+  const q=document.getElementById('qrCode');q.innerHTML='';
+  const txt=JSON.stringify(p);
+  try{new QRCode(q,{text:txt,width:330,height:330,correctLevel:QRCode.CorrectLevel.L})}
+  catch(e){alert('Le QR est trop volumineux. Il faudra réduire le nombre de résultats affichés.')}
+  show('qrScreen');
 }
-function finishRace(){
-  race.elapsed=performance.now()-race.start;
-  clearInterval(timerHandle); race.running=false; race.state='done';
-  const result={
-    id:crypto.randomUUID(),studentId:race.student.id,studentName:race.student.name,
-    classId:studentSession.classId,className:studentSession.className,lesson:'L1',
-    rawMs:Math.round(race.elapsed),hits:race.hits,penaltySec:race.penaltySec,
-    correctedMs:Math.round(race.elapsed + race.penaltySec*1000),
-    createdAt:new Date().toISOString()
-  };
-  const all=loadTabletResults(); all.push(result); localStorage.setItem(TABLET_KEY,JSON.stringify(all));
-  document.getElementById('timer').textContent=formatMs(result.correctedMs);
-  document.getElementById('race-action').textContent='RÉSULTAT ENREGISTRÉ';
-  document.getElementById('race-action').disabled=true;
-  document.getElementById('race-step').textContent=`${race.hits}/15`;
-  setTimeout(()=>{ document.getElementById('race-action').disabled=false; openStudent(); document.getElementById('pair-actions').classList.remove('hidden'); },900);
+function qrBack(){if(lastScreen==='pair')show('pair');else openStudentHome()}
+
+async function startScanner(){
+  document.getElementById('scanner').classList.remove('hidden');document.getElementById('scanMsg').textContent='Présente le QR d’une tablette.';
+  try{
+    scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    const v=document.getElementById('scanVideo');v.srcObject=scannerStream;await v.play();
+    scanLoop();
+  }catch(e){document.getElementById('scanMsg').textContent='Caméra indisponible. Utilise le bouton Photo.'}
 }
-function leaveRace(){ clearInterval(timerHandle); openStudent(); if(currentPair.length) document.getElementById('pair-actions').classList.remove('hidden'); }
-function loadTabletResults(){
-  try{return JSON.parse(localStorage.getItem(TABLET_KEY))||[]}catch(e){return[]}
+function stopScanner(){if(scannerLoop)cancelAnimationFrame(scannerLoop);scannerLoop=null;if(scannerStream)scannerStream.getTracks().forEach(t=>t.stop());scannerStream=null;document.getElementById('scanner').classList.add('hidden');renderProf()}
+function scanLoop(){
+  const v=document.getElementById('scanVideo'),c=document.getElementById('scanCanvas');
+  if(v.readyState===v.HAVE_ENOUGH_DATA){
+    c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d');ctx.drawImage(v,0,0,c.width,c.height);
+    const img=ctx.getImageData(0,0,c.width,c.height),code=window.jsQR?jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'}):null;
+    if(code&&handleQR(code.data)){document.getElementById('scanMsg').textContent='✅ Résultats ajoutés. Passe à la tablette suivante.';setTimeout(()=>document.getElementById('scanMsg').textContent='Présente le QR suivant.',1200)}
+  }
+  scannerLoop=requestAnimationFrame(scanLoop);
 }
-function exportTabletResults(){
-  if(!studentSession) return;
-  const results=loadTabletResults().filter(r=>r.classId===studentSession.classId);
-  if(!results.length) return alert('Aucun résultat enregistré sur cette tablette.');
-  const payload={kind:'laser-run-results',version:5,classId:studentSession.classId,className:studentSession.className,results};
-  downloadJSON(payload,`${safeName(studentSession.className)}-resultats-tablette.json`);
+function handleQR(txt){
+  let p;try{p=JSON.parse(txt)}catch(e){return false}
+  if(p.a!=='LR6'||!p.c||!Array.isArray(p.r))return false;
+  const c=db.classes.find(x=>x.id===p.c);if(!c){document.getElementById('scanMsg').textContent='⚠️ Classe inconnue sur la tablette professeur.';return true}
+  c.results=c.results||[];let n=0;
+  for(const a of p.r){
+    const [id,sid,s1,time,reloads]=a;if(c.results.some(x=>x.id===id))continue;
+    const s=c.students.find(x=>x.id===sid);if(!s)continue;
+    c.results.push({id,studentId:sid,studentName:s.name,date:p.d,lesson:'L1',s1:s1??null,time:time??null,reloads:reloads??null});n++;
+  }
+  saveJSON(DBKEY,db);return true;
 }
-function downloadJSON(obj,name){
-  const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-function safeName(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function formatMs(ms){
-  const total=Math.max(0,ms||0); const min=Math.floor(total/60000); const sec=Math.floor((total%60000)/1000); const d=Math.floor((total%1000)/100);
-  return `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${d}`;
-}
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
-}
+document.getElementById('qrPhoto').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.getElementById('scanCanvas');c.width=img.width;c.height=img.height;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const d=ctx.getImageData(0,0,c.width,c.height),code=window.jsQR?jsQR(d.data,d.width,d.height):null;if(code&&handleQR(code.data))document.getElementById('scanMsg').textContent='✅ QR importé.';else document.getElementById('scanMsg').textContent='QR non reconnu.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value='';
+});
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'))}
 </script>
 </body>
 </html>
