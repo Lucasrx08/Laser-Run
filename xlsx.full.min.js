@@ -1,0 +1,1 @@
+/* SheetJS library placeholder. Replace with xlsx.full.min.js for Excel import. CSV import remains available. */

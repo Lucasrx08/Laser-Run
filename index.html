@@ -2,151 +2,731 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#323c3a" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="stylesheet" href="styles.css" />
   <title>Laser Run 6ème</title>
+  <style>
+    :root{
+      --blue:#c7dbdf;
+      --dark:#323c3a;
+      --cream:#ebe5df;
+      --orange:#f7b738;
+      --white:#fff;
+      --danger:#b34747;
+      --ok:#437a55;
+      --shadow:0 10px 30px rgba(50,60,58,.12);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:var(--cream);color:var(--dark);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:980px;margin:0 auto;min-height:100vh;padding:18px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .brand{font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:-1.5px}
+    .subtle{opacity:.7}
+    .card{
+      background:rgba(255,255,255,.76);border:1px solid rgba(50,60,58,.08);
+      border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;
+    }
+    .role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px}
+    .role-card{
+      border:0;border-radius:28px;padding:32px 24px;min-height:230px;
+      display:flex;flex-direction:column;justify-content:space-between;text-align:left;
+      transition:.18s transform,.18s box-shadow;
+    }
+    .role-card:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(50,60,58,.16)}
+    .role-prof{background:var(--dark);color:var(--white)}
+    .role-student{background:var(--blue);color:var(--dark)}
+    .role-icon{font-size:48px}
+    .role-title{font-size:30px;font-weight:900}
+    .role-desc{opacity:.82;line-height:1.4;margin-top:6px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+    .btn{
+      border:0;border-radius:14px;padding:13px 16px;font-weight:800;background:var(--dark);color:white;
+    }
+    .btn.secondary{background:var(--blue);color:var(--dark)}
+    .btn.orange{background:var(--orange);color:var(--dark)}
+    .btn.ghost{background:transparent;color:var(--dark);border:2px solid rgba(50,60,58,.15)}
+    .btn.danger{background:var(--danger)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .section-title{font-size:24px;font-weight:900;margin:8px 0 12px}
+    .list{display:grid;gap:12px}
+    .class-row,.lesson-row,.student-row,.result-row{
+      background:white;border-radius:18px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+      border:1px solid rgba(50,60,58,.08);
+    }
+    .class-name,.lesson-name{font-size:19px;font-weight:900}
+    .muted{opacity:.65;font-size:14px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .field{display:grid;gap:7px}
+    input,select{
+      width:100%;padding:13px 14px;border-radius:13px;border:1px solid rgba(50,60,58,.18);background:white;color:var(--dark)
+    }
+    .hidden{display:none!important}
+    .back{background:transparent;border:0;font-weight:900;color:var(--dark);padding:8px 0}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:var(--blue);font-size:13px;font-weight:800}
+    .lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .lesson-card{
+      background:white;border:0;border-radius:18px;padding:18px;text-align:left;min-height:116px;border:1px solid rgba(50,60,58,.08)
+    }
+    .lesson-card.active{outline:3px solid var(--orange)}
+    .lesson-card.disabled{opacity:.55}
+    .timer{font-size:clamp(48px,12vw,88px);font-weight:950;letter-spacing:-3px;text-align:center;margin:18px 0}
+    .shoot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
+    .target{
+      aspect-ratio:1;border-radius:50%;border:4px solid var(--dark);background:white;font-size:26px;font-weight:900
+    }
+    .target.hit{background:var(--orange)}
+    .target.miss{background:#ddd}
+    .big-action{width:100%;padding:18px;border-radius:18px;border:0;background:var(--orange);font-size:22px;font-weight:950;color:var(--dark)}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .stat{background:white;border-radius:16px;padding:14px;text-align:center}
+    .stat b{display:block;font-size:22px}
+    .notice{background:var(--blue);border-radius:16px;padding:14px;margin:12px 0}
+    .warning{background:#f4e0c4;border-radius:16px;padding:14px;margin:12px 0}
+    .footer-note{text-align:center;opacity:.55;font-size:12px;margin:28px 0 10px}
+    @media(max-width:700px){
+      .role-grid,.grid-2,.lesson-grid{grid-template-columns:1fr}
+      .role-card{min-height:190px}
+      .summary{grid-template-columns:1fr}
+      .app{padding:14px}
+    }
+  </style>
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand"><div class="brand-main">LASER RUN</div><div class="brand-sub">6ÈME</div></div>
-      <button id="homeBtn" class="ghost small">Accueil</button>
-    </header>
-
-    <section id="modeView" class="view active">
-      <div class="page-heading"><div><span class="kicker">MODE D’UTILISATION</span><h2>Qui utilise cette tablette ?</h2></div></div>
-      <div class="mode-grid">
-        <button class="mode-card teacher" id="teacherModeBtn"><span class="mode-icon">P</span><span><strong>Professeur</strong><small>Classes, listes, séances et récupération des résultats</small></span><span class="chevron">›</span></button>
-        <button class="mode-card student" id="studentModeBtn"><span class="mode-icon">E</span><span><strong>Élèves</strong><small>Importer une séance, choisir le binôme et enregistrer les performances</small></span><span class="chevron">›</span></button>
+<div class="app">
+  <div id="screen-home">
+    <div class="topbar">
+      <div>
+        <div class="brand">Laser Run 6ème</div>
+        <div class="subtle">Choisis ton espace</div>
       </div>
-      <div class="offline-badge">✓ Les données restent enregistrées sur cette tablette, même hors connexion.</div>
-    </section>
-
-    <section id="teacherHomeView" class="view">
-      <div class="page-heading">
-        <div><span class="kicker">MODE PROFESSEUR</span><h2>Mes classes</h2></div>
-        <button class="primary compact" data-go="classView" data-new-class="1">+ Classe</button>
-      </div>
-      <div id="homeClassList" class="class-grid"></div>
-      <div id="noClassMessage" class="empty-state">
-        <strong>Aucune classe enregistrée</strong><span>Crée une classe de 6ème puis importe la liste des élèves.</span>
-        <button class="primary compact" data-go="classView" data-new-class="1">Créer une classe</button>
-      </div>
-    </section>
-
-    <section id="classView" class="view">
-      <div class="section-head"><button class="back" data-go="teacherHomeView">←</button><div><span class="kicker">MODE PROFESSEUR</span><h2>Classe & élèves</h2></div></div>
-      <div class="card form-card">
-        <label for="className">Nom de la classe</label>
-        <div class="row stack-mobile"><input id="className" placeholder="Ex. 6ème Avignon" autocomplete="off" /><button id="saveClassBtn" class="primary compact">Enregistrer</button></div>
-      </div>
-      <div id="classAdminPanel" class="hidden">
-        <div class="card">
-          <div class="card-title-row"><div><span class="kicker">ÉLÈVES</span><h3 id="classTitle">Classe</h3></div><span id="studentCount" class="pill">0 élève</span></div>
-          <label id="fileDrop" class="file-drop" for="studentFile">
-            <input id="studentFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
-            <span class="file-icon">⇧</span><strong>Importer la liste des élèves</strong><span>Excel ou CSV · « Nom Prénom »</span><span class="file-action">Choisir un fichier</span>
-          </label>
-          <div id="importMessage" class="import-message hidden"></div>
-          <div class="divider"><span>ou ajouter manuellement</span></div>
-          <div class="row stack-mobile"><input id="studentName" placeholder="Nom Prénom" autocomplete="off" /><button id="addStudentBtn" class="accent compact">Ajouter</button></div>
-          <div id="studentList" class="list student-list"></div>
+      <span class="pill">Hors connexion</span>
+    </div>
+    <div class="role-grid">
+      <button class="role-card role-prof" onclick="requestTeacherAccess()">
+        <div class="role-icon">👨‍🏫</div>
+        <div>
+          <div class="role-title">Professeur</div>
+          <div class="role-desc">Classes, élèves, leçons, résultats, import et export.</div>
         </div>
-        <button id="openClassBtn" class="accent big">Voir les leçons de cette classe</button>
-      </div>
-    </section>
-
-    <section id="classHubView" class="view">
-      <div class="section-head"><button class="back" data-go="teacherHomeView">←</button><div><span class="kicker">MODE PROFESSEUR</span><h2 id="hubClassName">Classe</h2></div></div>
-      <div class="class-summary card"><div><span>Classe</span><strong id="hubClassName2">—</strong></div><div><span>Élèves</span><strong id="hubStudentCount">0</strong></div><button id="manageClassBtn" class="ghost compact">Gérer les élèves</button></div>
-      <div class="card sync-card">
-        <div><span class="kicker">TABLETTES ÉLÈVES</span><h3>Partager la séance</h3><p>Exporte la liste de la classe puis envoie le fichier aux tablettes élèves par AirDrop ou Fichiers.</p></div>
-        <button id="exportSessionBtn" class="accent big">Partager la séance L1</button>
-        <label class="import-results-btn" for="teacherResultsFiles"><input id="teacherResultsFiles" type="file" accept=".json,application/json" multiple /><span>Récupérer des résultats</span></label>
-        <div id="teacherImportMessage" class="import-message hidden"></div>
-      </div>
-      <div class="lesson-grid">
-        <button class="lesson-card active-lesson" data-lesson="L1"><span class="lesson-number">L1</span><span class="lesson-copy"><strong>Centre national de recrutement</strong><small>4 × 150 m · 3 passages au tir</small></span><span class="chevron">›</span></button>
-        <button class="lesson-card locked" data-coming="L2"><span class="lesson-number">L2</span><span class="lesson-copy"><strong>Sprint individuel</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
-        <button class="lesson-card locked" data-coming="L3"><span class="lesson-number">L3</span><span class="lesson-copy"><strong>Poursuite</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
-        <button class="lesson-card locked" data-coming="L4"><span class="lesson-number">L4</span><span class="lesson-copy"><strong>Mass-start</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
-        <button class="lesson-card locked" data-coming="L5"><span class="lesson-number">L5</span><span class="lesson-copy"><strong>Relais des nations</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
-        <button class="lesson-card locked" data-coming="L6"><span class="lesson-number">L6</span><span class="lesson-copy"><strong>Qualification aux JO</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
-        <button class="lesson-card locked" data-coming="L7"><span class="lesson-number">L7</span><span class="lesson-copy"><strong>Jeux Olympiques</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
-      </div>
-    </section>
-
-    <section id="teacherLessonView" class="view">
-      <div class="section-head"><button class="back" data-go="classHubView">←</button><div><span id="lessonClassLabel" class="kicker">CLASSE</span><h2>L1 — Recrutement</h2></div></div>
-      <div class="card form-card"><label>Élève</label><select id="lessonStudentSelect"></select></div>
-      <div id="teacherRaceMount"></div>
-    </section>
-
-    <section id="teacherResultsView" class="view">
-      <div class="section-head"><button class="back" data-go="classHubView">←</button><div><span id="resultsClassLabel" class="kicker">CLASSE</span><h2>Résultats L1</h2></div></div>
-      <div class="card"><div id="resultsList" class="results-list"></div></div>
-    </section>
-
-    <section id="studentHomeView" class="view">
-      <div class="page-heading"><div><span class="kicker">MODE ÉLÈVES</span><h2>Ma séance</h2></div></div>
-      <label class="file-drop" for="studentSessionFile">
-        <input id="studentSessionFile" type="file" accept=".json,application/json" />
-        <span class="file-icon">⇩</span><strong>Importer une séance</strong><span>Fichier reçu du professeur</span><span class="file-action">Choisir le fichier</span>
-      </label>
-      <div id="studentSessionMessage" class="import-message hidden"></div>
-      <div id="studentSessionsList" class="class-grid"></div>
-      <div id="noStudentSession" class="empty-state"><strong>Aucune séance</strong><span>Importe d’abord le fichier transmis par le professeur.</span></div>
-    </section>
-
-    <section id="studentPairView" class="view">
-      <div class="section-head"><button class="back" data-go="studentHomeView">←</button><div><span id="studentClassLabel" class="kicker">CLASSE</span><h2>Choisir le binôme</h2></div></div>
-      <div class="card form-card"><label>Élève 1</label><select id="pairStudent1"></select><label class="spaced">Élève 2</label><select id="pairStudent2"></select><button id="savePairBtn" class="accent big">Valider le binôme</button></div>
-      <div id="pairPanel" class="hidden">
-        <div class="card"><span class="kicker">BINÔME</span><h3 id="pairNames">—</h3><p>Chaque élève réalise sa performance à tour de rôle sur cette tablette.</p></div>
-        <div id="pairRunButtons" class="grid two"></div>
-        <button id="exportStudentResultsBtn" class="primary big">Partager les résultats de cette tablette</button>
-        <div id="studentExportInfo" class="import-message hidden"></div>
-      </div>
-    </section>
-
-    <section id="studentLessonView" class="view">
-      <div class="section-head"><button class="back" data-go="studentPairView">←</button><div><span id="studentLessonClass" class="kicker">CLASSE</span><h2 id="studentLessonName">L1 — Recrutement</h2></div></div>
-      <div id="studentRaceMount"></div>
-    </section>
-
-    <section id="finalView" class="view">
-      <div class="section-head"><button class="back" id="finalBackBtn">←</button><div><span id="finalClassLabel" class="kicker">CLASSE</span><h2>Résultat final</h2></div></div>
-      <div class="card result-card">
-        <h3 id="finalStudent">Élève</h3>
-        <div class="result-line"><span>Temps brut</span><strong id="finalRaw">00:00.0</strong></div>
-        <div class="result-line"><span>Tirs réussis</span><strong id="finalHits">0 / 15</strong></div>
-        <div class="result-line"><span>Précision</span><strong id="finalAccuracy">0 %</strong></div>
-        <div class="result-line"><span>Pénalités</span><strong id="finalPenalty">+0 s</strong></div>
-        <div class="result-line total"><span>Temps corrigé</span><strong id="finalCorrected">00:00.0</strong></div>
-      </div>
-      <button id="finalContinueBtn" class="accent big">Continuer</button>
-    </section>
-  </main>
-
-  <template id="raceTemplate">
-    <div class="card race-card">
-      <div class="race-meta"><div><span class="label">Tour</span><strong data-r="lap">1 / 4</strong></div><div><span class="label">Distance</span><strong>150 m</strong></div></div>
-      <div class="timer" data-r="timer">00:00.0</div><div class="status" data-r="status">Prêt à démarrer</div>
-      <div class="grid two"><button class="accent big" data-r="start">Démarrer</button><button class="primary big" data-r="shoot" disabled>Pas de tir</button></div>
-      <button class="finish big" data-r="finish" disabled>🏁 Arrivée finale</button>
+      </button>
+      <button class="role-card role-student" onclick="openStudent()">
+        <div class="role-icon">🏃</div>
+        <div>
+          <div class="role-title">Élèves</div>
+          <div class="role-desc">Importer une séance, choisir le binôme et réaliser la leçon.</div>
+        </div>
+      </button>
     </div>
-    <div class="card hidden" data-r="shootPanel">
-      <div class="card-title-row"><h3 data-r="shootTitle">Tir 1 / 3</h3><span class="pill">5 tirs</span></div>
-      <div class="targets" data-r="targets"></div>
-      <div class="shoot-summary"><div><span>Réussis</span><strong data-r="hitsCount">0 / 5</strong></div><div><span>Pénalité</span><strong data-r="penaltyCount">+0 s</strong></div></div>
-      <button class="primary big" data-r="validateShoot">Valider & repartir</button>
-    </div>
-  </template>
+    <div class="footer-note">Les données restent sur l’appareil tant qu’elles ne sont pas exportées.</div>
+  </div>
 
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <script src="app.js"></script>
+  <div id="screen-prof" class="hidden">
+    <button class="back" onclick="goHome()">← Accueil</button>
+    <div class="topbar">
+      <div>
+        <div class="brand">Espace professeur</div>
+        <div class="subtle">Gestion complète du cycle</div>
+      </div>
+      <button class="btn ghost" onclick="lockTeacher()">🔒 Verrouiller</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn orange" onclick="showCreateClass()">+ Nouvelle classe</button>
+      <button class="btn secondary" onclick="importResults()">Récupérer des résultats</button>
+      <button class="btn ghost" onclick="openPinChange()">Changer le code enseignant</button>
+    </div>
+
+    <div id="create-class" class="card hidden">
+      <div class="section-title">Créer une classe</div>
+      <div class="field">
+        <label>Nom de la classe</label>
+        <input id="class-name" placeholder="Ex. 6ème Avignon">
+      </div>
+      <div class="toolbar">
+        <button class="btn orange" onclick="createClass()">Enregistrer</button>
+        <button class="btn ghost" onclick="hideCreateClass()">Annuler</button>
+      </div>
+    </div>
+
+    <div class="section-title">Mes classes</div>
+    <div id="prof-class-list" class="list"></div>
+  </div>
+
+  <div id="screen-class" class="hidden">
+    <button class="back" onclick="openProf()">← Mes classes</button>
+    <div class="topbar">
+      <div>
+        <div class="brand" id="class-title">Classe</div>
+        <div class="subtle" id="class-count"></div>
+      </div>
+      <button class="btn danger" onclick="deleteCurrentClass()">Supprimer</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Élèves</div>
+      <div class="notice">Importe un fichier CSV ou Excel contenant « Nom Prénom » sur chaque ligne, ou deux colonnes Nom / Prénom.</div>
+      <div class="toolbar">
+        <label class="btn secondary" for="roster-file">Importer CSV / Excel</label>
+        <input id="roster-file" type="file" accept=".csv,.xlsx,.xls,text/csv" class="hidden">
+        <button class="btn ghost" onclick="addStudentPrompt()">+ Ajouter manuellement</button>
+      </div>
+      <div id="student-list" class="list"></div>
+    </div>
+
+    <div class="section-title" style="margin-top:22px">Leçons</div>
+    <div id="lesson-grid" class="lesson-grid"></div>
+
+    <div class="toolbar">
+      <button class="btn orange" onclick="exportSession()">Partager la séance L1</button>
+      <button class="btn secondary" onclick="openClassResults()">Voir les résultats</button>
+    </div>
+  </div>
+
+  <div id="screen-results" class="hidden">
+    <button class="back" onclick="openCurrentClass()">← Classe</button>
+    <div class="topbar">
+      <div>
+        <div class="brand">Résultats</div>
+        <div class="subtle" id="results-subtitle"></div>
+      </div>
+    </div>
+    <div id="results-list" class="list"></div>
+  </div>
+
+  <div id="screen-student" class="hidden">
+    <button class="back" onclick="goHome()">← Accueil</button>
+    <div class="topbar">
+      <div>
+        <div class="brand">Espace élèves</div>
+        <div class="subtle">Accès limité à la séance importée</div>
+      </div>
+      <span class="pill">Élèves</span>
+    </div>
+
+    <div class="notice">🔒 Cet espace ne donne accès ni aux classes, ni aux résultats globaux, ni aux réglages professeur.</div>
+
+    <div id="student-import-card" class="card">
+      <div class="section-title">1. Importer la séance</div>
+      <div class="notice">Le professeur vous envoie un fichier de séance. Il contient uniquement le nom de la classe, la leçon et la liste des élèves.</div>
+      <label class="btn orange" for="session-file">Importer une séance</label>
+      <input id="session-file" type="file" accept=".json,application/json" class="hidden">
+    </div>
+
+    <div id="student-session" class="hidden">
+      <div class="card">
+        <div class="section-title" id="student-session-title">Séance</div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Élève 1</label>
+            <select id="student-a"></select>
+          </div>
+          <div class="field">
+            <label>Élève 2</label>
+            <select id="student-b"></select>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn orange" onclick="savePair()">Valider le binôme</button>
+          <button class="btn ghost" onclick="resetStudentSession()">Changer de séance</button>
+        </div>
+      </div>
+
+      <div id="pair-actions" class="hidden">
+        <div class="section-title">2. Choisir l’élève qui passe</div>
+        <div id="pair-buttons" class="grid-2"></div>
+        <div class="toolbar">
+          <button class="btn secondary" onclick="exportTabletResults()">Partager les résultats de cette tablette</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-race" class="hidden">
+    <button class="back" onclick="leaveRace()">← Binôme</button>
+    <div class="topbar">
+      <div>
+        <div class="brand" id="race-name">Élève</div>
+        <div class="subtle" id="race-meta">L1 · 4 × 150 m · 3 tirs</div>
+      </div>
+      <span class="pill" id="race-step">Prêt</span>
+    </div>
+
+    <div class="card">
+      <div class="timer" id="timer">00:00.0</div>
+      <div class="summary">
+        <div class="stat"><span>Boucle</span><b id="lap-stat">0/4</b></div>
+        <div class="stat"><span>Tir</span><b id="shoot-stat">0/3</b></div>
+        <div class="stat"><span>Pénalité</span><b id="penalty-stat">0 s</b></div>
+      </div>
+      <div id="shoot-zone" class="hidden">
+        <div class="section-title" style="text-align:center">Saisie du tir</div>
+        <div class="shoot-grid" id="targets"></div>
+        <div class="muted" style="text-align:center">Touchez une cible pour indiquer une réussite. Les autres seront comptées comme ratées.</div>
+      </div>
+      <div style="margin-top:18px">
+        <button id="race-action" class="big-action" onclick="raceAction()">DÉMARRER</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pin-modal" class="hidden" style="position:fixed;inset:0;background:rgba(50,60,58,.72);display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999">
+    <div class="card" style="width:min(420px,100%);background:#ebe5df">
+      <div class="section-title" id="pin-title">Accès professeur</div>
+      <div id="pin-first-note" class="notice hidden">
+        Première utilisation : crée un code enseignant de 4 à 6 chiffres.
+      </div>
+      <div class="field">
+        <label id="pin-label">Code enseignant</label>
+        <input id="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="6" type="password" placeholder="••••">
+      </div>
+      <div id="pin-confirm-wrap" class="field hidden" style="margin-top:12px">
+        <label>Confirmer le code</label>
+        <input id="pin-confirm" inputmode="numeric" pattern="[0-9]*" maxlength="6" type="password" placeholder="••••">
+      </div>
+      <div id="pin-error" class="warning hidden"></div>
+      <div class="toolbar">
+        <button class="btn orange" id="pin-validate" onclick="validateTeacherPin()">Valider</button>
+        <button class="btn ghost" onclick="closePinModal()">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="xlsx.full.min.js"></script>
+<script>
+const DB_KEY = 'laser_run_6e_v5';
+const TABLET_KEY = 'laser_run_6e_tablet_results_v5';
+let db = loadDB();
+let currentClassId = null;
+let studentSession = null;
+let currentPair = [];
+let race = null;
+let timerHandle = null;
+
+const TEACHER_PIN_KEY = 'laser_run_teacher_pin_v5';
+let teacherUnlocked = false;
+let pinMode = 'unlock';
+
+async function hashPin(pin){
+  const data = new TextEncoder().encode(pin);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function requestTeacherAccess(){
+  if(teacherUnlocked){ openProf(); return; }
+  const hasPin = !!localStorage.getItem(TEACHER_PIN_KEY);
+  pinMode = hasPin ? 'unlock' : 'create';
+  document.getElementById('pin-title').textContent = hasPin ? 'Accès professeur' : 'Créer le code enseignant';
+  document.getElementById('pin-first-note').classList.toggle('hidden', hasPin);
+  document.getElementById('pin-confirm-wrap').classList.toggle('hidden', hasPin);
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-confirm').value='';
+  document.getElementById('pin-error').classList.add('hidden');
+  document.getElementById('pin-modal').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('pin-input').focus(),50);
+}
+
+function closePinModal(){
+  document.getElementById('pin-modal').classList.add('hidden');
+}
+
+async function validateTeacherPin(){
+  const pin = document.getElementById('pin-input').value.trim();
+  const confirmPin = document.getElementById('pin-confirm').value.trim();
+  const err = document.getElementById('pin-error');
+
+  if(!/^\d{4,6}$/.test(pin)){
+    err.textContent='Le code doit contenir 4 à 6 chiffres.';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  if(pinMode==='create'){
+    if(pin !== confirmPin){
+      err.textContent='Les deux codes ne correspondent pas.';
+      err.classList.remove('hidden');
+      return;
+    }
+    localStorage.setItem(TEACHER_PIN_KEY, await hashPin(pin));
+    teacherUnlocked = true;
+    closePinModal();
+    openProf();
+    return;
+  }
+
+  if(pinMode==='change'){
+    if(pin !== confirmPin){
+      err.textContent='Les deux codes ne correspondent pas.';
+      err.classList.remove('hidden');
+      return;
+    }
+    localStorage.setItem(TEACHER_PIN_KEY, await hashPin(pin));
+    closePinModal();
+    alert('Code enseignant modifié.');
+    return;
+  }
+
+  const stored = localStorage.getItem(TEACHER_PIN_KEY);
+  if(await hashPin(pin) === stored){
+    teacherUnlocked = true;
+    closePinModal();
+    openProf();
+  } else {
+    err.textContent='Code incorrect.';
+    err.classList.remove('hidden');
+  }
+}
+
+function openPinChange(){
+  pinMode='change';
+  document.getElementById('pin-title').textContent='Changer le code enseignant';
+  document.getElementById('pin-first-note').classList.add('hidden');
+  document.getElementById('pin-confirm-wrap').classList.remove('hidden');
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-confirm').value='';
+  document.getElementById('pin-error').classList.add('hidden');
+  document.getElementById('pin-modal').classList.remove('hidden');
+}
+
+function lockTeacher(){
+  teacherUnlocked=false;
+  goHome();
+}
+
+function loadDB(){
+  try{
+    const x = JSON.parse(localStorage.getItem(DB_KEY));
+    if(x && x.classes) return x;
+  }catch(e){}
+  return {classes:[]};
+}
+function saveDB(){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+function show(id){
+  document.querySelectorAll('[id^="screen-"]').forEach(x=>x.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function goHome(){ show('screen-home'); }
+function openProf(){ renderProfClasses(); show('screen-prof'); }
+function openStudent(){
+  loadStudentSessionFromStorage();
+  renderStudentSession();
+  show('screen-student');
+}
+
+function showCreateClass(){ document.getElementById('create-class').classList.remove('hidden'); }
+function hideCreateClass(){ document.getElementById('create-class').classList.add('hidden'); }
+function createClass(){
+  const name = document.getElementById('class-name').value.trim();
+  if(!name) return alert('Entre le nom de la classe.');
+  db.classes.push({id:crypto.randomUUID(),name,students:[],results:[]});
+  saveDB();
+  document.getElementById('class-name').value='';
+  hideCreateClass();
+  renderProfClasses();
+}
+function renderProfClasses(){
+  const el=document.getElementById('prof-class-list');
+  if(!db.classes.length){
+    el.innerHTML='<div class="card muted">Aucune classe enregistrée.</div>';
+    return;
+  }
+  el.innerHTML=db.classes.map(c=>`
+    <button class="class-row" onclick="openClass('${c.id}')" style="width:100%;text-align:left;border:0">
+      <div><div class="class-name">${escapeHtml(c.name)}</div><div class="muted">${c.students.length} élève(s) · ${c.results.length} résultat(s)</div></div>
+      <div style="font-size:28px">›</div>
+    </button>`).join('');
+}
+function openClass(id){
+  currentClassId=id;
+  openCurrentClass();
+}
+function openCurrentClass(){
+  const c=getCurrentClass();
+  if(!c) return openProf();
+  document.getElementById('class-title').textContent=c.name;
+  document.getElementById('class-count').textContent=`${c.students.length} élève(s)`;
+  renderStudents();
+  renderLessons();
+  show('screen-class');
+}
+function getCurrentClass(){ return db.classes.find(c=>c.id===currentClassId); }
+function deleteCurrentClass(){
+  const c=getCurrentClass(); if(!c) return;
+  if(!confirm(`Supprimer ${c.name} et toutes ses données ?`)) return;
+  db.classes=db.classes.filter(x=>x.id!==c.id); saveDB(); currentClassId=null; openProf();
+}
+function addStudentPrompt(){
+  const v=prompt('Nom Prénom de l’élève :'); if(!v) return;
+  const c=getCurrentClass(); c.students.push({id:crypto.randomUUID(),name:v.trim()}); saveDB(); renderStudents();
+}
+function renderStudents(){
+  const c=getCurrentClass(); const el=document.getElementById('student-list');
+  if(!c.students.length){ el.innerHTML='<div class="muted">Aucun élève pour le moment.</div>'; return; }
+  el.innerHTML=c.students.map((s,i)=>`
+    <div class="student-row"><div><b>${escapeHtml(s.name)}</b></div>
+    <button class="btn ghost" onclick="removeStudent('${s.id}')">Retirer</button></div>`).join('');
+}
+function removeStudent(id){
+  const c=getCurrentClass();
+  c.students=c.students.filter(s=>s.id!==id); saveDB(); renderStudents();
+}
+document.getElementById('roster-file').addEventListener('change', async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const names = await parseRoster(f);
+    const c=getCurrentClass();
+    const existing=new Set(c.students.map(s=>s.name.toLowerCase()));
+    names.forEach(name=>{ if(name && !existing.has(name.toLowerCase())) c.students.push({id:crypto.randomUUID(),name}); });
+    saveDB(); renderStudents(); document.getElementById('class-count').textContent=`${c.students.length} élève(s)`;
+    alert(`${names.length} ligne(s) lue(s).`);
+  }catch(err){ alert('Impossible de lire ce fichier.'); console.error(err); }
+  e.target.value='';
+});
+async function parseRoster(file){
+  const ext=file.name.toLowerCase().split('.').pop();
+  if(ext==='csv'){
+    const txt=await file.text();
+    return txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).map(l=>{
+      const parts=l.split(/[;,]/).map(x=>x.trim()).filter(Boolean);
+      if(parts.length>=2 && /nom/i.test(parts[0]) && /pr[eé]nom/i.test(parts[1])) return null;
+      if(parts.length>=2) return `${parts[0]} ${parts[1]}`.trim();
+      return parts[0];
+    }).filter(Boolean);
+  }
+  const arr=await file.arrayBuffer();
+  const wb=XLSX.read(arr,{type:'array'});
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  const out=[];
+  for(let i=0;i<rows.length;i++){
+    const row=rows[i].map(x=>String(x).trim());
+    if(!row.some(Boolean)) continue;
+    if(i===0 && row.some(x=>/nom|pr[eé]nom/i.test(x))) continue;
+    if(row[0] && row[1]) out.push(`${row[0]} ${row[1]}`.trim());
+    else if(row[0]) out.push(row[0]);
+  }
+  return out;
+}
+function renderLessons(){
+  const lessons=[
+    ['L1','Centre national de recrutement',true],
+    ['L2','Sprint individuel',false],
+    ['L3','Poursuite',false],
+    ['L4','Mass-start',false],
+    ['L5','Relais des nations',false],
+    ['L6','Qualification aux JO',false],
+    ['L7','Jeux Olympiques',false]
+  ];
+  document.getElementById('lesson-grid').innerHTML=lessons.map(l=>`
+    <div class="lesson-card ${l[2]?'active':'disabled'}">
+      <div class="muted">${l[0]}</div><div class="lesson-name">${l[1]}</div>
+      <div class="muted" style="margin-top:8px">${l[2]?'Disponible':'À construire'}</div>
+    </div>`).join('');
+}
+function exportSession(){
+  const c=getCurrentClass(); if(!c || !c.students.length) return alert('Ajoute d’abord les élèves.');
+  const payload={
+    kind:'laser-run-session',version:5,classId:c.id,className:c.name,
+    lesson:'L1',lessonName:'Centre national de recrutement',
+    students:c.students.map(s=>({id:s.id,name:s.name})),
+    createdAt:new Date().toISOString()
+  };
+  downloadJSON(payload, `${safeName(c.name)}-L1-seance.json`);
+}
+function openClassResults(){
+  const c=getCurrentClass();
+  document.getElementById('results-subtitle').textContent=c.name;
+  const arr=[...c.results].sort((a,b)=>a.correctedMs-b.correctedMs);
+  document.getElementById('results-list').innerHTML=arr.length?arr.map((r,i)=>`
+    <div class="result-row">
+      <div><b>${i+1}. ${escapeHtml(r.studentName)}</b><div class="muted">${new Date(r.createdAt).toLocaleString('fr-FR')}</div></div>
+      <div style="text-align:right"><b>${formatMs(r.correctedMs)}</b><div class="muted">${r.hits}/15 · +${r.penaltySec}s</div></div>
+    </div>`).join(''):'<div class="card muted">Aucun résultat importé.</div>';
+  show('screen-results');
+}
+function importResults(){
+  const input=document.createElement('input');
+  input.type='file'; input.accept='.json,application/json'; input.multiple=true;
+  input.onchange=async ()=>{
+    let added=0;
+    for(const f of input.files){
+      try{
+        const data=JSON.parse(await f.text());
+        if(data.kind!=='laser-run-results') continue;
+        const c=db.classes.find(x=>x.id===data.classId) || db.classes.find(x=>x.name===data.className);
+        if(!c) continue;
+        const ids=new Set(c.results.map(r=>r.id));
+        for(const r of data.results||[]){
+          if(!ids.has(r.id)){ c.results.push(r); ids.add(r.id); added++; }
+        }
+      }catch(e){}
+    }
+    saveDB(); renderProfClasses(); alert(`${added} résultat(s) ajouté(s).`);
+  };
+  input.click();
+}
+
+document.getElementById('session-file').addEventListener('change', async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const data=JSON.parse(await f.text());
+    if(data.kind!=='laser-run-session') throw new Error();
+    studentSession=data;
+    localStorage.setItem('laser_run_student_session_v5',JSON.stringify(data));
+    renderStudentSession();
+  }catch(err){ alert('Ce fichier de séance n’est pas valide.'); }
+  e.target.value='';
+});
+function loadStudentSessionFromStorage(){
+  if(studentSession) return;
+  try{ studentSession=JSON.parse(localStorage.getItem('laser_run_student_session_v5')); }catch(e){}
+}
+function resetStudentSession(){
+  localStorage.removeItem('laser_run_student_session_v5'); studentSession=null; currentPair=[];
+  renderStudentSession();
+}
+function renderStudentSession(){
+  const importCard=document.getElementById('student-import-card');
+  const sessionBox=document.getElementById('student-session');
+  if(!studentSession){
+    importCard.classList.remove('hidden'); sessionBox.classList.add('hidden'); return;
+  }
+  importCard.classList.add('hidden'); sessionBox.classList.remove('hidden');
+  document.getElementById('student-session-title').textContent=`${studentSession.className} · ${studentSession.lesson}`;
+  const opts='<option value="">Choisir...</option>'+studentSession.students.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+  document.getElementById('student-a').innerHTML=opts;
+  document.getElementById('student-b').innerHTML=opts;
+  document.getElementById('pair-actions').classList.add('hidden');
+}
+function savePair(){
+  const a=document.getElementById('student-a').value, b=document.getElementById('student-b').value;
+  if(!a || !b || a===b) return alert('Choisis deux élèves différents.');
+  currentPair=[studentSession.students.find(s=>s.id===a),studentSession.students.find(s=>s.id===b)];
+  document.getElementById('pair-buttons').innerHTML=currentPair.map(s=>`
+    <button class="role-card role-student" onclick="startRace('${s.id}')" style="min-height:150px">
+      <div class="role-icon">🏃</div><div class="role-title" style="font-size:24px">${escapeHtml(s.name)}</div>
+    </button>`).join('');
+  document.getElementById('pair-actions').classList.remove('hidden');
+}
+function startRace(studentId){
+  const s=currentPair.find(x=>x.id===studentId); if(!s) return;
+  race={student:s,start:null,elapsed:0,running:false,lap:0,shoot:0,hits:0,penaltySec:0,state:'ready',shotHits:0};
+  document.getElementById('race-name').textContent=s.name;
+  resetRaceUI(); show('screen-race');
+}
+function resetRaceUI(){
+  clearInterval(timerHandle);
+  document.getElementById('timer').textContent='00:00.0';
+  document.getElementById('lap-stat').textContent='0/4';
+  document.getElementById('shoot-stat').textContent='0/3';
+  document.getElementById('penalty-stat').textContent='0 s';
+  document.getElementById('shoot-zone').classList.add('hidden');
+  document.getElementById('race-action').textContent='DÉMARRER';
+  document.getElementById('race-step').textContent='Prêt';
+}
+function raceAction(){
+  if(race.state==='ready'){
+    race.start=performance.now(); race.running=true; race.state='running';
+    timerHandle=setInterval(updateTimer,100);
+    race.lap=1; updateRaceStats();
+    document.getElementById('race-action').textContent='ARRIVÉE AU TIR 1';
+    document.getElementById('race-step').textContent='Boucle 1';
+  } else if(race.state==='running'){
+    race.running=false; race.elapsed=performance.now()-race.start;
+    clearInterval(timerHandle);
+    if(race.shoot<3){
+      race.state='shooting'; race.shotHits=0; renderTargets();
+      document.getElementById('shoot-zone').classList.remove('hidden');
+      document.getElementById('race-action').textContent='VALIDER LE TIR';
+      document.getElementById('race-step').textContent=`Tir ${race.shoot+1}`;
+    }else{
+      finishRace();
+    }
+  } else if(race.state==='shooting'){
+    const misses=5-race.shotHits;
+    race.hits+=race.shotHits; race.penaltySec+=misses*5; race.shoot++;
+    updateRaceStats(); document.getElementById('shoot-zone').classList.add('hidden');
+    race.start=performance.now()-race.elapsed; race.running=true; race.state='running';
+    timerHandle=setInterval(updateTimer,100);
+    race.lap++;
+    document.getElementById('race-action').textContent=race.shoot<3?`ARRIVÉE AU TIR ${race.shoot+1}`:'ARRIVÉE';
+    document.getElementById('race-step').textContent=`Boucle ${race.lap}`;
+  }
+}
+function renderTargets(){
+  const t=document.getElementById('targets');
+  t.innerHTML=Array.from({length:5},(_,i)=>`<button class="target" id="target-${i}" onclick="toggleTarget(${i})">○</button>`).join('');
+}
+function toggleTarget(i){
+  const el=document.getElementById(`target-${i}`);
+  const hit=el.classList.toggle('hit');
+  el.textContent=hit?'✓':'○';
+  race.shotHits += hit?1:-1;
+}
+function updateTimer(){
+  if(!race?.running) return;
+  race.elapsed=performance.now()-race.start;
+  document.getElementById('timer').textContent=formatMs(race.elapsed);
+}
+function updateRaceStats(){
+  document.getElementById('lap-stat').textContent=`${race.lap}/4`;
+  document.getElementById('shoot-stat').textContent=`${race.shoot}/3`;
+  document.getElementById('penalty-stat').textContent=`${race.penaltySec} s`;
+}
+function finishRace(){
+  race.elapsed=performance.now()-race.start;
+  clearInterval(timerHandle); race.running=false; race.state='done';
+  const result={
+    id:crypto.randomUUID(),studentId:race.student.id,studentName:race.student.name,
+    classId:studentSession.classId,className:studentSession.className,lesson:'L1',
+    rawMs:Math.round(race.elapsed),hits:race.hits,penaltySec:race.penaltySec,
+    correctedMs:Math.round(race.elapsed + race.penaltySec*1000),
+    createdAt:new Date().toISOString()
+  };
+  const all=loadTabletResults(); all.push(result); localStorage.setItem(TABLET_KEY,JSON.stringify(all));
+  document.getElementById('timer').textContent=formatMs(result.correctedMs);
+  document.getElementById('race-action').textContent='RÉSULTAT ENREGISTRÉ';
+  document.getElementById('race-action').disabled=true;
+  document.getElementById('race-step').textContent=`${race.hits}/15`;
+  setTimeout(()=>{ document.getElementById('race-action').disabled=false; openStudent(); document.getElementById('pair-actions').classList.remove('hidden'); },900);
+}
+function leaveRace(){ clearInterval(timerHandle); openStudent(); if(currentPair.length) document.getElementById('pair-actions').classList.remove('hidden'); }
+function loadTabletResults(){
+  try{return JSON.parse(localStorage.getItem(TABLET_KEY))||[]}catch(e){return[]}
+}
+function exportTabletResults(){
+  if(!studentSession) return;
+  const results=loadTabletResults().filter(r=>r.classId===studentSession.classId);
+  if(!results.length) return alert('Aucun résultat enregistré sur cette tablette.');
+  const payload={kind:'laser-run-results',version:5,classId:studentSession.classId,className:studentSession.className,results};
+  downloadJSON(payload,`${safeName(studentSession.className)}-resultats-tablette.json`);
+}
+function downloadJSON(obj,name){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function safeName(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function formatMs(ms){
+  const total=Math.max(0,ms||0); const min=Math.floor(total/60000); const sec=Math.floor((total%60000)/1000); const d=Math.floor((total%1000)/100);
+  return `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${d}`;
+}
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
+}
+</script>
 </body>
 </html>
