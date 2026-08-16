@@ -4,623 +4,141 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#323c3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Laser Run 6ème</title>
-
-<!-- Bibliothèques uniquement pour les fonctions techniques.
-     Elles sont mises en cache après la première ouverture en ligne. -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
-:root{
-  --bleu:#c7dbdf;
-  --fonce:#323c3a;
-  --beige:#ebe5df;
-  --orange:#f7b738;
-  --vert:#20a447;
-  --rouge:#d92d20;
-  --blanc:#fff;
-  --ombre:0 10px 28px rgba(50,60,58,.12);
-  --rayon:22px;
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--beige);color:var(--fonce);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.app{max-width:1050px;margin:auto;min-height:100vh;padding:16px}
-.hidden{display:none!important}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.brand{font-size:clamp(29px,5vw,48px);font-weight:950;letter-spacing:-1.5px}
-.subtitle{opacity:.7}
-.card{background:rgba(255,255,255,.82);border:1px solid rgba(50,60,58,.08);border-radius:var(--rayon);padding:18px;box-shadow:var(--ombre)}
-.role-grid,.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.role-card{border:0;border-radius:28px;padding:28px;text-align:left;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}
-.role-prof{background:var(--fonce);color:white}
-.role-eleve{background:var(--bleu);color:var(--fonce)}
-.role-icon{font-size:48px}.role-title{font-size:30px;font-weight:950}.role-desc{opacity:.78;line-height:1.35}
-.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:900;background:var(--fonce);color:white}
-.btn.orange{background:var(--orange);color:var(--fonce)}
-.btn.light{background:var(--bleu);color:var(--fonce)}
-.btn.ghost{background:transparent;color:var(--fonce);border:2px solid rgba(50,60,58,.15)}
-.btn.red{background:var(--rouge);color:white}
-.btn.green{background:var(--vert);color:white}
-.btn:disabled{opacity:.42}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-.back{border:0;background:transparent;font-weight:900;color:var(--fonce);padding:8px 0}
-.section{font-size:24px;font-weight:950;margin:16px 0 10px}
-.list{display:grid;gap:10px}
-.row{background:white;border-radius:17px;padding:15px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(50,60,58,.08)}
-.row button{flex-shrink:0}
-.big-name{font-size:19px;font-weight:950}.muted{opacity:.64;font-size:14px}
-.pill{display:inline-block;padding:7px 11px;border-radius:999px;background:var(--bleu);font-weight:850;font-size:13px}
-.field{display:grid;gap:6px}.field input,.field select{padding:13px;border-radius:13px;border:1px solid rgba(50,60,58,.2);background:white;width:100%}
-.notice{padding:13px;border-radius:15px;background:var(--bleu);margin:10px 0}
-.warn{padding:13px;border-radius:15px;background:#f8dec5;margin:10px 0}
-.lesson-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.lesson{border:0;background:white;border-radius:18px;padding:18px;text-align:left;min-height:110px;border:1px solid rgba(50,60,58,.08)}
-.lesson.active{outline:3px solid var(--orange)}
-.lesson.locked{opacity:.5}
-.screen-title{font-size:clamp(28px,4vw,40px);font-weight:950}
-.progress{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.step{padding:7px 10px;border-radius:999px;background:#ddd;font-size:13px;font-weight:900}
-.step.done{background:var(--vert);color:white}.step.now{background:var(--orange);color:var(--fonce)}
-.target-set{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0}
-.target{
-  aspect-ratio:1;border-radius:50%;border:0;position:relative;background:#fff;
-  box-shadow:inset 0 0 0 5px #202020,inset 0 0 0 13px #fff,inset 0 0 0 18px #202020;
-  font-size:clamp(18px,4vw,30px);font-weight:950;color:#222;
-}
-.target::after{content:"";position:absolute;inset:38%;border-radius:50%;background:#202020}
-.target.hit{background:var(--vert);box-shadow:inset 0 0 0 5px #11612d,inset 0 0 0 13px #fff,inset 0 0 0 18px #11612d;color:white}
-.target.hit::after{background:#fff}
-.target.miss{background:var(--rouge);box-shadow:inset 0 0 0 5px #7e1b13,inset 0 0 0 13px #fff,inset 0 0 0 18px #7e1b13;color:white}
-.target.miss::after{background:#fff}
-.score{font-size:clamp(46px,11vw,78px);font-weight:950;text-align:center;letter-spacing:-3px}
-.timer{font-size:clamp(48px,12vw,92px);font-weight:950;text-align:center;letter-spacing:-4px;margin:14px 0}
-.shoot-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
-.hitbtn,.missbtn{
-  aspect-ratio:1.6;border-radius:999px;border:0;color:white;font-size:22px;font-weight:950;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  box-shadow:inset 0 0 0 6px rgba(255,255,255,.5),0 8px 18px rgba(0,0,0,.12)
-}
-.hitbtn{background:var(--vert)}.missbtn{background:var(--rouge)}
-.fivehits{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:15px 0}
-.dot{aspect-ratio:1;border-radius:50%;background:#ddd;border:4px solid #999}
-.dot.on{background:var(--vert);border-color:#146c34}
-.main-action{width:100%;padding:18px;border:0;border-radius:18px;background:var(--orange);color:var(--fonce);font-size:21px;font-weight:950}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{background:white;border-radius:15px;padding:13px;text-align:center}.stat b{display:block;font-size:23px}
-.qrbox{display:flex;justify-content:center;background:white;padding:18px;border-radius:18px;margin:16px auto;max-width:390px}
-.qrbox img,.qrbox canvas{max-width:100%!important;height:auto!important}
-.scanner{position:fixed;inset:0;background:#111;z-index:5000;display:flex;flex-direction:column}
-.scanner video{width:100%;height:calc(100vh - 100px);object-fit:cover}
-.scannerbar{height:100px;background:#111;color:white;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.pinmodal{position:fixed;inset:0;background:rgba(50,60,58,.75);z-index:6000;display:flex;align-items:center;justify-content:center;padding:16px}
-.footer{text-align:center;font-size:12px;opacity:.55;margin:24px 0}
-@media(max-width:720px){
-  .role-grid,.grid2,.lesson-grid{grid-template-columns:1fr}
-  .role-card{min-height:180px}
-  .stats{grid-template-columns:1fr}
-  .app{padding:13px}
-}
+:root{--c1:#c7dbdf;--c2:#323c3a;--c3:#ebe5df;--c4:#f7b738;--green:#21a447;--red:#d92d20;--white:#fff;--shadow:0 10px 28px rgba(50,60,58,.12);--r:20px}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--c3);color:var(--c2);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif} button,input,select{font:inherit} button{cursor:pointer}
+.app{width:min(1220px,100%);margin:auto;min-height:100vh;padding:clamp(14px,2.5vw,30px)} .hidden{display:none!important}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}.brand{font-size:clamp(32px,4.8vw,54px);font-weight:950;letter-spacing:-1.8px;line-height:.98}.sub{opacity:.68;margin-top:7px}.pill{background:var(--c1);padding:8px 12px;border-radius:999px;font-weight:850;font-size:13px;white-space:nowrap}
+.card{background:rgba(255,255,255,.84);border:1px solid rgba(50,60,58,.08);border-radius:var(--r);padding:clamp(16px,2vw,24px);box-shadow:var(--shadow)}
+.rolegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.role{border:0;border-radius:28px;padding:clamp(22px,3vw,34px);text-align:left;min-height:240px;display:flex;flex-direction:column;justify-content:space-between}.profrole{background:var(--c2);color:white}.studentrole{background:var(--c1);color:var(--c2)}.roleicon{font-size:50px}.roletitle{font-size:clamp(28px,3vw,38px);font-weight:950}.roledesc{opacity:.8;line-height:1.4;margin-top:7px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:900;background:var(--c2);color:white}.btn.orange{background:var(--c4);color:var(--c2)}.btn.light{background:var(--c1);color:var(--c2)}.btn.ghost{background:transparent;color:var(--c2);border:2px solid rgba(50,60,58,.16)}.btn.red{background:var(--red);color:white}.btn.green{background:var(--green);color:white}.btn:disabled{opacity:.45;cursor:not-allowed}
+.back{border:0;background:transparent;color:var(--c2);font-weight:900;padding:8px 0 14px}.title{font-size:clamp(29px,4vw,43px);font-weight:950;letter-spacing:-1px}.section{font-size:24px;font-weight:950;margin:20px 0 11px}.muted{opacity:.64;font-size:14px}.notice{background:var(--c1);padding:14px;border-radius:15px;margin:12px 0;line-height:1.4}.warn{background:#f4ddc7;padding:14px;border-radius:15px;margin:12px 0;line-height:1.4}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.list{display:grid;gap:10px}.row{background:white;border:1px solid rgba(50,60,58,.08);border-radius:17px;padding:15px;display:flex;align-items:center;justify-content:space-between;gap:12px}.big{font-size:19px;font-weight:950}.field{display:grid;gap:6px}.field input,.field select{width:100%;padding:13px;border:1px solid rgba(50,60,58,.2);border-radius:13px;background:white;color:var(--c2)}
+.lessonGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.lesson{border:0;background:white;border-radius:18px;padding:20px;text-align:left;min-height:125px;border:1px solid rgba(50,60,58,.08)}.lesson.active{outline:3px solid var(--c4)}.lesson.locked{opacity:.48}.lessonnum{font-size:13px;opacity:.6;font-weight:900}
+.targetset{display:grid;grid-template-columns:repeat(5,minmax(58px,1fr));gap:clamp(8px,1.4vw,16px);margin:20px auto;max-width:760px}.target{aspect-ratio:1;border-radius:50%;border:0;background:#fff;position:relative;box-shadow:inset 0 0 0 5px #202020,inset 0 0 0 13px #fff,inset 0 0 0 18px #202020}.target:after{content:"";position:absolute;inset:39%;border-radius:50%;background:#202020}.target.hit{background:var(--green);box-shadow:inset 0 0 0 5px #12652f,inset 0 0 0 13px #fff,inset 0 0 0 18px #12652f}.target.hit:after{background:#fff}.target.miss{background:var(--red);box-shadow:inset 0 0 0 5px #861a12,inset 0 0 0 13px #fff,inset 0 0 0 18px #861a12}.target.miss:after{background:#fff}.score{font-size:clamp(50px,9vw,82px);font-weight:950;text-align:center;letter-spacing:-3px}
+.timer{font-size:clamp(54px,10vw,104px);font-weight:950;text-align:center;letter-spacing:-4px;margin:18px 0}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.stat{background:white;border-radius:16px;padding:15px;text-align:center}.stat b{display:block;font-size:25px;margin-top:3px}.fivehits{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:620px;margin:18px auto}.dot{aspect-ratio:1;border-radius:50%;background:#ddd;border:5px solid #999}.dot.on{background:var(--green);border-color:#12652f}.shootActions{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:700px;margin:20px auto}.shoot{border:0;border-radius:999px;color:white;padding:22px;font-size:clamp(20px,3vw,28px);font-weight:950}.shoot.hit{background:var(--green)}.shoot.miss{background:var(--red)}.mainAction{width:100%;padding:18px;border:0;border-radius:18px;background:var(--c4);color:var(--c2);font-size:22px;font-weight:950;margin-top:18px}
+.qrLayout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,430px);gap:22px;align-items:start}.qrbox{background:white;border-radius:18px;padding:18px;display:flex;justify-content:center;overflow:auto}.qrbox svg{max-width:100%;height:auto}.qrnav{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}.qrCounter{font-weight:900;min-width:70px;text-align:center}
+.scanModal{position:fixed;inset:0;z-index:5000;background:#151817;display:grid;grid-template-columns:minmax(0,1fr) 360px}.scanVideoWrap{min-height:0;display:flex;align-items:center;justify-content:center;background:#000}.scanModal video{width:100%;height:100%;object-fit:contain;max-height:100vh}.scanSide{background:#202624;color:white;padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:20px}.scanSide .btn.ghost{color:white;border-color:rgba(255,255,255,.25)}
+.pin{position:fixed;inset:0;z-index:6000;background:rgba(50,60,58,.76);display:flex;align-items:center;justify-content:center;padding:18px}.pin .card{width:min(430px,100%)}
+.statusbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.okdot,.baddot{width:10px;height:10px;border-radius:50%}.okdot{background:var(--green)}.baddot{background:var(--red)}
+@media(max-width:900px){.lessonGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.qrLayout{grid-template-columns:1fr}.scanModal{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.scanSide{padding:14px;min-height:145px}.role{min-height:210px}}
+@media(max-width:650px){.app{padding:13px}.rolegrid,.grid2,.grid3,.lessonGrid{grid-template-columns:1fr}.role{min-height:180px}.targetset{grid-template-columns:repeat(5,1fr);gap:7px}.stats{grid-template-columns:1fr}.shootActions{gap:10px}.shoot{padding:18px 10px}.row{align-items:flex-start;flex-direction:column}.row>div:last-child{width:100%}.qrbox{padding:10px}}
 </style>
 </head>
 <body>
 <div class="app">
-
-<!-- ACCUEIL -->
 <section id="home">
-  <div class="topbar">
-    <div><div class="brand">Laser Run 6ème</div><div class="subtitle">Cycle EPS · fonctionnement hors connexion</div></div>
-    <span class="pill">V7</span>
-  </div>
-  <div class="role-grid">
-    <button class="role-card role-prof" onclick="teacherGate()">
-      <div class="role-icon">👨‍🏫</div>
-      <div><div class="role-title">Professeur</div><div class="role-desc">Classes, listes, résultats et scan des QR codes.</div></div>
-    </button>
-    <button class="role-card role-eleve" onclick="openStudentHome()">
-      <div class="role-icon">🏃</div>
-      <div><div class="role-title">Élèves</div><div class="role-desc">Classe → leçon → binôme → activité. Aucun fichier à envoyer.</div></div>
-    </button>
-  </div>
-  <div class="footer">Les performances restent sur la tablette jusqu’au transfert par QR code.</div>
+ <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS · ordinateur, tablette et smartphone</div></div><span class="pill">Version 8</span></div>
+ <div class="statusbar"><span id="netdot" class="okdot"></span><span id="nettext" class="muted"></span><span class="muted">· Les données de séance restent enregistrées sur l’appareil.</span></div>
+ <div class="rolegrid">
+  <button class="role profrole" onclick="teacherGate()"><div class="roleicon">👨‍🏫</div><div><div class="roletitle">Professeur</div><div class="roledesc">Créer les classes, importer les élèves, diffuser les listes et récupérer les résultats.</div></div></button>
+  <button class="role studentrole" onclick="openStudentHome()"><div class="roleicon">🏃</div><div><div class="roletitle">Élèves</div><div class="roledesc">Classes installées → leçon → binôme → situations.</div></div></button>
+ </div>
 </section>
 
-<!-- PROF -->
 <section id="prof" class="hidden">
-  <button class="back" onclick="lockTeacher()">← Accueil et verrouiller</button>
-  <div class="topbar">
-    <div><div class="screen-title">Espace professeur</div><div class="subtitle">Gestion du cycle</div></div>
-    <span class="pill">🔒 Professeur</span>
-  </div>
-  <div class="toolbar">
-    <button class="btn orange" onclick="toggleCreateClass()">+ Nouvelle classe</button>
-    <button class="btn light" onclick="scannerMode='results';startScanner()">📷 Scanner les résultats</button>
-        <button class="btn ghost" onclick="changePin()">Changer le code</button>
-  </div>
-
-  <div id="createClassBox" class="card hidden">
-    <div class="section">Nouvelle classe</div>
-    <div class="field"><label>Nom de la classe</label><input id="newClassName" placeholder="Ex. 6ème Avignon"></div>
-    <div class="toolbar"><button class="btn orange" onclick="createClass()">Enregistrer</button><button class="btn ghost" onclick="toggleCreateClass()">Annuler</button></div>
-  </div>
-
-  <div class="section">Classes</div>
-  <div id="profClasses" class="list"></div>
+ <button class="back" onclick="lockTeacher()">← Accueil et verrouiller</button>
+ <div class="top"><div><div class="title">Espace professeur</div><div class="sub">Administration du cycle</div></div><span class="pill">🔒 Professeur</span></div>
+ <div class="toolbar"><button class="btn orange" onclick="toggleCreate()">+ Nouvelle classe</button><button class="btn light" onclick="openConfigQR()">▦ Diffuser les classes</button><button class="btn light" onclick="startScanner('results')">📷 Scanner les résultats</button><button class="btn ghost" onclick="changePin()">Changer le code</button></div>
+ <div id="createBox" class="card hidden"><div class="section">Nouvelle classe</div><div class="field"><label>Nom de la classe</label><input id="newClass" placeholder="Ex. 6ème Avignon"></div><div class="toolbar"><button class="btn orange" onclick="createClass()">Enregistrer</button><button class="btn ghost" onclick="toggleCreate()">Annuler</button></div></div>
+ <div class="section">Mes classes</div><div id="profClasses" class="list"></div>
 </section>
 
-<!-- CLASSE PROF -->
 <section id="profClass" class="hidden">
-  <button class="back" onclick="openProf()">← Mes classes</button>
-  <div class="topbar">
-    <div><div class="screen-title" id="pcName"></div><div class="subtitle" id="pcMeta"></div></div>
-    <div class="toolbar" style="margin:0"><button class="btn light" onclick="showClassQR()">QR de la classe</button><button class="btn red" onclick="deleteCurrentClass()">Supprimer</button></div>
-  </div>
-  <div class="card">
-    <div class="section">Élèves</div>
-    <div class="notice">Import CSV / Excel : une colonne « Nom Prénom » ou deux colonnes « Nom » et « Prénom ».</div>
-    <div class="toolbar">
-      <label class="btn light" for="rosterFile">Importer CSV / Excel</label>
-      <input id="rosterFile" class="hidden" type="file" accept=".csv,.xlsx,.xls">
-      <button class="btn ghost" onclick="manualStudent()">+ Ajouter un élève</button>
-    </div>
-    <div id="pcStudents" class="list"></div>
-  </div>
-
-  <div class="section">Résultats L1</div>
-  <div id="pcResults" class="list"></div>
+ <button class="back" onclick="openProf()">← Mes classes</button>
+ <div class="top"><div><div id="pcTitle" class="title"></div><div id="pcSub" class="sub"></div></div><button class="btn red" onclick="deleteClass()">Supprimer</button></div>
+ <div class="grid2">
+  <div class="card"><div class="section" style="margin-top:0">Élèves</div><div class="notice">Importe un fichier <b>CSV, XLS ou XLSX</b>. L’application accepte une colonne « Nom Prénom » ou deux colonnes « Nom » / « Prénom ».</div><div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.xls,.xlsx"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button></div><div id="pcStudents" class="list"></div></div>
+  <div class="card"><div class="section" style="margin-top:0">Résultats L1</div><div id="pcResults" class="list"></div></div>
+ </div>
 </section>
 
-<!-- ELEVE ACCUEIL -->
 <section id="studentHome" class="hidden">
-  <button class="back" onclick="show('home')">← Accueil</button>
-  <div class="topbar">
-    <div><div class="screen-title">Espace élèves</div><div class="subtitle">Choisis ta classe</div></div>
-    <span class="pill">Élèves</span>
-  </div>
-  <div class="notice">Les leçons sont déjà dans l’application. La classe est installée une seule fois sur la tablette en scannant le QR donné par le professeur.</div>
-  <div class="toolbar">
-    <button class="btn light" onclick="startClassScanner()">📷 Installer une classe par QR</button>
-    <button class="btn ghost" onclick="openTabletQR()">QR des résultats de la tablette</button>
-  </div>
-  <div id="studentClasses" class="list"></div>
+ <button class="back" onclick="show('home')">← Accueil</button>
+ <div class="top"><div><div class="title">Espace élèves</div><div class="sub">Choisis ta classe</div></div><span class="pill">Élèves</span></div>
+ <div class="toolbar"><button class="btn light" onclick="startScanner('config')">📷 Installer / mettre à jour les classes</button><button class="btn ghost" onclick="openResultsQR()">▦ QR des résultats de la tablette</button></div>
+ <div class="notice">L’installation des classes n’est à faire qu’une fois. Si le professeur modifie une liste, rescanner la nouvelle configuration remplace automatiquement l’ancienne.</div>
+ <div id="studentClasses" class="list"></div>
 </section>
 
-<!-- LEÇONS -->
 <section id="lessons" class="hidden">
-  <button class="back" onclick="openStudentHome()">← Classes</button>
-  <div class="topbar"><div><div class="screen-title" id="lessonClassName"></div><div class="subtitle">Choisis la leçon</div></div></div>
-  <div class="lesson-grid" id="lessonGrid"></div>
+ <button class="back" onclick="openStudentHome()">← Classes</button><div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis la leçon</div></div></div><div id="lessonGrid" class="lessonGrid"></div>
 </section>
 
-<!-- BINOME -->
 <section id="pair" class="hidden">
-  <button class="back" onclick="openLessons()">← Leçons</button>
-  <div class="topbar"><div><div class="screen-title">Leçon 1</div><div class="subtitle">Centre de recrutement national</div></div></div>
-  <div class="card">
-    <div class="section">Choisis ton binôme</div>
-    <div class="grid2">
-      <div class="field"><label>Élève 1</label><select id="pairA"></select></div>
-      <div class="field"><label>Élève 2</label><select id="pairB"></select></div>
-    </div>
-    <div class="toolbar"><button class="btn orange" onclick="validatePair()">Valider le binôme</button></div>
-  </div>
-  <div id="pairWork" class="hidden">
-    <div class="section">Situation 1 · Le tir verrouillé</div>
-    <div id="s1Buttons" class="grid2"></div>
-    <div class="section">Situation principale · Centre national de recrutement</div>
-    <div id="mainButtons" class="grid2"></div>
-    <div class="toolbar"><button class="btn light" onclick="openTabletQR()">Afficher le QR des résultats</button></div>
-  </div>
+ <button class="back" onclick="openLessons()">← Leçons</button><div class="top"><div><div class="title">Leçon 1</div><div class="sub">Centre national de recrutement</div></div></div>
+ <div class="card"><div class="section" style="margin-top:0">Choisis ton binôme</div><div class="grid2"><div class="field"><label>Élève 1</label><select id="pa"></select></div><div class="field"><label>Élève 2</label><select id="pb"></select></div></div><div class="toolbar"><button class="btn orange" onclick="validatePair()">Valider le binôme</button></div></div>
+ <div id="pairWork" class="hidden"><div class="section">Situation 1 · Le tir verrouillé</div><div id="s1Buttons" class="grid2"></div><div class="section">Situation principale · Centre national de recrutement</div><div id="mainButtons" class="grid2"></div><div class="toolbar"><button class="btn light" onclick="openResultsQR()">▦ Afficher le QR des résultats</button></div></div>
 </section>
 
-<!-- SITUATION 1 -->
 <section id="s1" class="hidden">
-  <button class="back" onclick="openPair()">← Binôme</button>
-  <div class="topbar">
-    <div><div class="screen-title">Le tir verrouillé</div><div class="subtitle" id="s1Student"></div></div>
-    <span class="pill">Situation 1</span>
-  </div>
-  <div class="card">
-    <div class="notice">Après les deux Défis XP, saisis uniquement le <b>Défi Étoile</b> : 5 rechargements, sans aide du coach.</div>
-    <div class="target-set" id="s1Targets"></div>
-    <div class="score" id="s1Score">0 / 5</div>
-    <div class="muted" style="text-align:center">Appui 1 = vert (touché) · Appui 2 = rouge (raté) · Appui 3 = neutre</div>
-    <div style="margin-top:18px"><button class="main-action" onclick="saveS1()">VALIDER LE DÉFI ÉTOILE</button></div>
-  </div>
+ <button class="back" onclick="openPair()">← Binôme</button><div class="top"><div><div class="title">Le tir verrouillé</div><div id="s1Name" class="sub"></div></div><span class="pill">Situation 1</span></div>
+ <div class="card"><div class="notice">Saisis uniquement le <b>Défi Étoile</b> : 5 rechargements. Vert = touché, rouge = raté.</div><div id="targets" class="targetset"></div><div id="s1Score" class="score">0 / 5</div><div class="muted" style="text-align:center">Appui 1 : vert · Appui 2 : rouge · Appui 3 : neutre</div><button class="mainAction" onclick="saveS1()">VALIDER LE DÉFI ÉTOILE</button></div>
 </section>
 
-<!-- PRINCIPALE -->
-<section id="mainRace" class="hidden">
-  <button class="back" onclick="confirmLeaveRace()">← Binôme</button>
-  <div class="topbar">
-    <div><div class="screen-title">Centre national de recrutement</div><div class="subtitle" id="raceStudent"></div></div>
-    <span class="pill" id="raceStatus">Prêt</span>
-  </div>
-  <div class="card">
-    <div class="timer" id="raceTimer">00:00.0</div>
-    <div class="stats">
-      <div class="stat"><span>Boucle</span><b id="raceLap">0 / 4</b></div>
-      <div class="stat"><span>Passage tir</span><b id="raceShoot">0 / 3</b></div>
-      <div class="stat"><span>Rechargements</span><b id="raceReloads">0</b></div>
-    </div>
-
-    <div id="shootPanel" class="hidden">
-      <div class="section" style="text-align:center">Toucher 5 fois la cible</div>
-      <div class="fivehits" id="hitDots"></div>
-      <div class="shoot-actions">
-        <button class="hitbtn" onclick="shot(true)">◎ TOUCHÉ</button>
-        <button class="missbtn" onclick="shot(false)">◎ RATÉ</button>
-      </div>
-      <div class="muted" style="text-align:center">Chaque pression compte comme un rechargement.</div>
-    </div>
-
-    <div style="margin-top:18px"><button id="raceAction" class="main-action" onclick="raceAction()">DÉMARRER</button></div>
-  </div>
+<section id="race" class="hidden">
+ <button class="back" onclick="leaveRace()">← Binôme</button><div class="top"><div><div class="title">Centre national de recrutement</div><div id="raceName" class="sub"></div></div><span id="raceStatus" class="pill">Prêt</span></div>
+ <div class="card"><div id="timer" class="timer">00:00.0</div><div class="stats"><div class="stat">Boucle<b id="lap">0 / 4</b></div><div class="stat">Passage tir<b id="shootNo">0 / 3</b></div><div class="stat">Rechargements<b id="reloads">0</b></div></div><div id="shootPanel" class="hidden"><div class="section" style="text-align:center">Objectif : 5 touches</div><div id="dots" class="fivehits"></div><div class="shootActions"><button class="shoot hit" onclick="shot(true)">◎ TOUCHÉ</button><button class="shoot miss" onclick="shot(false)">◎ RATÉ</button></div><div class="muted" style="text-align:center">Chaque appui compte comme un rechargement.</div></div><button id="raceAction" class="mainAction" onclick="raceAction()">DÉMARRER</button></div>
 </section>
 
-<!-- QR -->
-<section id="qrScreen" class="hidden">
-  <button class="back" onclick="qrBack()">← Retour</button>
-  <div class="topbar"><div><div class="screen-title" id="qrTitle">Résultats de la tablette</div><div class="subtitle" id="qrSubtitle">Un seul QR code pour le professeur</div></div></div>
-  <div class="card">
-    <div id="qrSummary" class="notice"></div>
-    <div id="qrCode" class="qrbox"></div>
-    <div class="muted" style="text-align:center">Le professeur scanne ce QR depuis son espace. Les doublons sont ignorés.</div>
-  </div>
+<section id="qr" class="hidden">
+ <button class="back" onclick="qrBack()">← Retour</button><div class="top"><div><div id="qrTitle" class="title">QR</div><div id="qrSub" class="sub"></div></div></div>
+ <div class="qrLayout"><div class="card"><div id="qrInfo" class="notice"></div><div id="qrDetail" class="list"></div></div><div><div id="qrBox" class="qrbox"></div><div class="qrnav"><button class="btn ghost" onclick="prevQR()">←</button><div id="qrCount" class="qrCounter"></div><button class="btn ghost" onclick="nextQR()">→</button></div></div></div>
 </section>
-
-<!-- SCANNER PROF -->
-<div id="scanner" class="scanner hidden">
-  <video id="scanVideo" playsinline autoplay muted></video>
-  <canvas id="scanCanvas" class="hidden"></canvas>
-  <div class="scannerbar">
-    <div><b id="scanTitle">Scanner les résultats</b><div id="scanMsg" style="opacity:.75;font-size:13px">Présente le QR d’une tablette.</div></div>
-    <div class="toolbar" style="margin:0">
-      <label class="btn light" for="qrPhoto">Photo</label>
-      <input id="qrPhoto" class="hidden" type="file" accept="image/*" capture="environment">
-      <button class="btn red" onclick="stopScanner()">Fermer</button>
-    </div>
-  </div>
 </div>
 
-<!-- PIN -->
-<div id="pinModal" class="pinmodal hidden">
-  <div class="card" style="width:min(420px,100%)">
-    <div class="section" id="pinTitle">Accès professeur</div>
-    <div id="pinNote" class="notice hidden">Première utilisation : crée un code de 4 à 6 chiffres.</div>
-    <div class="field"><label>Code enseignant</label><input id="pin1" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
-    <div id="pinConfirmWrap" class="field hidden" style="margin-top:10px"><label>Confirmer</label><input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div>
-    <div id="pinErr" class="warn hidden"></div>
-    <div class="toolbar"><button class="btn orange" onclick="validatePin()">Valider</button><button class="btn ghost" onclick="closePin()">Annuler</button></div>
-  </div>
-</div>
-
-</div>
+<div id="scanner" class="scanModal hidden"><div class="scanVideoWrap"><video id="video" playsinline autoplay muted></video><canvas id="canvas" class="hidden"></canvas></div><div class="scanSide"><div><div id="scanTitle" style="font-size:27px;font-weight:950">Scanner</div><div id="scanMsg" style="opacity:.75;line-height:1.4;margin-top:8px"></div><div id="scanProgress" style="margin-top:18px;font-weight:900"></div></div><div><div class="toolbar"><label class="btn light" for="scanFile">Ouvrir une photo</label><input id="scanFile" class="hidden" type="file" accept="image/*"><button class="btn ghost" onclick="stopScanner()">Fermer</button></div><div class="muted" style="color:white">Sur ordinateur sans webcam, utilise « Ouvrir une photo » ou une capture d’écran du QR.</div></div></div></div>
+<div id="pin" class="pin hidden"><div class="card"><div id="pinTitle" class="section" style="margin-top:0">Accès professeur</div><div id="pinNote" class="notice hidden">Première utilisation : crée un code de 4 à 6 chiffres.</div><div class="field"><label>Code enseignant</label><input id="pin1" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div><div id="pin2Wrap" class="field hidden" style="margin-top:10px"><label>Confirmer</label><input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="••••"></div><div id="pinErr" class="warn hidden"></div><div class="toolbar"><button class="btn orange" onclick="validatePin()">Valider</button><button class="btn ghost" onclick="closePin()">Annuler</button></div></div></div>
 
 <script>
-const DBKEY='lr6_prof_v7';
-const RESULTKEY='lr6_tablet_results_v7';
-const PUBKEY='lr6_installed_classes_v7';
-const PINKEY='lr6_pin_v7';
-let db=loadJSON(DBKEY,{classes:[]});
-let published=loadJSON(PUBKEY,{classes:[]});
-let currentClassId=null, studentClassId=null, pair=[], activeStudent=null;
-let s1States=[0,0,0,0,0];
-let race=null, timer=null;
-let teacherUnlocked=false, pinMode='unlock';
-let scannerStream=null, scannerLoop=null, scannerMode='results';
-let lastScreen='studentHome';
+const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
+let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock';
+let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={};
+function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');scrollTo(0,0)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))} function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)} function day(){return new Date().toISOString().slice(0,10)}
+function fmt(ms){ms=Math.max(0,ms||0);let m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`}
+function updateNet(){let on=navigator.onLine;document.getElementById('netdot').className=on?'okdot':'baddot';document.getElementById('nettext').textContent=on?'Internet disponible':'Mode hors connexion'} addEventListener('online',updateNet);addEventListener('offline',updateNet);updateNet();
+async function hashPin(p){if(crypto.subtle){let d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}return btoa(p)}
+function teacherGate(){if(teacher)return openProf();pinMode=localStorage.getItem(PIN)?'unlock':'create';document.getElementById('pinTitle').textContent=pinMode==='create'?'Créer le code enseignant':'Accès professeur';document.getElementById('pinNote').classList.toggle('hidden',pinMode!=='create');document.getElementById('pin2Wrap').classList.toggle('hidden',pinMode==='unlock');document.getElementById('pin1').value='';document.getElementById('pin2').value='';document.getElementById('pinErr').classList.add('hidden');document.getElementById('pin').classList.remove('hidden')}
+function closePin(){document.getElementById('pin').classList.add('hidden')} async function validatePin(){let a=pin1.value.trim(),b=pin2.value.trim(),e=pinErr;if(!/^\d{4,6}$/.test(a)){e.textContent='Le code doit contenir 4 à 6 chiffres.';e.classList.remove('hidden');return}if(pinMode!=='unlock'){if(a!==b){e.textContent='Les codes ne correspondent pas.';e.classList.remove('hidden');return}localStorage.setItem(PIN,await hashPin(a));teacher=true;closePin();openProf();return}if(await hashPin(a)===localStorage.getItem(PIN)){teacher=true;closePin();openProf()}else{e.textContent='Code incorrect.';e.classList.remove('hidden')}}
+function changePin(){pinMode='change';pinTitle.textContent='Changer le code';pinNote.classList.add('hidden');pin2Wrap.classList.remove('hidden');pin1.value='';pin2.value='';pin.classList.remove('hidden')} function lockTeacher(){teacher=false;show('home')}
+function openProf(){renderProf();show('prof')} function renderProf(){profClasses.innerHTML=db.classes.length?db.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="openProfClass(${i})"><div><div class="big">${esc(c.name)}</div><div class="muted">${c.students.length} élèves · ${(c.results||[]).length} résultat(s)</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe enregistrée.</div>'}
+function toggleCreate(){createBox.classList.toggle('hidden')} function createClass(){let n=newClass.value.trim();if(!n)return alert('Entre un nom de classe.');db.classes.push({name:n,students:[],results:[]});write(DB,db);newClass.value='';toggleCreate();renderProf()}
+function openProfClass(i){currentProf=i;renderProfClass();show('profClass')} function pc(){return db.classes[currentProf]} function renderProfClass(){let c=pc();pcTitle.textContent=c.name;pcSub.textContent=`${c.students.length} élèves`;pcStudents.innerHTML=c.students.length?c.students.map((n,i)=>`<div class="row"><div class="big">${esc(n)}</div><button class="btn ghost" onclick="removeStudent(${i})">Retirer</button></div>`).join(''):'<div class="muted">Aucun élève.</div>';let rs=c.results||[];pcResults.innerHTML=rs.length?rs.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(r=>`<div class="row"><div><div class="big">${esc(r.name)}</div><div class="muted">Situation 1 : ${r.s1==null?'—':r.s1+'/5'}</div></div><div><b>${r.time==null?'—':fmt(r.time)}</b><div class="muted">${r.reloads?`${r.reloads[0]} · ${r.reloads[1]} · ${r.reloads[2]} recharg.`:''}</div></div></div>`).join(''):'<div class="muted">Aucun résultat récupéré.</div>'}
+function deleteClass(){if(confirm(`Supprimer ${pc().name} ?`)){db.classes.splice(currentProf,1);write(DB,db);openProf()}} function manualStudent(){let n=prompt('Nom Prénom :');if(n){pc().students.push(n.trim());write(DB,db);renderProfClass()}} function removeStudent(i){pc().students.splice(i,1);write(DB,db);renderProfClass()}
+roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let names=[];if(f.name.toLowerCase().endsWith('.csv')){let t=await f.text();names=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&/nom|pr[eé]nom/i.test(p.join(' ')))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean)}else{if(typeof XLSX==='undefined')throw new Error('xlsx');let wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&/nom|pr[eé]nom/i.test(r.join(' ')))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])})}let seen=new Set(pc().students.map(x=>x.toLowerCase()));names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){pc().students.push(n);seen.add(n.toLowerCase())}});write(DB,db);renderProfClass();alert(`${names.length} élève(s) lu(s).`)}catch(err){alert('Lecture Excel indisponible. Vérifie que l’application a été ouverte au moins une fois avec Internet, ou utilise un CSV.')}e.target.value=''});
 
-(function migrateV6(){
-  try{
-    if(!localStorage.getItem(DBKEY)){
-      const old=JSON.parse(localStorage.getItem('lr6_prof_v6')||'null');
-      if(old&&old.classes){ db=old; saveJSON(DBKEY,db); }
-    }
-    if(!localStorage.getItem(PINKEY)){
-      const oldPin=localStorage.getItem('lr6_pin_v6');
-      if(oldPin) localStorage.setItem(PINKEY,oldPin);
-    }
-    if(!localStorage.getItem(RESULTKEY)){
-      const oldR=JSON.parse(localStorage.getItem('lr6_tablet_results_v6')||'null');
-      if(oldR) saveJSON(RESULTKEY,oldR);
-    }
-    if(!localStorage.getItem(PUBKEY)){
-      const oldC=JSON.parse(localStorage.getItem('lr6_published_classes_v6')||'null');
-      if(oldC&&oldC.classes) saveJSON(PUBKEY,oldC);
-    }
-  }catch(e){}
-  db=loadJSON(DBKEY,{classes:[]});
-  published=loadJSON(PUBKEY,{classes:[]});
-})();
+function configObject(){return {v:(Date.now()),classes:db.classes.map(c=>[c.name,c.students])}} function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
+function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR8C',configObject());qrIndex=0;qrReturn='prof';qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
+function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:8,d:day(),r:arr.map(x=>[x.className,x.name,x.s1,x.time,x.reloads,x.key])};qrPages=makeChunks('LR8R',compact,850);qrIndex=0;qrReturn=document.getElementById('pair').classList.contains('hidden')?'studentHome':'pair';qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} élève(s) avec résultat(s) aujourd’hui · ${qrPages.length} QR.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · S1 ${x.s1==null?'—':x.s1+'/5'} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
+function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='pair')show('pair');else openStudentHome()}
 
+function openStudentHome(){installed=read(INST,{version:0,classes:[]});studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Utilise « Installer / mettre à jour les classes ».</div>';show('studentHome')}
+function selectClass(i){currentClass=i;openLessons()} function sc(){return installed.classes[currentClass]} function openLessons(){lessonClass.textContent=sc()[0];let ls=[['L1','Centre national de recrutement',1],['L2','Sprint individuel',0],['L3','Poursuite',0],['L4','Mass-start',0],['L5','Relais des nations',0],['L6','Qualification aux JO',0],['L7','Jeux Olympiques',0]];lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?'onclick="openPair()"':'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');show('lessons')}
+function options(){return '<option value="">Choisir...</option>'+sc()[1].map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('')} function openPair(){pa.innerHTML=options();pb.innerHTML=options();pairWork.classList.add('hidden');if(pair.length===2){pa.value=pair[0].i;pb.value=pair[1].i;renderPair()}show('pair')} function validatePair(){if(pa.value===''||pb.value===''||pa.value===pb.value)return alert('Choisis deux élèves différents.');pair=[{i:+pa.value,name:sc()[1][+pa.value]},{i:+pb.value,name:sc()[1][+pb.value]}];renderPair()}
+function keyFor(n){return `${sc()[0]}|${n}|${day()}|L1`} function record(n){return read(RES,[]).find(r=>r.key===keyFor(n))||null} function ensure(n){let a=read(RES,[]),r=a.find(x=>x.key===keyFor(n));if(!r){r={key:keyFor(n),className:sc()[0],name:n,date:day(),s1:null,time:null,reloads:null};a.push(r);write(RES,a)}return r} function saveRecord(r){let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
+function renderPair(){pairWork.classList.remove('hidden');s1Buttons.innerHTML=pair.map(p=>{let r=record(p.name);return `<button class="role studentrole" style="min-height:145px" onclick="startS1(${p.i})"><div class="big">${esc(p.name)}</div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5':'Commencer'}</div></button>`}).join('');mainButtons.innerHTML=pair.map(p=>{let r=record(p.name);return `<button class="role profrole" style="min-height:145px" onclick="startRace(${p.i})"><div class="big">${esc(p.name)}</div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')}
+function startS1(i){active={i,name:sc()[1][i]};s1=[0,0,0,0,0];s1Name.textContent=active.name;renderTargets();show('s1')} function renderTargets(){targets.innerHTML=s1.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycle(${i})"></button>`).join('');s1Score.textContent=`${s1.filter(x=>x===1).length} / 5`} function cycle(i){s1[i]=(s1[i]+1)%3;renderTargets()} function saveS1(){if(s1.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;let r=ensure(active.name);r.s1=s1.filter(x=>x===1).length;saveRecord(r);openPair()}
+function startRace(i){active={i,name:sc()[1][i]};race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,hits:0,total:0,sta:[0,0,0]};clearInterval(tick);raceName.textContent=active.name;resetRace();show('race')} function resetRace(){timer.textContent='00:00.0';lap.textContent='0 / 4';shootNo.textContent='0 / 3';reloads.textContent='0';raceStatus.textContent='Prêt';shootPanel.classList.add('hidden');raceAction.textContent='DÉMARRER';raceAction.disabled=false;renderDots()} function clock(){race.elapsed=performance.now()-race.start;timer.textContent=fmt(race.elapsed)} function updateStats(){lap.textContent=`${race.lap} / 4`;shootNo.textContent=`${race.shoot} / 3`;reloads.textContent=race.total} function renderDots(){dots.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('')}
+function raceAction(){if(race.state==='ready'){race.start=performance.now();race.state='run';race.lap=1;tick=setInterval(clock,100);raceAction.textContent='ARRIVÉE AU TIR 1';raceStatus.textContent='Boucle 1';updateStats();return}if(race.state==='run'){if(race.shoot<3){race.state='shoot';race.hits=0;shootPanel.classList.remove('hidden');raceAction.disabled=true;raceStatus.textContent=`Tir ${race.shoot+1}`;renderDots()}else finishRace()}}
+function shot(ok){if(race.state!=='shoot')return;race.total++;race.sta[race.shoot]++;if(ok&&race.hits<5)race.hits++;updateStats();renderDots();if(race.hits===5){race.shoot++;race.lap++;race.state='run';shootPanel.classList.add('hidden');raceAction.disabled=false;raceAction.textContent=race.shoot<3?`ARRIVÉE AU TIR ${race.shoot+1}`:'ARRIVÉE';raceStatus.textContent=`Boucle ${race.lap}`;updateStats()}} function finishRace(){clearInterval(tick);clock();race.state='done';let r=ensure(active.name);r.time=Math.round(race.elapsed);r.reloads=[...race.sta];saveRecord(r);raceStatus.textContent='Terminé';raceAction.textContent='RÉSULTAT ENREGISTRÉ';raceAction.disabled=true;setTimeout(openPair,700)} function leaveRace(){if(race&&race.state!=='ready'&&race.state!=='done'&&!confirm('Abandonner cette performance ?'))return;clearInterval(tick);openPair()}
 
-function loadJSON(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}}
-function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function show(id){
-  document.querySelectorAll('section').forEach(x=>x.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  window.scrollTo(0,0);
-}
-function uid(){return (crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2))}
-function shortDate(){return new Date().toISOString().slice(0,10)}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function fmt(ms){ms=Math.max(0,ms||0);const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`}
-function download(obj,name){const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function getResults(){return loadJSON(RESULTKEY,[])}
-function saveResults(r){saveJSON(RESULTKEY,r)}
-function currentProfClass(){return db.classes.find(c=>c.id===currentClassId)}
-function currentStudentClass(){return published.classes.find(c=>c.id===studentClassId)}
+function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove('hidden');scanTitle.textContent=mode==='config'?'Installer les classes':'Scanner les résultats';scanMsg.textContent=mode==='config'?'Scanne les QR de configuration dans l’ordre.':'Scanne les QR de chaque tablette élève.';scanProgress.textContent='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanMsg.textContent+=' Caméra non disponible dans ce navigateur : utilise « Ouvrir une photo ».';return}navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(async s=>{stream=s;video.srcObject=s;await video.play();scanFrame()}).catch(()=>{scanMsg.textContent+=' Caméra inaccessible : utilise « Ouvrir une photo ».'})}
+function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
+function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
+scanFile.addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let img=new Image();img.onload=()=>{canvas.width=img.width;canvas.height=img.height;let ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);if(typeof jsQR==='undefined'){scanMsg.textContent='Lecteur QR non chargé. Ouvre l’application une fois avec Internet.';return}let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height);if(code)consume(code.data);else scanMsg.textContent='QR non reconnu sur cette image.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value=''});
+let lastScan=''; function consume(txt){if(txt===lastScan)return;lastScan=txt;setTimeout(()=>lastScan='',1200);let p;try{p=JSON.parse(txt)}catch(e){return}if(!p.a||!p.id||!p.p||!p.t)return;if((scanMode==='config'&&p.a!=='LR8C')||(scanMode==='results'&&p.a!=='LR8R')){scanMsg.textContent='Ce QR ne correspond pas à cette opération.';return}scanBuffer[p.id]=scanBuffer[p.id]||{t:p.t,parts:{}};scanBuffer[p.id].parts[p.p]=p.d;let b=scanBuffer[p.id],n=Object.keys(b.parts).length;scanProgress.textContent=`QR ${n} / ${b.t} reçu(s)`;scanMsg.textContent=`✅ Partie ${p.p}/${p.t} reçue.`;if(n===b.t){let raw='';for(let i=1;i<=b.t;i++)raw+=b.parts[i];let obj;try{obj=JSON.parse(raw)}catch(e){scanMsg.textContent='Erreur de reconstruction.';return}if(scanMode==='config'){installed=obj;write(INST,installed);scanMsg.textContent=`✅ ${obj.classes.length} classe(s) installée(s).`;scanProgress.textContent='Configuration terminée';setTimeout(stopScanner,900)}else{mergeResults(obj);delete scanBuffer[p.id]}}}
+function mergeResults(obj){let added=0,updated=0;(obj.r||[]).forEach(a=>{let [cn,n,s1v,tim,rel,key]=a,c=db.classes.find(x=>x.name===cn);if(!c)return;c.results=c.results||[];let ex=c.results.find(x=>x.key===key);let item={key,name:n,s1:s1v,time:tim,reloads:rel,date:obj.d};if(ex){Object.assign(ex,item);updated++}else{c.results.push(item);added++}});write(DB,db);scanMsg.textContent=`✅ ${added} nouveau(x), ${updated} mis à jour.`;scanProgress.textContent='Tu peux scanner la tablette suivante.'}
 
-async function hashPin(p){if(crypto.subtle){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}return btoa(p)}
-function teacherGate(){
-  if(teacherUnlocked)return openProf();
-  pinMode=localStorage.getItem(PINKEY)?'unlock':'create';
-  document.getElementById('pinTitle').textContent=pinMode==='create'?'Créer le code enseignant':'Accès professeur';
-  document.getElementById('pinNote').classList.toggle('hidden',pinMode!=='create');
-  document.getElementById('pinConfirmWrap').classList.toggle('hidden',pinMode==='unlock');
-  document.getElementById('pin1').value='';document.getElementById('pin2').value='';document.getElementById('pinErr').classList.add('hidden');
-  document.getElementById('pinModal').classList.remove('hidden');
-}
-function closePin(){document.getElementById('pinModal').classList.add('hidden')}
-async function validatePin(){
-  const a=document.getElementById('pin1').value.trim(),b=document.getElementById('pin2').value.trim(),e=document.getElementById('pinErr');
-  if(!/^\d{4,6}$/.test(a)){e.textContent='Le code doit contenir 4 à 6 chiffres.';e.classList.remove('hidden');return}
-  if(pinMode==='create'||pinMode==='change'){
-    if(a!==b){e.textContent='Les deux codes ne correspondent pas.';e.classList.remove('hidden');return}
-    localStorage.setItem(PINKEY,await hashPin(a));teacherUnlocked=true;closePin();return openProf();
-  }
-  if(await hashPin(a)===localStorage.getItem(PINKEY)){teacherUnlocked=true;closePin();openProf()}else{e.textContent='Code incorrect.';e.classList.remove('hidden')}
-}
-function changePin(){pinMode='change';document.getElementById('pinTitle').textContent='Changer le code';document.getElementById('pinNote').classList.add('hidden');document.getElementById('pinConfirmWrap').classList.remove('hidden');document.getElementById('pin1').value='';document.getElementById('pin2').value='';document.getElementById('pinModal').classList.remove('hidden')}
-function lockTeacher(){teacherUnlocked=false;show('home')}
-
-function openProf(){renderProf();show('prof')}
-function renderProf(){
-  const el=document.getElementById('profClasses');
-  el.innerHTML=db.classes.length?db.classes.map(c=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="openProfClass('${c.id}')"><div><div class="big-name">${esc(c.name)}</div><div class="muted">${c.students.length} élèves · ${(c.results||[]).length} résultats</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe.</div>';
-}
-function toggleCreateClass(){document.getElementById('createClassBox').classList.toggle('hidden')}
-function createClass(){
-  const n=document.getElementById('newClassName').value.trim();if(!n)return alert('Entre un nom de classe.');
-  db.classes.push({id:uid(),name:n,students:[],results:[]});saveJSON(DBKEY,db);document.getElementById('newClassName').value='';toggleCreateClass();renderProf();
-}
-function openProfClass(id){currentClassId=id;renderProfClass();show('profClass')}
-function renderProfClass(){
-  const c=currentProfClass();document.getElementById('pcName').textContent=c.name;document.getElementById('pcMeta').textContent=`${c.students.length} élèves`;
-  document.getElementById('pcStudents').innerHTML=c.students.length?c.students.map(s=>`<div class="row"><div class="big-name">${esc(s.name)}</div><button class="btn ghost" onclick="removeStudent('${s.id}')">Retirer</button></div>`).join(''):'<div class="muted">Aucun élève.</div>';
-  const rs=[...(c.results||[])].sort((a,b)=>a.studentName.localeCompare(b.studentName));
-  document.getElementById('pcResults').innerHTML=rs.length?rs.map(r=>`<div class="row"><div><div class="big-name">${esc(r.studentName)}</div><div class="muted">S1 : ${r.s1==null?'—':r.s1+'/5'} · Principal : ${r.time==null?'—':fmt(r.time)}</div></div><div style="text-align:right"><b>${r.time==null?'':(r.reloads||[]).reduce((a,b)=>a+b,0)+' recharg.'}</b><div class="muted">${r.reloads?('T1 '+r.reloads[0]+' · T2 '+r.reloads[1]+' · T3 '+r.reloads[2]):''}</div></div></div>`).join(''):'<div class="card muted">Aucun résultat scanné.</div>';
-}
-function deleteCurrentClass(){const c=currentProfClass();if(confirm(`Supprimer ${c.name} ?`)){db.classes=db.classes.filter(x=>x.id!==c.id);saveJSON(DBKEY,db);openProf()}}
-function manualStudent(){const n=prompt('Nom Prénom :');if(!n)return;currentProfClass().students.push({id:uid(),name:n.trim()});saveJSON(DBKEY,db);renderProfClass()}
-function removeStudent(id){const c=currentProfClass();c.students=c.students.filter(s=>s.id!==id);saveJSON(DBKEY,db);renderProfClass()}
-document.getElementById('rosterFile').addEventListener('change',async e=>{
-  const f=e.target.files[0];if(!f)return;
-  try{
-    let names=[];
-    if(f.name.toLowerCase().endsWith('.csv')){
-      const txt=await f.text();names=txt.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&p.join(' ').match(/nom|pr[eé]nom/i))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean);
-    }else{
-      const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-      rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&r.join(' ').match(/nom|pr[eé]nom/i))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])});
-    }
-    const c=currentProfClass(),seen=new Set(c.students.map(s=>s.name.toLowerCase()));
-    names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){c.students.push({id:uid(),name:n});seen.add(n.toLowerCase())}});
-    saveJSON(DBKEY,db);renderProfClass();alert(`${names.length} ligne(s) lue(s).`);
-  }catch(err){alert('Impossible de lire ce fichier.')}
-  e.target.value='';
-});
-
-
-
-function openStudentHome(){published=loadJSON(PUBKEY,{classes:[]});renderStudentClasses();show('studentHome')}
-function renderStudentClasses(){
-  const el=document.getElementById('studentClasses');
-  el.innerHTML=published.classes?.length?published.classes.map(c=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectStudentClass('${c.id}')"><div><div class="big-name">${esc(c.name)}</div><div class="muted">${c.students.length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe mémorisée sur cette tablette.</div>';
-}
-function selectStudentClass(id){studentClassId=id;openLessons()}
-function openLessons(){
-  const c=currentStudentClass();if(!c)return openStudentHome();
-  document.getElementById('lessonClassName').textContent=c.name;
-  const ls=[['L1','Centre national de recrutement',true],['L2','Sprint individuel',false],['L3','Poursuite',false],['L4','Mass-start',false],['L5','Relais des nations',false],['L6','Qualification aux JO',false],['L7','Jeux Olympiques',false]];
-  document.getElementById('lessonGrid').innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?'onclick="openPair()"':'disabled'}><div class="muted">${x[0]}</div><div class="big-name">${x[1]}</div><div class="muted" style="margin-top:6px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
-  show('lessons');
-}
-function openPair(){
-  const c=currentStudentClass();const opt='<option value="">Choisir...</option>'+c.students.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
-  document.getElementById('pairA').innerHTML=opt;document.getElementById('pairB').innerHTML=opt;document.getElementById('pairWork').classList.add('hidden');show('pair');
-  if(pair.length===2){document.getElementById('pairA').value=pair[0].id;document.getElementById('pairB').value=pair[1].id;renderPairWork()}
-}
-function validatePair(){
-  const a=document.getElementById('pairA').value,b=document.getElementById('pairB').value;if(!a||!b||a===b)return alert('Choisis deux élèves différents.');
-  const c=currentStudentClass();pair=[c.students.find(s=>s.id===a),c.students.find(s=>s.id===b)];renderPairWork();
-}
-function renderPairWork(){
-  document.getElementById('pairWork').classList.remove('hidden');
-  const rs=getResults();
-  document.getElementById('s1Buttons').innerHTML=pair.map(s=>{const r=latestRecord(s.id);return `<button class="role-card role-eleve" style="min-height:140px" onclick="startS1('${s.id}')"><div class="big-name">${esc(s.name)}</div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5':'Commencer'}</div></button>`}).join('');
-  document.getElementById('mainButtons').innerHTML=pair.map(s=>{const r=latestRecord(s.id);return `<button class="role-card role-prof" style="min-height:140px" onclick="startMain('${s.id}')"><div class="big-name">${esc(s.name)}</div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('');
-}
-function latestRecord(studentId){
-  return getResults().filter(r=>r.classId===studentClassId&&r.studentId===studentId&&r.date===shortDate()&&r.lesson==='L1').sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0]||null;
-}
-function ensureRecord(student){
-  let all=getResults(),r=latestRecord(student.id);
-  if(!r){r={id:uid(),classId:studentClassId,studentId:student.id,studentName:student.name,date:shortDate(),lesson:'L1',s1:null,time:null,reloads:null,updatedAt:new Date().toISOString()};all.push(r);saveResults(all)}
-  return r;
-}
-function updateRecord(r){
-  let all=getResults(),i=all.findIndex(x=>x.id===r.id);r.updatedAt=new Date().toISOString();if(i>=0)all[i]=r;else all.push(r);saveResults(all);
-}
-
-function startS1(id){activeStudent=currentStudentClass().students.find(s=>s.id===id);s1States=[0,0,0,0,0];document.getElementById('s1Student').textContent=activeStudent.name;renderS1();show('s1')}
-function renderS1(){
-  document.getElementById('s1Targets').innerHTML=s1States.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycleTarget(${i})" aria-label="cible ${i+1}"></button>`).join('');
-  document.getElementById('s1Score').textContent=`${s1States.filter(x=>x===1).length} / 5`;
-}
-function cycleTarget(i){s1States[i]=(s1States[i]+1)%3;renderS1()}
-function saveS1(){
-  if(s1States.some(x=>x===0)&&!confirm('Certaines cibles sont encore neutres. Valider quand même ?'))return;
-  const r=ensureRecord(activeStudent);r.s1=s1States.filter(x=>x===1).length;updateRecord(r);openPair();
-}
-
-function startMain(id){
-  activeStudent=currentStudentClass().students.find(s=>s.id===id);
-  race={start:0,elapsed:0,running:false,state:'ready',lap:0,shoot:0,hits:0,attempts:0,stationAttempts:[0,0,0]};
-  clearInterval(timer);document.getElementById('raceStudent').textContent=activeStudent.name;resetRaceUI();show('mainRace');
-}
-function resetRaceUI(){
-  document.getElementById('raceTimer').textContent='00:00.0';document.getElementById('raceLap').textContent='0 / 4';document.getElementById('raceShoot').textContent='0 / 3';document.getElementById('raceReloads').textContent='0';document.getElementById('raceStatus').textContent='Prêt';document.getElementById('shootPanel').classList.add('hidden');document.getElementById('raceAction').textContent='DÉMARRER';renderHitDots();
-}
-function updateClock(){race.elapsed=performance.now()-race.start;document.getElementById('raceTimer').textContent=fmt(race.elapsed)}
-function raceAction(){
-  if(race.state==='ready'){
-    race.start=performance.now();race.running=true;race.state='run';race.lap=1;timer=setInterval(updateClock,100);document.getElementById('raceAction').textContent='ARRIVÉE AU TIR 1';document.getElementById('raceStatus').textContent='Boucle 1';updateRaceStats();return;
-  }
-  if(race.state==='run'){
-    if(race.shoot<3){race.state='shoot';race.hits=0;document.getElementById('shootPanel').classList.remove('hidden');document.getElementById('raceAction').disabled=true;document.getElementById('raceStatus').textContent=`Tir ${race.shoot+1}`;renderHitDots()}
-    else finishMain();
-  }
-}
-function shot(hit){
-  if(race.state!=='shoot')return;
-  race.attempts++;race.stationAttempts[race.shoot]++;
-  if(hit&&race.hits<5)race.hits++;
-  updateRaceStats();renderHitDots();
-  if(race.hits===5){
-    race.shoot++;race.state='run';race.lap++;
-    document.getElementById('shootPanel').classList.add('hidden');document.getElementById('raceAction').disabled=false;
-    document.getElementById('raceAction').textContent=race.shoot<3?`ARRIVÉE AU TIR ${race.shoot+1}`:'ARRIVÉE';
-    document.getElementById('raceStatus').textContent=`Boucle ${race.lap}`;updateRaceStats();
-  }
-}
-function renderHitDots(){document.getElementById('hitDots').innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('')}
-function updateRaceStats(){document.getElementById('raceLap').textContent=`${race.lap} / 4`;document.getElementById('raceShoot').textContent=`${race.shoot} / 3`;document.getElementById('raceReloads').textContent=race.attempts}
-function finishMain(){
-  clearInterval(timer);updateClock();race.running=false;race.state='done';
-  const r=ensureRecord(activeStudent);r.time=Math.round(race.elapsed);r.reloads=[...race.stationAttempts];updateRecord(r);
-  document.getElementById('raceStatus').textContent='Terminé';document.getElementById('raceAction').textContent='RÉSULTAT ENREGISTRÉ';document.getElementById('raceAction').disabled=true;
-  setTimeout(()=>openPair(),800);
-}
-function confirmLeaveRace(){if(race&&race.state!=='done'&&race.state!=='ready'&&!confirm('Abandonner cette performance ?'))return;clearInterval(timer);openPair()}
-
-function compactPayload(){
-  const recs=getResults().filter(r=>r.date===shortDate()&&r.lesson==='L1'&&r.classId===studentClassId&&(r.s1!=null||r.time!=null));
-  return {a:'LR6',v:7,c:studentClassId,d:shortDate(),r:recs.map(x=>[x.id,x.studentId,x.s1,x.time,x.reloads])};
-}
-function openTabletQR(){
-  lastScreen=document.getElementById('pair').classList.contains('hidden')?'studentHome':'pair';
-  document.getElementById('qrTitle').textContent='Résultats de la tablette';
-  document.getElementById('qrSubtitle').textContent='Un seul QR code pour le professeur';
-  const p=compactPayload();
-  if(!p.r.length)return alert('Aucun résultat du jour à afficher.');
-  document.getElementById('qrSummary').textContent=`${p.r.length} élève(s) / résultat(s) du jour · ${currentStudentClass()?.name||''}`;
-  const q=document.getElementById('qrCode');q.innerHTML='';
-  const txt=JSON.stringify(p);
-  try{new QRCode(q,{text:txt,width:330,height:330,correctLevel:QRCode.CorrectLevel.L})}
-  catch(e){alert('Le QR est trop volumineux. Il faudra réduire le nombre de résultats affichés.')}
-  show('qrScreen');
-}
-function qrBack(){if(lastScreen==='pair')show('pair');else if(lastScreen==='profClass')show('profClass');else openStudentHome()}
-
-
-function showClassQR(){
-  const c=currentProfClass();
-  if(!c || !c.students.length) return alert('Ajoute d’abord les élèves.');
-  lastScreen='profClass';
-  document.getElementById('qrTitle').textContent='Installer '+c.name;
-  document.getElementById('qrSubtitle').textContent='À scanner une seule fois sur chaque tablette élève';
-  document.getElementById('qrSummary').textContent=`${c.name} · ${c.students.length} élève(s)`;
-  const payload={
-    a:'LR6C',v:7,c:c.id,n:c.name,
-    s:c.students.map(x=>[x.id,x.name])
-  };
-  const q=document.getElementById('qrCode');q.innerHTML='';
-  try{
-    new QRCode(q,{text:JSON.stringify(payload),width:330,height:330,correctLevel:QRCode.CorrectLevel.L});
-  }catch(e){
-    alert('Cette classe contient trop de données pour un seul QR code.');
-    return;
-  }
-  show('qrScreen');
-}
-
-function startClassScanner(){
-  scannerMode='class';
-  document.getElementById('scanTitle').textContent='Installer une classe';
-  document.getElementById('scanMsg').textContent='Scanne le QR affiché par le professeur.';
-  startScanner();
-}
-
-async function startScanner(){
-  if(scannerMode!=='class'){scannerMode='results';document.getElementById('scanTitle').textContent='Scanner les résultats';document.getElementById('scanMsg').textContent='Présente le QR d’une tablette.';}
-  document.getElementById('scanner').classList.remove('hidden');
-  try{
-    scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
-    const v=document.getElementById('scanVideo');v.srcObject=scannerStream;await v.play();
-    scanLoop();
-  }catch(e){document.getElementById('scanMsg').textContent='Caméra indisponible. Utilise le bouton Photo.'}
-}
-function stopScanner(){if(scannerLoop)cancelAnimationFrame(scannerLoop);scannerLoop=null;if(scannerStream)scannerStream.getTracks().forEach(t=>t.stop());scannerStream=null;document.getElementById('scanner').classList.add('hidden');renderProf()}
-function scanLoop(){
-  const v=document.getElementById('scanVideo'),c=document.getElementById('scanCanvas');
-  if(v.readyState===v.HAVE_ENOUGH_DATA){
-    c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d');ctx.drawImage(v,0,0,c.width,c.height);
-    const img=ctx.getImageData(0,0,c.width,c.height),code=window.jsQR?jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'}):null;
-    if(code&&handleQR(code.data)){document.getElementById('scanMsg').textContent='✅ Résultats ajoutés. Passe à la tablette suivante.';setTimeout(()=>document.getElementById('scanMsg').textContent='Présente le QR suivant.',1200)}
-  }
-  scannerLoop=requestAnimationFrame(scanLoop);
-}
-function handleQR(txt){
-  let p;try{p=JSON.parse(txt)}catch(e){return false}
-
-  if(p.a==='LR6C'){
-    const cls={
-      id:p.c,
-      name:p.n,
-      students:(p.s||[]).map(x=>({id:x[0],name:x[1]}))
-    };
-    published=loadJSON(PUBKEY,{classes:[]});
-    const i=published.classes.findIndex(x=>x.id===cls.id);
-    if(i>=0) published.classes[i]=cls; else published.classes.push(cls);
-    saveJSON(PUBKEY,published);
-    document.getElementById('scanMsg').textContent=`✅ ${cls.name} installée (${cls.students.length} élèves).`;
-    setTimeout(()=>{stopScanner();openStudentHome()},700);
-    return true;
-  }
-
-  if(p.a==='LR6'&&p.c&&Array.isArray(p.r)){
-    const c=db.classes.find(x=>x.id===p.c);
-    if(!c){document.getElementById('scanMsg').textContent='⚠️ Classe inconnue sur l’appareil professeur.';return true}
-    c.results=c.results||[];let n=0;
-    for(const a of p.r){
-      const [id,sid,s1,time,reloads]=a;
-      const s=c.students.find(x=>x.id===sid);if(!s)continue;
-      const existing=c.results.find(x=>x.id===id);
-      const item={id,studentId:sid,studentName:s.name,date:p.d,lesson:'L1',s1:s1??null,time:time??null,reloads:reloads??null};
-      if(existing){
-        Object.assign(existing,item);
-      }else{
-        c.results.push(item);n++;
-      }
-    }
-    saveJSON(DBKEY,db);
-    document.getElementById('scanMsg').textContent=`✅ ${n} nouveau(x) résultat(s) ajouté(s).`;
-    return true;
-  }
-  return false;
-}
-document.getElementById('qrPhoto').addEventListener('change',e=>{
-  const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.getElementById('scanCanvas');c.width=img.width;c.height=img.height;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const d=ctx.getImageData(0,0,c.width,c.height),code=window.jsQR?jsQR(d.data,d.width,d.height):null;if(code&&handleQR(code.data))document.getElementById('scanMsg').textContent='✅ QR importé.';else document.getElementById('scanMsg').textContent='QR non reconnu.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value='';
-});
-
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'))}
+if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}
 </script>
-</body>
-</html>
+</body></html>

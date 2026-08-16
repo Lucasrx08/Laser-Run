@@ -1,37 +1,17 @@
-LASER RUN 6ème — V7
+LASER RUN 6ème — V8
 
-Cette version supprime complètement la manipulation classes.json.
+Nouveautés :
+- Mise en page responsive pour ordinateur, tablette et smartphone.
+- Les classes sont créées une seule fois dans l’espace professeur.
+- Import CSV / Excel.
+- « Diffuser les classes » génère automatiquement 1 ou plusieurs QR selon la taille des listes.
+- Sur chaque tablette élève : « Installer / mettre à jour les classes » puis scanner ces QR une seule fois.
+- Une nouvelle diffusion remplace automatiquement les listes installées.
+- L1 complète : Situation 1 + Situation principale.
+- Résultats locaux puis transfert par QR vers l’espace professeur.
+- Les gros lots de données sont automatiquement découpés en plusieurs QR.
+- Sur ordinateur, le scanner propose la webcam ou l’ouverture d’une photo/capture d’écran.
 
-FONCTIONNEMENT
-1. PROFESSEUR
-- Crée les classes et importe les élèves sur son appareil.
-- Dans une classe, appuie sur « QR de la classe ».
-- Chaque tablette élève scanne ce QR UNE SEULE FOIS.
-- La classe et les élèves restent ensuite enregistrés sur la tablette, même hors connexion.
+Mise à jour GitHub : déposer les 5 fichiers à la racine du dépôt et remplacer les versions précédentes.
 
-2. ÉLÈVES
-- Les leçons sont déjà intégrées à l’application.
-- Choisir « Installer une classe par QR » seulement lors de la première utilisation.
-- Ensuite : Classe → L1 → Binôme → Situation 1 / Situation principale.
-- Aucun fichier JSON, aucune séance à importer.
-
-3. RÉSULTATS
-- Les résultats restent sur chaque tablette.
-- En fin de séance : « QR des résultats de la tablette ».
-- Le professeur scanne chaque tablette.
-- Les doublons sont ignorés / mis à jour.
-
-4. COMPATIBILITÉ
-- iPhone / iPad / Android
-- Safari / Chrome / Edge sur ordinateur
-- Si la caméra n’est pas disponible sur ordinateur, le bouton « Photo » permet de lire une capture/photo du QR.
-
-5. DONNÉES
-- Aucun serveur de données externe.
-- GitHub Pages héberge l’application.
-- Classes et résultats sont stockés localement dans le navigateur/appareil.
-- Les QR servent uniquement au transfert direct entre appareils.
-
-NOTE
-Les bibliothèques QR et Excel sont chargées depuis leur CDN lors de la première ouverture.
-Les données élèves ne sont pas envoyées à ces bibliothèques : elles s’exécutent dans le navigateur.
+Important : lors de la toute première ouverture de cette version, garder Internet quelques secondes afin que les bibliothèques Excel/QR puissent se charger et être mises en cache.
