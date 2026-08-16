@@ -1,5 +1,5 @@
-const CACHE='laser-run-6e-v6-20260816-1';
-const CORE=['./','./index.html','./manifest.json','./classes.json','./icon-192.png','./icon-512.png'];
+const CACHE='laser-run-6e-v7-20260816-1';
+const CORE=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));

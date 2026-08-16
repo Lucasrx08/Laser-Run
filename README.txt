@@ -1,37 +1,37 @@
-LASER RUN 6ème — V6
+LASER RUN 6ème — V7
 
-Fichiers à déposer à la racine du dépôt GitHub Pages :
-- index.html
-- manifest.json
-- service-worker.js
-- classes.json
-- icon-192.png
-- icon-512.png
+Cette version supprime complètement la manipulation classes.json.
 
-NOUVEAU FONCTIONNEMENT
+FONCTIONNEMENT
 1. PROFESSEUR
-   - Créer les classes.
-   - Importer les élèves.
-   - Cliquer "Exporter classes.json".
-   - Remplacer le fichier classes.json du dépôt GitHub par celui exporté.
-   Cette opération n'est nécessaire que lorsque les classes changent.
+- Crée les classes et importe les élèves sur son appareil.
+- Dans une classe, appuie sur « QR de la classe ».
+- Chaque tablette élève scanne ce QR UNE SEULE FOIS.
+- La classe et les élèves restent ensuite enregistrés sur la tablette, même hors connexion.
 
 2. ÉLÈVES
-   - Ouvrir l'application une fois avec Internet.
-   - "Actualiser les classes".
-   - Les classes restent ensuite disponibles hors connexion.
-   - L1 propose deux parties :
-       Situation 1 : Défi Étoile, score /5 avec cibles vertes/rouges.
-       Situation principale : 4 x 150 m, 3 passages au tir, 5 touches obligatoires,
-       nombre de rechargements illimité et chronomètre continu.
+- Les leçons sont déjà intégrées à l’application.
+- Choisir « Installer une classe par QR » seulement lors de la première utilisation.
+- Ensuite : Classe → L1 → Binôme → Situation 1 / Situation principale.
+- Aucun fichier JSON, aucune séance à importer.
 
 3. RÉSULTATS
-   - Chaque tablette conserve localement les résultats.
-   - En fin de séance : "QR des résultats de la tablette".
-   - Le professeur : "Scanner les résultats".
-   - Un QR peut contenir plusieurs résultats et les doublons sont ignorés.
+- Les résultats restent sur chaque tablette.
+- En fin de séance : « QR des résultats de la tablette ».
+- Le professeur scanne chaque tablette.
+- Les doublons sont ignorés / mis à jour.
 
-IMPORTANT
-Les bibliothèques techniques XLSX / QR sont chargées lors de la première ouverture en ligne
-puis peuvent être mises en cache par le navigateur/service worker.
-Aucune performance élève n'est envoyée vers un serveur externe par l'application.
+4. COMPATIBILITÉ
+- iPhone / iPad / Android
+- Safari / Chrome / Edge sur ordinateur
+- Si la caméra n’est pas disponible sur ordinateur, le bouton « Photo » permet de lire une capture/photo du QR.
+
+5. DONNÉES
+- Aucun serveur de données externe.
+- GitHub Pages héberge l’application.
+- Classes et résultats sont stockés localement dans le navigateur/appareil.
+- Les QR servent uniquement au transfert direct entre appareils.
+
+NOTE
+Les bibliothèques QR et Excel sont chargées depuis leur CDN lors de la première ouverture.
+Les données élèves ne sont pas envoyées à ces bibliothèques : elles s’exécutent dans le navigateur.

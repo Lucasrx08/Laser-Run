@@ -115,7 +115,7 @@ button{cursor:pointer}
 <section id="home">
   <div class="topbar">
     <div><div class="brand">Laser Run 6ème</div><div class="subtitle">Cycle EPS · fonctionnement hors connexion</div></div>
-    <span class="pill">V6</span>
+    <span class="pill">V7</span>
   </div>
   <div class="role-grid">
     <button class="role-card role-prof" onclick="teacherGate()">
@@ -139,9 +139,8 @@ button{cursor:pointer}
   </div>
   <div class="toolbar">
     <button class="btn orange" onclick="toggleCreateClass()">+ Nouvelle classe</button>
-    <button class="btn light" onclick="startScanner()">📷 Scanner les résultats</button>
-    <button class="btn ghost" onclick="exportClasses()">Exporter classes.json</button>
-    <button class="btn ghost" onclick="changePin()">Changer le code</button>
+    <button class="btn light" onclick="scannerMode='results';startScanner()">📷 Scanner les résultats</button>
+        <button class="btn ghost" onclick="changePin()">Changer le code</button>
   </div>
 
   <div id="createClassBox" class="card hidden">
@@ -159,7 +158,7 @@ button{cursor:pointer}
   <button class="back" onclick="openProf()">← Mes classes</button>
   <div class="topbar">
     <div><div class="screen-title" id="pcName"></div><div class="subtitle" id="pcMeta"></div></div>
-    <button class="btn red" onclick="deleteCurrentClass()">Supprimer</button>
+    <div class="toolbar" style="margin:0"><button class="btn light" onclick="showClassQR()">QR de la classe</button><button class="btn red" onclick="deleteCurrentClass()">Supprimer</button></div>
   </div>
   <div class="card">
     <div class="section">Élèves</div>
@@ -183,9 +182,9 @@ button{cursor:pointer}
     <div><div class="screen-title">Espace élèves</div><div class="subtitle">Choisis ta classe</div></div>
     <span class="pill">Élèves</span>
   </div>
-  <div class="notice">Les classes sont récupérées depuis GitHub lorsqu’une connexion est disponible puis conservées sur la tablette.</div>
+  <div class="notice">Les leçons sont déjà dans l’application. La classe est installée une seule fois sur la tablette en scannant le QR donné par le professeur.</div>
   <div class="toolbar">
-    <button class="btn light" onclick="refreshPublishedClasses()">↻ Actualiser les classes</button>
+    <button class="btn light" onclick="startClassScanner()">📷 Installer une classe par QR</button>
     <button class="btn ghost" onclick="openTabletQR()">QR des résultats de la tablette</button>
   </div>
   <div id="studentClasses" class="list"></div>
@@ -267,7 +266,7 @@ button{cursor:pointer}
 <!-- QR -->
 <section id="qrScreen" class="hidden">
   <button class="back" onclick="qrBack()">← Retour</button>
-  <div class="topbar"><div><div class="screen-title">Résultats de la tablette</div><div class="subtitle">Un seul QR code pour le professeur</div></div></div>
+  <div class="topbar"><div><div class="screen-title" id="qrTitle">Résultats de la tablette</div><div class="subtitle" id="qrSubtitle">Un seul QR code pour le professeur</div></div></div>
   <div class="card">
     <div id="qrSummary" class="notice"></div>
     <div id="qrCode" class="qrbox"></div>
@@ -280,7 +279,7 @@ button{cursor:pointer}
   <video id="scanVideo" playsinline autoplay muted></video>
   <canvas id="scanCanvas" class="hidden"></canvas>
   <div class="scannerbar">
-    <div><b>Scanner les résultats</b><div id="scanMsg" style="opacity:.75;font-size:13px">Présente le QR d’une tablette.</div></div>
+    <div><b id="scanTitle">Scanner les résultats</b><div id="scanMsg" style="opacity:.75;font-size:13px">Présente le QR d’une tablette.</div></div>
     <div class="toolbar" style="margin:0">
       <label class="btn light" for="qrPhoto">Photo</label>
       <input id="qrPhoto" class="hidden" type="file" accept="image/*" capture="environment">
@@ -304,18 +303,42 @@ button{cursor:pointer}
 </div>
 
 <script>
-const DBKEY='lr6_prof_v6';
-const RESULTKEY='lr6_tablet_results_v6';
-const PUBKEY='lr6_published_classes_v6';
-const PINKEY='lr6_pin_v6';
+const DBKEY='lr6_prof_v7';
+const RESULTKEY='lr6_tablet_results_v7';
+const PUBKEY='lr6_installed_classes_v7';
+const PINKEY='lr6_pin_v7';
 let db=loadJSON(DBKEY,{classes:[]});
 let published=loadJSON(PUBKEY,{classes:[]});
 let currentClassId=null, studentClassId=null, pair=[], activeStudent=null;
 let s1States=[0,0,0,0,0];
 let race=null, timer=null;
 let teacherUnlocked=false, pinMode='unlock';
-let scannerStream=null, scannerLoop=null;
+let scannerStream=null, scannerLoop=null, scannerMode='results';
 let lastScreen='studentHome';
+
+(function migrateV6(){
+  try{
+    if(!localStorage.getItem(DBKEY)){
+      const old=JSON.parse(localStorage.getItem('lr6_prof_v6')||'null');
+      if(old&&old.classes){ db=old; saveJSON(DBKEY,db); }
+    }
+    if(!localStorage.getItem(PINKEY)){
+      const oldPin=localStorage.getItem('lr6_pin_v6');
+      if(oldPin) localStorage.setItem(PINKEY,oldPin);
+    }
+    if(!localStorage.getItem(RESULTKEY)){
+      const oldR=JSON.parse(localStorage.getItem('lr6_tablet_results_v6')||'null');
+      if(oldR) saveJSON(RESULTKEY,oldR);
+    }
+    if(!localStorage.getItem(PUBKEY)){
+      const oldC=JSON.parse(localStorage.getItem('lr6_published_classes_v6')||'null');
+      if(oldC&&oldC.classes) saveJSON(PUBKEY,oldC);
+    }
+  }catch(e){}
+  db=loadJSON(DBKEY,{classes:[]});
+  published=loadJSON(PUBKEY,{classes:[]});
+})();
+
 
 function loadJSON(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}}
 function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -393,22 +416,10 @@ document.getElementById('rosterFile').addEventListener('change',async e=>{
   }catch(err){alert('Impossible de lire ce fichier.')}
   e.target.value='';
 });
-function exportClasses(){
-  const payload={version:6,classes:db.classes.map(c=>({id:c.id,name:c.name,students:c.students}))};
-  download(payload,'classes.json');
-  alert('Dépose ensuite classes.json à la racine du dépôt GitHub Laser-Run. Les tablettes élèves pourront alors actualiser leurs classes.');
-}
 
-async function refreshPublishedClasses(silent=false){
-  try{
-    const r=await fetch('./classes.json?'+Date.now(),{cache:'no-store'});
-    if(!r.ok)throw new Error();
-    const x=await r.json();
-    if(!x.classes)throw new Error();
-    published=x;saveJSON(PUBKEY,published);renderStudentClasses();if(!silent)alert('Classes actualisées.');
-  }catch(e){renderStudentClasses();if(!silent)alert('Pas de nouvelle liste disponible. Les classes déjà mémorisées restent utilisables hors connexion.')}
-}
-function openStudentHome(){refreshPublishedClasses(true);renderStudentClasses();show('studentHome')}
+
+
+function openStudentHome(){published=loadJSON(PUBKEY,{classes:[]});renderStudentClasses();show('studentHome')}
 function renderStudentClasses(){
   const el=document.getElementById('studentClasses');
   el.innerHTML=published.classes?.length?published.classes.map(c=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectStudentClass('${c.id}')"><div><div class="big-name">${esc(c.name)}</div><div class="muted">${c.students.length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe mémorisée sur cette tablette.</div>';
@@ -501,10 +512,12 @@ function confirmLeaveRace(){if(race&&race.state!=='done'&&race.state!=='ready'&&
 
 function compactPayload(){
   const recs=getResults().filter(r=>r.date===shortDate()&&r.lesson==='L1'&&r.classId===studentClassId&&(r.s1!=null||r.time!=null));
-  return {a:'LR6',v:6,c:studentClassId,d:shortDate(),r:recs.map(x=>[x.id,x.studentId,x.s1,x.time,x.reloads])};
+  return {a:'LR6',v:7,c:studentClassId,d:shortDate(),r:recs.map(x=>[x.id,x.studentId,x.s1,x.time,x.reloads])};
 }
 function openTabletQR(){
   lastScreen=document.getElementById('pair').classList.contains('hidden')?'studentHome':'pair';
+  document.getElementById('qrTitle').textContent='Résultats de la tablette';
+  document.getElementById('qrSubtitle').textContent='Un seul QR code pour le professeur';
   const p=compactPayload();
   if(!p.r.length)return alert('Aucun résultat du jour à afficher.');
   document.getElementById('qrSummary').textContent=`${p.r.length} élève(s) / résultat(s) du jour · ${currentStudentClass()?.name||''}`;
@@ -514,10 +527,40 @@ function openTabletQR(){
   catch(e){alert('Le QR est trop volumineux. Il faudra réduire le nombre de résultats affichés.')}
   show('qrScreen');
 }
-function qrBack(){if(lastScreen==='pair')show('pair');else openStudentHome()}
+function qrBack(){if(lastScreen==='pair')show('pair');else if(lastScreen==='profClass')show('profClass');else openStudentHome()}
+
+
+function showClassQR(){
+  const c=currentProfClass();
+  if(!c || !c.students.length) return alert('Ajoute d’abord les élèves.');
+  lastScreen='profClass';
+  document.getElementById('qrTitle').textContent='Installer '+c.name;
+  document.getElementById('qrSubtitle').textContent='À scanner une seule fois sur chaque tablette élève';
+  document.getElementById('qrSummary').textContent=`${c.name} · ${c.students.length} élève(s)`;
+  const payload={
+    a:'LR6C',v:7,c:c.id,n:c.name,
+    s:c.students.map(x=>[x.id,x.name])
+  };
+  const q=document.getElementById('qrCode');q.innerHTML='';
+  try{
+    new QRCode(q,{text:JSON.stringify(payload),width:330,height:330,correctLevel:QRCode.CorrectLevel.L});
+  }catch(e){
+    alert('Cette classe contient trop de données pour un seul QR code.');
+    return;
+  }
+  show('qrScreen');
+}
+
+function startClassScanner(){
+  scannerMode='class';
+  document.getElementById('scanTitle').textContent='Installer une classe';
+  document.getElementById('scanMsg').textContent='Scanne le QR affiché par le professeur.';
+  startScanner();
+}
 
 async function startScanner(){
-  document.getElementById('scanner').classList.remove('hidden');document.getElementById('scanMsg').textContent='Présente le QR d’une tablette.';
+  if(scannerMode!=='class'){scannerMode='results';document.getElementById('scanTitle').textContent='Scanner les résultats';document.getElementById('scanMsg').textContent='Présente le QR d’une tablette.';}
+  document.getElementById('scanner').classList.remove('hidden');
   try{
     scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
     const v=document.getElementById('scanVideo');v.srcObject=scannerStream;await v.play();
@@ -536,15 +579,42 @@ function scanLoop(){
 }
 function handleQR(txt){
   let p;try{p=JSON.parse(txt)}catch(e){return false}
-  if(p.a!=='LR6'||!p.c||!Array.isArray(p.r))return false;
-  const c=db.classes.find(x=>x.id===p.c);if(!c){document.getElementById('scanMsg').textContent='⚠️ Classe inconnue sur la tablette professeur.';return true}
-  c.results=c.results||[];let n=0;
-  for(const a of p.r){
-    const [id,sid,s1,time,reloads]=a;if(c.results.some(x=>x.id===id))continue;
-    const s=c.students.find(x=>x.id===sid);if(!s)continue;
-    c.results.push({id,studentId:sid,studentName:s.name,date:p.d,lesson:'L1',s1:s1??null,time:time??null,reloads:reloads??null});n++;
+
+  if(p.a==='LR6C'){
+    const cls={
+      id:p.c,
+      name:p.n,
+      students:(p.s||[]).map(x=>({id:x[0],name:x[1]}))
+    };
+    published=loadJSON(PUBKEY,{classes:[]});
+    const i=published.classes.findIndex(x=>x.id===cls.id);
+    if(i>=0) published.classes[i]=cls; else published.classes.push(cls);
+    saveJSON(PUBKEY,published);
+    document.getElementById('scanMsg').textContent=`✅ ${cls.name} installée (${cls.students.length} élèves).`;
+    setTimeout(()=>{stopScanner();openStudentHome()},700);
+    return true;
   }
-  saveJSON(DBKEY,db);return true;
+
+  if(p.a==='LR6'&&p.c&&Array.isArray(p.r)){
+    const c=db.classes.find(x=>x.id===p.c);
+    if(!c){document.getElementById('scanMsg').textContent='⚠️ Classe inconnue sur l’appareil professeur.';return true}
+    c.results=c.results||[];let n=0;
+    for(const a of p.r){
+      const [id,sid,s1,time,reloads]=a;
+      const s=c.students.find(x=>x.id===sid);if(!s)continue;
+      const existing=c.results.find(x=>x.id===id);
+      const item={id,studentId:sid,studentName:s.name,date:p.d,lesson:'L1',s1:s1??null,time:time??null,reloads:reloads??null};
+      if(existing){
+        Object.assign(existing,item);
+      }else{
+        c.results.push(item);n++;
+      }
+    }
+    saveJSON(DBKEY,db);
+    document.getElementById('scanMsg').textContent=`✅ ${n} nouveau(x) résultat(s) ajouté(s).`;
+    return true;
+  }
+  return false;
 }
 document.getElementById('qrPhoto').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.getElementById('scanCanvas');c.width=img.width;c.height=img.height;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);const d=ctx.getImageData(0,0,c.width,c.height),code=window.jsQR?jsQR(d.data,d.width,d.height):null;if(code&&handleQR(code.data))document.getElementById('scanMsg').textContent='✅ QR importé.';else document.getElementById('scanMsg').textContent='QR non reconnu.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value='';
