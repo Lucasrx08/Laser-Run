@@ -3,74 +3,124 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#081a2b" />
+  <meta name="theme-color" content="#323c3a" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="styles.css" />
-  <title>Biathlon EPS</title>
+  <title>Laser Run 6ème</title>
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <div>
-        <div class="eyebrow">BIATHLON</div>
-        <h1>EPS</h1>
+      <div class="brand">
+        <div class="brand-main">LASER RUN</div>
+        <div class="brand-sub">6ÈME</div>
       </div>
       <button id="resetBtn" class="ghost small">Réinitialiser</button>
     </header>
 
     <section id="homeView" class="view active">
-      <div class="hero card">
-        <h2>Biathlon EPS</h2>
-        <p>Application hors connexion pour gérer une séance de biathlon en EPS.</p>
+      <div class="page-heading">
+        <div>
+          <span class="kicker">MES GROUPES</span>
+          <h2>Mes classes</h2>
+        </div>
+        <button class="primary compact" data-go="classView" data-new-class="1">+ Classe</button>
       </div>
-
-      <div class="grid two">
-        <button class="menu-btn primary" data-go="classView">Classes & élèves</button>
-        <button class="menu-btn success" data-go="lessonView">Lancer L1</button>
-        <button class="menu-btn" data-go="resultsView">Résultats</button>
-        <button class="menu-btn violet" data-go="aboutView">À propos</button>
+      <div id="homeClassList" class="class-grid"></div>
+      <div id="noClassMessage" class="empty-state">
+        <strong>Aucune classe enregistrée</strong>
+        <span>Crée ta première classe de 6ème puis importe la liste des élèves.</span>
+        <button class="primary compact" data-go="classView" data-new-class="1">Créer une classe</button>
       </div>
-      <div class="offline-badge">✓ Fonctionne hors connexion après installation</div>
+      <div class="offline-badge">✓ Données enregistrées sur cet appareil · utilisation hors connexion après installation</div>
     </section>
 
     <section id="classView" class="view">
       <div class="section-head">
         <button class="back" data-go="homeView">←</button>
-        <h2>Classes & élèves</h2>
+        <div>
+          <span class="kicker">GESTION</span>
+          <h2>Classes & élèves</h2>
+        </div>
       </div>
+
       <div class="card form-card">
-        <label>Nom de la classe</label>
-        <div class="row">
-          <input id="className" placeholder="Ex. 6e Avignon" />
+        <label for="className">Nom de la classe</label>
+        <div class="row stack-mobile">
+          <input id="className" placeholder="Ex. 6ème Avignon" autocomplete="off" />
           <button id="saveClassBtn" class="primary compact">Enregistrer</button>
         </div>
       </div>
-      <div class="card form-card">
-        <label>Ajouter un élève</label>
-        <div class="row stack-mobile">
-          <input id="studentName" placeholder="Prénom NOM" />
-          <select id="nationSelect">
-            <option>France</option>
-            <option>Norvège</option>
-            <option>Suède</option>
-            <option>Allemagne</option>
-            <option>Italie</option>
-            <option>Espagne</option>
-          </select>
-          <button id="addStudentBtn" class="success compact">Ajouter</button>
+
+      <div id="classAdminPanel" class="hidden">
+        <div class="card">
+          <div class="card-title-row">
+            <div>
+              <span class="kicker">ÉLÈVES</span>
+              <h3 id="classTitle">Classe</h3>
+            </div>
+            <span id="studentCount" class="pill">0 élève</span>
+          </div>
+
+          <label id="fileDrop" class="file-drop" for="studentFile">
+            <input id="studentFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+            <span class="file-icon">⇧</span>
+            <strong>Importer la liste des élèves</strong>
+            <span>Excel ou CSV · un élève par ligne au format « Nom Prénom »</span>
+            <span class="file-action">Choisir un fichier</span>
+          </label>
+          <div id="importMessage" class="import-message hidden"></div>
+
+          <div class="divider"><span>ou ajouter manuellement</span></div>
+          <div class="row stack-mobile">
+            <input id="studentName" placeholder="Nom Prénom" autocomplete="off" />
+            <button id="addStudentBtn" class="accent compact">Ajouter</button>
+          </div>
+
+          <div id="studentList" class="list student-list"></div>
+        </div>
+
+        <button id="openClassBtn" class="accent big">Voir les leçons de cette classe</button>
+      </div>
+    </section>
+
+    <section id="classHubView" class="view">
+      <div class="section-head">
+        <button class="back" data-go="homeView">←</button>
+        <div>
+          <span class="kicker">CYCLE LASER RUN</span>
+          <h2 id="hubClassName">Classe</h2>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title-row"><h3 id="classTitle">Ma classe</h3><span id="studentCount" class="pill">0 élève</span></div>
-        <div id="studentList" class="list"></div>
+      <div class="class-summary card">
+        <div><span>Classe</span><strong id="hubClassName2">—</strong></div>
+        <div><span>Élèves</span><strong id="hubStudentCount">0</strong></div>
+        <button id="manageClassBtn" class="ghost compact">Gérer les élèves</button>
+      </div>
+
+      <div class="lesson-grid">
+        <button class="lesson-card active-lesson" data-lesson="L1">
+          <span class="lesson-number">L1</span>
+          <span class="lesson-copy"><strong>Centre national de recrutement</strong><small>4 × 150 m · 3 passages au tir</small></span>
+          <span class="chevron">›</span>
+        </button>
+        <button class="lesson-card locked" data-coming="L2"><span class="lesson-number">L2</span><span class="lesson-copy"><strong>Sprint individuel</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
+        <button class="lesson-card locked" data-coming="L3"><span class="lesson-number">L3</span><span class="lesson-copy"><strong>Poursuite</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
+        <button class="lesson-card locked" data-coming="L4"><span class="lesson-number">L4</span><span class="lesson-copy"><strong>Mass-start</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
+        <button class="lesson-card locked" data-coming="L5"><span class="lesson-number">L5</span><span class="lesson-copy"><strong>Relais des nations</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
+        <button class="lesson-card locked" data-coming="L6"><span class="lesson-number">L6</span><span class="lesson-copy"><strong>Qualification aux JO</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
+        <button class="lesson-card locked" data-coming="L7"><span class="lesson-number">L7</span><span class="lesson-copy"><strong>Jeux Olympiques</strong><small>À construire</small></span><span class="status-pill">Bientôt</span></button>
       </div>
     </section>
 
     <section id="lessonView" class="view">
       <div class="section-head">
-        <button class="back" data-go="homeView">←</button>
-        <h2>L1 — Centre national de recrutement</h2>
+        <button class="back" data-go="classHubView">←</button>
+        <div>
+          <span id="lessonClassLabel" class="kicker">CLASSE</span>
+          <h2>L1 — Centre national de recrutement</h2>
+        </div>
       </div>
       <div class="card form-card">
         <label>Élève</label>
@@ -84,7 +134,7 @@
         <div id="timer" class="timer">00:00.0</div>
         <div id="status" class="status">Prêt à démarrer</div>
         <div class="grid two">
-          <button id="startBtn" class="success big">Démarrer</button>
+          <button id="startBtn" class="accent big">Démarrer</button>
           <button id="shootBtn" class="primary big" disabled>Pas de tir</button>
         </div>
         <button id="finishBtn" class="finish big" disabled>🏁 Arrivée finale</button>
@@ -103,8 +153,8 @@
 
     <section id="finalView" class="view">
       <div class="section-head">
-        <button class="back" data-go="homeView">←</button>
-        <h2>Résultat final</h2>
+        <button class="back" data-go="classHubView">←</button>
+        <div><span id="finalClassLabel" class="kicker">CLASSE</span><h2>Résultat final</h2></div>
       </div>
       <div class="card result-card">
         <h3 id="finalStudent">Élève</h3>
@@ -115,34 +165,23 @@
         <div class="result-line total"><span>Temps corrigé</span><strong id="finalCorrected">00:00.0</strong></div>
       </div>
       <div class="grid two">
-        <button class="menu-btn success" data-go="lessonView">Nouvel élève</button>
-        <button class="menu-btn" data-go="resultsView">Voir résultats</button>
+        <button class="menu-btn accent" data-go="lessonView">Nouvel élève</button>
+        <button class="menu-btn primary" data-go="resultsView">Voir résultats L1</button>
       </div>
     </section>
 
     <section id="resultsView" class="view">
       <div class="section-head">
-        <button class="back" data-go="homeView">←</button>
-        <h2>Résultats L1</h2>
+        <button class="back" data-go="classHubView">←</button>
+        <div><span id="resultsClassLabel" class="kicker">CLASSE</span><h2>Résultats L1</h2></div>
       </div>
       <div class="card">
         <div id="resultsList" class="results-list"></div>
       </div>
     </section>
-
-    <section id="aboutView" class="view">
-      <div class="section-head">
-        <button class="back" data-go="homeView">←</button>
-        <h2>À propos</h2>
-      </div>
-      <div class="card">
-        <p><strong>Biathlon EPS V1</strong></p>
-        <p>Format L1 : 4 × 150 m, 3 passages au tir, 5 tirs par passage, +5 s par tir manqué.</p>
-        <p>Les données sont enregistrées uniquement sur l’appareil.</p>
-      </div>
-    </section>
   </main>
 
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
