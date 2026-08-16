@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#081a2b" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Biathlon EPS</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">BIATHLON</div>
+        <h1>EPS</h1>
+      </div>
+      <button id="resetBtn" class="ghost small">Réinitialiser</button>
+    </header>
+
+    <section id="homeView" class="view active">
+      <div class="hero card">
+        <h2>Biathlon EPS</h2>
+        <p>Application hors connexion pour gérer une séance de biathlon en EPS.</p>
+      </div>
+
+      <div class="grid two">
+        <button class="menu-btn primary" data-go="classView">Classes & élèves</button>
+        <button class="menu-btn success" data-go="lessonView">Lancer L1</button>
+        <button class="menu-btn" data-go="resultsView">Résultats</button>
+        <button class="menu-btn violet" data-go="aboutView">À propos</button>
+      </div>
+      <div class="offline-badge">✓ Fonctionne hors connexion après installation</div>
+    </section>
+
+    <section id="classView" class="view">
+      <div class="section-head">
+        <button class="back" data-go="homeView">←</button>
+        <h2>Classes & élèves</h2>
+      </div>
+      <div class="card form-card">
+        <label>Nom de la classe</label>
+        <div class="row">
+          <input id="className" placeholder="Ex. 6e Avignon" />
+          <button id="saveClassBtn" class="primary compact">Enregistrer</button>
+        </div>
+      </div>
+      <div class="card form-card">
+        <label>Ajouter un élève</label>
+        <div class="row stack-mobile">
+          <input id="studentName" placeholder="Prénom NOM" />
+          <select id="nationSelect">
+            <option>France</option>
+            <option>Norvège</option>
+            <option>Suède</option>
+            <option>Allemagne</option>
+            <option>Italie</option>
+            <option>Espagne</option>
+          </select>
+          <button id="addStudentBtn" class="success compact">Ajouter</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title-row"><h3 id="classTitle">Ma classe</h3><span id="studentCount" class="pill">0 élève</span></div>
+        <div id="studentList" class="list"></div>
+      </div>
+    </section>
+
+    <section id="lessonView" class="view">
+      <div class="section-head">
+        <button class="back" data-go="homeView">←</button>
+        <h2>L1 — Centre national de recrutement</h2>
+      </div>
+      <div class="card form-card">
+        <label>Élève</label>
+        <select id="lessonStudentSelect"></select>
+      </div>
+      <div id="raceCard" class="card race-card">
+        <div class="race-meta">
+          <div><span class="label">Tour</span><strong id="lapLabel">1 / 4</strong></div>
+          <div><span class="label">Distance</span><strong>150 m</strong></div>
+        </div>
+        <div id="timer" class="timer">00:00.0</div>
+        <div id="status" class="status">Prêt à démarrer</div>
+        <div class="grid two">
+          <button id="startBtn" class="success big">Démarrer</button>
+          <button id="shootBtn" class="primary big" disabled>Pas de tir</button>
+        </div>
+        <button id="finishBtn" class="finish big" disabled>🏁 Arrivée finale</button>
+      </div>
+
+      <div id="shootPanel" class="card hidden">
+        <div class="card-title-row"><h3 id="shootTitle">Tir 1 / 3</h3><span class="pill">5 tirs</span></div>
+        <div id="targets" class="targets"></div>
+        <div class="shoot-summary">
+          <div><span>Réussis</span><strong id="hitsCount">0 / 5</strong></div>
+          <div><span>Pénalité</span><strong id="penaltyCount">+0 s</strong></div>
+        </div>
+        <button id="validateShootBtn" class="primary big">Valider & repartir</button>
+      </div>
+    </section>
+
+    <section id="finalView" class="view">
+      <div class="section-head">
+        <button class="back" data-go="homeView">←</button>
+        <h2>Résultat final</h2>
+      </div>
+      <div class="card result-card">
+        <h3 id="finalStudent">Élève</h3>
+        <div class="result-line"><span>Temps brut</span><strong id="finalRaw">00:00.0</strong></div>
+        <div class="result-line"><span>Tirs réussis</span><strong id="finalHits">0 / 15</strong></div>
+        <div class="result-line"><span>Précision</span><strong id="finalAccuracy">0 %</strong></div>
+        <div class="result-line"><span>Pénalités</span><strong id="finalPenalty">+0 s</strong></div>
+        <div class="result-line total"><span>Temps corrigé</span><strong id="finalCorrected">00:00.0</strong></div>
+      </div>
+      <div class="grid two">
+        <button class="menu-btn success" data-go="lessonView">Nouvel élève</button>
+        <button class="menu-btn" data-go="resultsView">Voir résultats</button>
+      </div>
+    </section>
+
+    <section id="resultsView" class="view">
+      <div class="section-head">
+        <button class="back" data-go="homeView">←</button>
+        <h2>Résultats L1</h2>
+      </div>
+      <div class="card">
+        <div id="resultsList" class="results-list"></div>
+      </div>
+    </section>
+
+    <section id="aboutView" class="view">
+      <div class="section-head">
+        <button class="back" data-go="homeView">←</button>
+        <h2>À propos</h2>
+      </div>
+      <div class="card">
+        <p><strong>Biathlon EPS V1</strong></p>
+        <p>Format L1 : 4 × 150 m, 3 passages au tir, 5 tirs par passage, +5 s par tir manqué.</p>
+        <p>Les données sont enregistrées uniquement sur l’appareil.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
