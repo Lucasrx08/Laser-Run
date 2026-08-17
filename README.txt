@@ -36,3 +36,11 @@ MODIFICATIONS PRINCIPALES
   Défi Précision = nombre d’étoiles de 0 à 4.
 
 Les futures leçons pourront utiliser la même structure d’export avec Défi Rapidité ou Défi Respiration selon le thème travaillé.
+
+
+V10.1
+- Correction du bouton Situation principale : accès DOM explicite, fiable sur ordinateur/tablette/smartphone.
+- Les élèves de deux nations différentes peuvent former un binôme temporaire.
+- Chaque performance reste comptabilisée pour la nation propre de l’élève.
+- La nation s’affiche dès qu’un élève sélectionné possède déjà une nation.
+- Si un élève n’a pas encore de nation, celle-ci peut lui être attribuée sans modifier la nation de son partenaire.

@@ -213,26 +213,123 @@ function setStudentNation(i,nation){if(!Array.isArray(sc()[1][i]))sc()[1][i]=[sc
 function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){lessonClass.textContent=sc()[0];let ls=[['L1','Centre national de recrutement',1],['L2','Sprint individuel',0],['L3','Poursuite',0],['L4','Mass-start',0],['L5','Relais des nations',0],['L6','Qualification aux JO',0],['L7','Jeux Olympiques',0]];lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?'onclick="openPair()"':'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');show('lessons')}
 function options(){return '<option value="">Choisir...</option>'+studentEntries().map((x,i)=>`<option value="${i}">${esc(studentNameAt(i))}</option>`).join('')}
 function renderNations(){nationGrid.innerHTML=NATIONS.map(n=>`<button class="nationBtn ${selectedNation===n?'selected':''}" onclick="selectNation('${n}')"><div class="nationName">${n}</div></button>`).join('')}
-function selectNation(n){const a=pa.value===''?null:+pa.value,b=pb.value===''?null:+pb.value;if(a!=null&&b!=null&&nationCount(n,[a,b])>=2){alert('Cette nation possède déjà deux élèves. Choisis une autre nation.');return}selectedNation=n;renderNations();updatePairNation()}
-function openPair(){pa.innerHTML=options();pb.innerHTML=options();pairWork.classList.add('hidden');selectedNation=null;renderNations();if(pair.length===2){pa.value=pair[0].i;pb.value=pair[1].i}updatePairNation();show('pair')}
-function updatePairNation(){nationConflict.classList.add('hidden');nationAutoBox.classList.add('hidden');validatePairBtn.disabled=false;const av=pa.value,bv=pb.value;if(av===''||bv===''||av===bv){nationAssignBox.classList.remove('hidden');return}const a=+av,b=+bv,na=studentNationAt(a),nb=studentNationAt(b);if(na&&nb&&na!==nb){selectedNation=null;nationAssignBox.classList.add('hidden');nationConflict.textContent=`Ces deux élèves appartiennent déjà à deux nations différentes : ${na} et ${nb}. Choisis le bon partenaire.`;nationConflict.classList.remove('hidden');validatePairBtn.disabled=true;return}if(na||nb){selectedNation=na||nb;nationAssignBox.classList.add('hidden');nationAutoBox.textContent=`Nation : ${selectedNation}`;nationAutoBox.classList.remove('hidden');renderNations();return}nationAssignBox.classList.remove('hidden');renderNations()}
-function validatePair(){if(pa.value===''||pb.value===''||pa.value===pb.value)return alert('Choisis deux élèves différents.');const a=+pa.value,b=+pb.value,na=studentNationAt(a),nb=studentNationAt(b);if(na&&nb&&na!==nb)return alert('Ces deux élèves appartiennent à deux nations différentes.');const nation=na||nb||selectedNation;if(!nation)return alert('Choisis la nation du binôme pour cette première attribution.');if(!na&&!nb&&nationCount(nation,[a,b])>=2)return alert('Cette nation possède déjà deux élèves.');if(!na)setStudentNation(a,nation);if(!nb)setStudentNation(b,nation);selectedNation=nation;pair=[{i:a,name:studentNameAt(a)},{i:b,name:studentNameAt(b)}];renderPair();updatePairNation()}
+function selectNation(n){
+ selectedNation=n;
+ renderNations();
+ updatePairNation();
+}
+function openPair(){
+ pa.innerHTML=options();
+ pb.innerHTML=options();
+ pairWork.classList.add('hidden');
+ selectedNation=null;
+ renderNations();
+ if(pair.length===2){pa.value=pair[0].i;pb.value=pair[1].i}
+ updatePairNation();
+ show('pair');
+}
+function updatePairNation(){
+ const autoBox=document.getElementById('nationAutoBox');
+ const assignBox=document.getElementById('nationAssignBox');
+ const conflict=document.getElementById('nationConflict');
+ const btn=document.getElementById('validatePairBtn');
+ conflict.classList.add('hidden');
+ autoBox.classList.add('hidden');
+ btn.disabled=false;
+
+ const av=pa.value,bv=pb.value;
+ const selected=[];
+ if(av!=='')selected.push({i:+av,name:studentNameAt(+av),nation:studentNationAt(+av)});
+ if(bv!==''&&bv!==av)selected.push({i:+bv,name:studentNameAt(+bv),nation:studentNationAt(+bv)});
+
+ if(!selected.length){
+   assignBox.classList.remove('hidden');
+   return;
+ }
+
+ const known=selected.filter(x=>x.nation);
+ if(known.length){
+   autoBox.innerHTML=known.map(x=>`<b>${esc(x.name)}</b> : ${esc(x.nation)}`).join('<br>');
+   autoBox.classList.remove('hidden');
+ }
+
+ // Si les deux élèves ont déjà une nation, aucune nouvelle attribution n'est nécessaire,
+ // même si leurs nations sont différentes.
+ if(selected.length===2 && selected.every(x=>x.nation)){
+   assignBox.classList.add('hidden');
+   return;
+ }
+
+ // Si au moins un élève n'a pas encore de nation, l'enseignant/élève peut attribuer
+ // une nation uniquement à l'élève non encore affecté.
+ assignBox.classList.remove('hidden');
+}
+function validatePair(){
+ if(pa.value===''||pb.value===''||pa.value===pb.value)return alert('Choisis deux élèves différents.');
+
+ const a=+pa.value,b=+pb.value;
+ const na=studentNationAt(a),nb=studentNationAt(b);
+
+ // Si les deux élèves ont déjà une nation, on conserve chacune sans blocage.
+ if(na && nb){
+   pair=[{i:a,name:studentNameAt(a)},{i:b,name:studentNameAt(b)}];
+   selectedNation=null;
+   renderPair();
+   updatePairNation();
+   return;
+ }
+
+ // Si les deux sont encore sans nation, une nation commune est nécessaire pour
+ // l'attribution initiale de L1.
+ if(!na && !nb){
+   if(!selectedNation)return alert('Choisis la nation à attribuer à ce binôme.');
+   setStudentNation(a,selectedNation);
+   setStudentNation(b,selectedNation);
+ }
+
+ // Si un seul élève n'a pas encore de nation, on attribue la nation choisie à lui seul.
+ if(na && !nb){
+   if(!selectedNation)selectedNation=na;
+   setStudentNation(b,selectedNation);
+ }
+ if(!na && nb){
+   if(!selectedNation)selectedNation=nb;
+   setStudentNation(a,selectedNation);
+ }
+
+ pair=[{i:a,name:studentNameAt(a)},{i:b,name:studentNameAt(b)}];
+ renderPair();
+ updatePairNation();
+}
 function keyFor(n){return `${sc()[0]}|${n}|${day()}|L1`}
 function record(n){return read(RES,[]).find(r=>r.key===keyFor(n))||null}
 function ensure(n){let a=read(RES,[]),r=a.find(x=>x.key===keyFor(n));const idx=studentEntries().findIndex((x,i)=>studentNameAt(i)===n);const permanentNation=idx>=0?studentNationAt(idx):selectedNation;if(!r){r={key:keyFor(n),className:sc()[0],name:n,date:day(),nation:permanentNation,s1:null,stars:null,time:null};a.push(r);write(RES,a)}else if(permanentNation){r.nation=permanentNation;saveRecord(r)}return r}
 function saveRecord(r){let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
 function renderPair(){
- pairWork.classList.remove('hidden');
- s1Buttons.innerHTML=pair.map(p=>{
+ const work=document.getElementById('pairWork');
+ const s1box=document.getElementById('s1Buttons');
+ const mainbox=document.getElementById('mainButtons');
+ work.classList.remove('hidden');
+
+ s1box.innerHTML=pair.map(p=>{
   let r=record(p.name);
-  return `<button class="role studentrole" style="min-height:145px" onclick="startS1(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(selectedNation||'')}</div></div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5 · '+(r.stars??0)+' ⭐':'Commencer'}</div></button>`;
+  const nation=studentNationAt(p.i)||'Nation non attribuée';
+  return `<button type="button" class="role studentrole" style="min-height:145px" onclick="startS1(${p.i})">
+    <div><div class="big">${esc(p.name)}</div><div class="muted">${esc(nation)}</div></div>
+    <div>${r&&r.s1!=null?'✅ '+r.s1+'/5 · '+(r.stars??0)+' ⭐':'Commencer'}</div>
+  </button>`;
  }).join('');
- mainButtons.innerHTML=pair.map(p=>{
+
+ mainbox.innerHTML=pair.map(p=>{
   let r=record(p.name);
-  return `<button class="role profrole" style="min-height:145px" onclick="startRace(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(selectedNation||'')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`;
+  const nation=studentNationAt(p.i)||'Nation non attribuée';
+  return `<button type="button" class="role profrole" style="min-height:145px" onclick="startRace(${p.i})">
+    <div><div class="big">${esc(p.name)}</div><div class="muted">${esc(nation)}</div></div>
+    <div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div>
+  </button>`;
  }).join('');
 }
-function startS1(i){active={i,name:studentNameAt(i)};s1=[0,0,0,0,0];xp1=null;xp2=null;s1Name.textContent=`${active.name} · ${selectedNation}`;renderXP('xp1');xp1Card.classList.remove('hidden');xp2Card.classList.add('hidden');starCard.classList.add('hidden');show('s1')}
+function startS1(i){active={i,name:studentNameAt(i)};s1=[0,0,0,0,0];xp1=null;xp2=null;document.getElementById('s1Name').textContent=`${active.name} · ${studentNationAt(i)||'Nation non attribuée'}`;renderXP('xp1');xp1Card.classList.remove('hidden');xp2Card.classList.add('hidden');starCard.classList.add('hidden');show('s1')}
 function criterionHTML(prefix){return [['pieds','PIEDS','Stabilité des appuis'],['bras','BRAS','Tenue du pistolet'],['regard','REGARD','Alignement de la visée']].map(x=>`<button class="criterion ${(prefix==='xp1'?xp1:xp2)===x[0]?'active':''}" onclick="chooseCriterion('${prefix}','${x[0]}')"><div class="criterionTitle">${x[1]}</div><div class="muted">${x[2]}</div></button>`).join('')}
 function renderXP(prefix){document.getElementById(prefix+'Criteria').innerHTML=criterionHTML(prefix);const chosen=prefix==='xp1'?xp1:xp2;document.getElementById(prefix+'Advice').textContent=chosen?XP_ADVICE[chosen]:'Sélectionne PIEDS, BRAS ou REGARD.'}
 function chooseCriterion(prefix,c){if(prefix==='xp1')xp1=c;else xp2=c;renderXP(prefix)}
@@ -240,16 +337,119 @@ function goXP2(){if(!xp1)return alert('Choisis un critère à conseiller avant d
 function goStar(){if(!xp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');xp2Card.classList.add('hidden');starCard.classList.remove('hidden');renderTargets()}
 function renderTargets(){targets.innerHTML=s1.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycle(${i})"></button>`).join('');const hits=s1.filter(x=>x===1).length;s1Score.textContent=`${hits} / 5`;const stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;starDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);starText.textContent=stars===4?'Objectif maximal atteint : 4 étoiles de précision.':`${stars} étoile(s) de précision.`}
 function cycle(i){s1[i]=(s1[i]+1)%3;renderTargets()}
-function saveS1(){if(s1.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;let hits=s1.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;let r=ensure(active.name);r.nation=studentNationAt(active.i)||selectedNation;r.s1=hits;r.stars=stars;saveRecord(r);openPair()}
-function startRace(i){active={i,name:studentNameAt(i)};selectedNation=studentNationAt(i)||selectedNation;race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,hits:0};clearInterval(tick);raceName.textContent=`${active.name} · ${selectedNation||''}`;resetRace();show('race')}
-function resetRace(){timer.textContent='00:00.0';lap.textContent='0 / 4';shootNo.textContent='0 / 3';touchCount.textContent='0 / 5';raceStatus.textContent='Prêt';shootPanel.classList.add('hidden');raceAction.classList.remove('hidden');raceAction.textContent='DÉMARRER';raceAction.disabled=false;renderDots()}
-function clock(){race.elapsed=performance.now()-race.start;timer.textContent=fmt(race.elapsed)}
-function updateStats(){lap.textContent=`${race.lap} / 4`;shootNo.textContent=`${race.shoot} / 3`;touchCount.textContent=`${race.hits} / 5`}
-function renderDots(){dots.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('')}
-function raceAction(){if(race.state==='ready'){race.start=performance.now();race.state='run';race.lap=1;tick=setInterval(clock,100);raceAction.textContent='ARRIVÉE AU PAS DE TIR 1';raceStatus.textContent='Boucle 1';updateStats();return}if(race.state==='run'){if(race.shoot<3){race.state='shoot';race.hits=0;shootPanel.classList.remove('hidden');raceAction.classList.add('hidden');raceStatus.textContent=`Pas de tir ${race.shoot+1}`;updateStats();renderDots()}else finishRace();return}if(race.state==='readyToRun'){race.lap++;race.state='run';shootPanel.classList.add('hidden');raceAction.classList.remove('hidden');raceAction.textContent=race.shoot<3?`ARRIVÉE AU PAS DE TIR ${race.shoot+1}`:'ARRIVÉE';raceStatus.textContent=`Boucle ${race.lap}`;updateStats();return}}
-function validateTouch(){if(race.state!=='shoot'||race.hits>=5)return;race.hits++;updateStats();renderDots();if(race.hits===5){race.shoot++;race.state='readyToRun';raceStatus.textContent='TIR VALIDÉ';raceAction.classList.remove('hidden');raceAction.textContent=race.shoot<3?'REPARTIR POUR LA BOUCLE SUIVANTE':'REPARTIR POUR LA DERNIÈRE BOUCLE'}}
-function finishRace(){clearInterval(tick);clock();race.state='done';let r=ensure(active.name);r.nation=studentNationAt(active.i)||selectedNation;r.time=Math.round(race.elapsed);saveRecord(r);raceStatus.textContent='Terminé';raceAction.textContent='RÉSULTAT ENREGISTRÉ';raceAction.disabled=true;setTimeout(openPair,700)}
-function leaveRace(){if(race&&race.state!=='ready'&&race.state!=='done'&&!confirm('Abandonner cette performance ?'))return;clearInterval(tick);openPair()}
+function saveS1(){if(s1.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;let hits=s1.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;let r=ensure(active.name);r.nation=studentNationAt(active.i)||null;r.s1=hits;r.stars=stars;saveRecord(r);openPair()}
+function startRace(i){
+ active={i,name:studentNameAt(i)};
+ const nation=studentNationAt(i)||'Nation non attribuée';
+ race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,hits:0};
+ clearInterval(tick);
+ document.getElementById('raceName').textContent=`${active.name} · ${nation}`;
+ resetRace();
+ show('race');
+}
+function resetRace(){
+ document.getElementById('timer').textContent='00:00.0';
+ document.getElementById('lap').textContent='0 / 4';
+ document.getElementById('shootNo').textContent='0 / 3';
+ document.getElementById('touchCount').textContent='0 / 5';
+ document.getElementById('raceStatus').textContent='Prêt';
+ document.getElementById('shootPanel').classList.add('hidden');
+ const action=document.getElementById('raceAction');
+ action.classList.remove('hidden');
+ action.textContent='DÉMARRER';
+ action.disabled=false;
+ renderDots();
+}
+function clock(){
+ race.elapsed=performance.now()-race.start;
+ document.getElementById('timer').textContent=fmt(race.elapsed);
+}
+function updateStats(){
+ document.getElementById('lap').textContent=`${race.lap} / 4`;
+ document.getElementById('shootNo').textContent=`${race.shoot} / 3`;
+ document.getElementById('touchCount').textContent=`${race.hits} / 5`;
+}
+function renderDots(){
+ const box=document.getElementById('dots');
+ box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('');
+}
+function raceAction(){
+ const action=document.getElementById('raceAction');
+ const status=document.getElementById('raceStatus');
+ const shootPanel=document.getElementById('shootPanel');
+
+ if(race.state==='ready'){
+  race.start=performance.now();
+  race.state='run';
+  race.lap=1;
+  tick=setInterval(clock,100);
+  action.textContent='ARRIVÉE AU PAS DE TIR 1';
+  status.textContent='Boucle 1';
+  updateStats();
+  return;
+ }
+
+ if(race.state==='run'){
+  if(race.shoot<3){
+   race.state='shoot';
+   race.hits=0;
+   shootPanel.classList.remove('hidden');
+   action.classList.add('hidden');
+   status.textContent=`Pas de tir ${race.shoot+1}`;
+   updateStats();
+   renderDots();
+  }else{
+   finishRace();
+  }
+  return;
+ }
+
+ if(race.state==='readyToRun'){
+  race.lap++;
+  race.state='run';
+  shootPanel.classList.add('hidden');
+  action.classList.remove('hidden');
+  action.textContent=race.shoot<3?`ARRIVÉE AU PAS DE TIR ${race.shoot+1}`:'ARRIVÉE';
+  status.textContent=`Boucle ${race.lap}`;
+  updateStats();
+  return;
+ }
+}
+function validateTouch(){
+ if(!race || race.state!=='shoot' || race.hits>=5)return;
+
+ race.hits++;
+ updateStats();
+ renderDots();
+
+ if(race.hits===5){
+  race.shoot++;
+  race.state='readyToRun';
+  document.getElementById('raceStatus').textContent='TIR VALIDÉ';
+  const action=document.getElementById('raceAction');
+  action.classList.remove('hidden');
+  action.textContent=race.shoot<3?'REPARTIR POUR LA BOUCLE SUIVANTE':'REPARTIR POUR LA DERNIÈRE BOUCLE';
+ }
+}
+function finishRace(){
+ clearInterval(tick);
+ clock();
+ race.state='done';
+ let r=ensure(active.name);
+ r.nation=studentNationAt(active.i)||null;
+ r.time=Math.round(race.elapsed);
+ saveRecord(r);
+ document.getElementById('raceStatus').textContent='Terminé';
+ const action=document.getElementById('raceAction');
+ action.textContent='RÉSULTAT ENREGISTRÉ';
+ action.disabled=true;
+ setTimeout(openPair,700);
+}
+function leaveRace(){
+ if(race&&race.state!=='ready'&&race.state!=='done'&&!confirm('Abandonner cette performance ?'))return;
+ clearInterval(tick);
+ openPair();
+}
 
 function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove('hidden');scanTitle.textContent=mode==='config'?'Installer les classes':'Scanner les résultats';scanMsg.textContent=mode==='config'?'Scanne les QR de configuration dans l’ordre.':'Scanne les QR de chaque tablette élève.';scanProgress.textContent='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanMsg.textContent+=' Caméra non disponible dans ce navigateur : utilise « Ouvrir une photo ».';return}navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(async s=>{stream=s;video.srcObject=s;await video.play();scanFrame()}).catch(()=>{scanMsg.textContent+=' Caméra inaccessible : utilise « Ouvrir une photo ».'})}
 function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
