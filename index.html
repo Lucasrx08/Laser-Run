@@ -46,7 +46,7 @@
 .rankRow{background:white;border-radius:17px;padding:15px;display:grid;grid-template-columns:70px 1fr auto;align-items:center;gap:12px}
 .rankPos{font-size:28px;font-weight:950;text-align:center}
 @media(max-width:650px){.nationGrid,.xpCriteria{grid-template-columns:1fr}.rankRow{grid-template-columns:52px 1fr}.rankRow>div:last-child{grid-column:2}}
-</style>
+.dot.missdot{background:#d9534f;border-color:#d9534f}</style>
 </head>
 <body>
 <div class="app">
@@ -138,6 +138,60 @@
  </div>
 </section>
 
+
+<section id="lesson23" class="hidden">
+ <button class="back" onclick="openLessons()">← Leçons</button>
+ <div class="top"><div><div id="l23Title" class="title"></div><div id="l23Sub" class="sub"></div></div><span id="l23Theme" class="pill"></span></div>
+ <div class="card">
+  <div class="section" style="margin-top:0">Choisis ton binôme</div>
+  <div class="grid2"><div class="field"><label>Élève 1</label><select id="l23a"></select></div><div class="field"><label>Élève 2</label><select id="l23b"></select></div></div>
+  <div class="toolbar"><button class="btn orange" onclick="validateL23Pair()">Valider le binôme</button></div>
+ </div>
+ <div id="l23Work" class="hidden">
+  <div id="l23S1Title" class="section"></div><div id="l23S1Buttons" class="grid2"></div>
+  <div id="l23MainTitle" class="section"></div><div id="l23MainButtons" class="grid2"></div>
+  <div class="toolbar"><button class="btn light" onclick="openResultsQR()">▦ Afficher le QR des résultats</button></div>
+ </div>
+</section>
+
+<section id="l23challenge" class="hidden">
+ <button class="back" onclick="show('lesson23')">← Binôme</button>
+ <div class="top"><div><div id="chTitle" class="title"></div><div id="chName" class="sub"></div></div><span id="chTheme" class="pill"></span></div>
+ <div class="card">
+  <div class="notice"><b>Deux Défis XP :</b> le coach observe et donne un seul conseil après chaque essai. <b>Défi Étoile :</b> aucune aide.</div>
+  <div class="section">Défi Étoile · résultat final</div>
+  <div id="speedChallenge" class="hidden">
+   <div class="field"><label>LED maximale atteinte en 50 secondes</label><input id="speedLed" type="number" inputmode="numeric" min="0" max="99" placeholder="Ex. 12"></div>
+   <div class="field" style="margin-top:14px"><label>Étoiles de rapidité obtenues</label><select id="speedStars"><option value="0">0 étoile</option><option value="1">1 étoile</option><option value="2">2 étoiles</option><option value="3">3 étoiles</option><option value="4">4 étoiles</option></select></div>
+  </div>
+  <div id="breathChallenge" class="hidden">
+   <div class="muted" style="margin-bottom:12px">Le coach valide le niveau atteint sur la routine respiratoire.</div>
+   <div class="field"><label>Étoiles de respiration obtenues</label><select id="breathStars"><option value="0">0 étoile</option><option value="1">1 étoile</option><option value="2">2 étoiles</option><option value="3">3 étoiles</option><option value="4">4 étoiles</option></select></div>
+  </div>
+  <div class="toolbar"><button class="btn orange" onclick="saveL23Challenge()">Enregistrer le Défi Étoile</button></div>
+ </div>
+</section>
+
+<section id="l23race" class="hidden">
+ <button class="back" onclick="leaveL23Race()">← Binôme</button>
+ <div class="top"><div><div id="r23Title" class="title"></div><div id="r23Name" class="sub"></div></div><span id="r23Status" class="pill">Prêt</span></div>
+ <div class="card">
+  <div id="r23PursuitInfo" class="notice hidden"></div>
+  <div id="r23Timer" class="timer">00:00.0</div>
+  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat">Rechargements<b id="r23Shots">0 / 5</b></div></div>
+  <div id="r23ShootPanel" class="hidden">
+   <div class="section" style="text-align:center">5 rechargements maximum</div>
+   <div id="r23Dots" class="fivehits"></div>
+   <div class="grid2" style="max-width:850px;margin:20px auto">
+    <button class="shoot hit" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
+    <button class="shoot miss" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
+   </div>
+   <div class="muted" style="text-align:center">Le chronomètre continue pendant le tir.</div>
+  </div>
+  <div id="r23Penalty" class="hidden card" style="margin-top:18px;text-align:center"></div>
+  <button id="r23Action" class="mainAction" onclick="r23Action()">DÉMARRER</button>
+ </div>
+</section>
 <section id="qr" class="hidden">
  <button class="back" onclick="qrBack()">← Retour</button><div class="top"><div><div id="qrTitle" class="title">QR</div><div id="qrSub" class="sub"></div></div></div>
  <div class="qrLayout"><div class="card"><div id="qrInfo" class="notice"></div><div id="qrDetail" class="list"></div></div><div><div id="qrBox" class="qrbox"></div><div class="qrnav"><button class="btn ghost" onclick="prevQR()">←</button><div id="qrCount" class="qrCounter"></div><button class="btn ghost" onclick="nextQR()">→</button></div></div></div>
@@ -149,7 +203,7 @@
 
 <script>
 const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
-let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof';
+let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof',currentLesson=1,l23pair=[],l23active=null,l23race=null,l23tick=null;
 let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={};
 const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Espagne','Suisse','Finlande'];
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
@@ -193,14 +247,22 @@ function renderNationRanking(rs){
  nationRanking.innerHTML=rows.length?rows.map((x,i)=>`<div class="rankRow"><div class="rankPos">${i+1}</div><div><div class="big">${esc(x.nation)}</div><div class="muted">${esc(x.people[0].name)} ${fmt(x.people[0].time)} + ${esc(x.people[1].name)} ${fmt(x.people[1].time)}</div></div><div><b>${fmt(x.total)}</b></div></div>`).join(''):'<div class="muted">Le classement apparaît lorsqu’une nation possède deux temps enregistrés.</div>';
 }
 function csvEscape(v){v=v==null?'':String(v);if(/[;"\n\r]/.test(v))v='"'+v.replace(/"/g,'""')+'"';return v}
-function exportIDoceo(){const c=pc();const rows=c.students.slice().sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));const latest={};(c.results||[]).forEach(r=>{if(!latest[r.name]||String(r.date||'')>=String(latest[r.name].date||''))latest[r.name]=r});const lines=[['Nom Prénom','Défi Précision','Centre national de recrutement']];rows.forEach(name=>{const r=latest[name]||{};lines.push([name,r.stars==null?'':r.stars,r.time==null?'':fmt(r.time)])});const csv='\ufeff'+lines.map(row=>row.map(csvEscape).join(';')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`${c.name.replace(/[^a-z0-9]+/gi,'-')}-L1-iDoceo.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportIDoceo(){
+ const c=pc(),rows=c.students.slice().sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));
+ const by=(name,lesson)=>{let a=(c.results||[]).filter(r=>r.name===name&&(r.lesson||1)===lesson);return a[a.length-1]||{}};
+ const lines=[['Nom Prénom','Défi Précision','Centre national de recrutement','Défi Rapidité','Sprint individuel','Défi Respiration','Poursuite']];
+ rows.forEach(name=>{let l1=by(name,1),l2=by(name,2),l3=by(name,3);lines.push([name,l1.stars??'',l1.time==null?'':fmt(l1.time),l2.stars??'',l2.time==null?'':fmt(l2.time),l3.stars??'',l3.time==null?'':fmt(l3.time)])});
+ const csv='\ufeff'+lines.map(row=>row.map(csvEscape).join(';')).join('\r\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download=`${c.name.replace(/[^a-z0-9]+/gi,'-')}-Laser-Run-iDoceo.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
+}
 function deleteClass(){if(confirm(`Supprimer ${pc().name} ?`)){db.classes.splice(currentProf,1);write(DB,db);openProf()}} function manualStudent(){let n=prompt('Nom Prénom :');if(n){pc().students.push(n.trim());write(DB,db);renderProfClass()}} function removeStudent(i){pc().students.splice(i,1);write(DB,db);renderProfClass()}
 roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let names=[];if(f.name.toLowerCase().endsWith('.csv')){let t=await f.text();names=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&/nom|pr[eé]nom/i.test(p.join(' ')))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean)}else{if(typeof XLSX==='undefined')throw new Error('xlsx');let wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&/nom|pr[eé]nom/i.test(r.join(' ')))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])})}let seen=new Set(pc().students.map(x=>x.toLowerCase()));names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){pc().students.push(n);seen.add(n.toLowerCase())}});write(DB,db);renderProfClass();alert(`${names.length} élève(s) lu(s).`)}catch(err){alert('Lecture Excel indisponible. Vérifie que l’application a été ouverte au moins une fois avec Internet, ou utilise un CSV.')}e.target.value=''});
 
-function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])])}} function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
+function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=2)])}}
+function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
 function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject());qrIndex=0;qrReturn='prof';qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
-function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:10,d:day(),r:arr.map(x=>[x.className,x.name,x.nation,x.s1,x.stars,x.time,x.key])};qrPages=makeChunks('LR10R',compact,850);qrIndex=0;qrReturn=document.getElementById('pair').classList.contains('hidden')?'studentHome':'pair';qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} élève(s) avec résultat(s) aujourd’hui · ${qrPages.length} QR.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · S1 ${x.s1==null?'—':x.s1+'/5'} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
-function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='pair')show('pair');else openStudentHome()}
+function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:11,d:day(),r:arr};qrPages=makeChunks('LR11R',compact,850);qrIndex=0;qrReturn=(!document.getElementById('pair').classList.contains('hidden')?'pair':(!document.getElementById('lesson23').classList.contains('hidden')?'lesson23':'studentHome'));qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
+function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='pair')show('pair');else if(qrReturn==='lesson23')show('lesson23');else openStudentHome()}
 
 function normalizeInstalled(){installed=read(INST,{version:0,classes:[]});installed.classes=(installed.classes||[]).map(c=>[c[0],(c[1]||[]).map(x=>Array.isArray(x)?[x[0],x[1]||null]:[x,null])]);write(INST,installed)}
 function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
@@ -210,7 +272,12 @@ function studentEntries(){return sc()[1]||[]}
 function studentNameAt(i){const x=studentEntries()[i];return Array.isArray(x)?x[0]:x}
 function studentNationAt(i){const x=studentEntries()[i];return Array.isArray(x)?x[1]||null:null}
 function setStudentNation(i,nation){if(!Array.isArray(sc()[1][i]))sc()[1][i]=[sc()[1][i],null];sc()[1][i][1]=nation;write(INST,installed)}
-function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){lessonClass.textContent=sc()[0];let ls=[['L1','Centre national de recrutement',1],['L2','Sprint individuel',0],['L3','Poursuite',0],['L4','Mass-start',0],['L5','Relais des nations',0],['L6','Qualification aux JO',0],['L7','Jeux Olympiques',0]];lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?'onclick="openPair()"':'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');show('lessons')}
+function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){
+ lessonClass.textContent=sc()[0];
+ let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L4','Mass-start',0,''],['L5','Relais des nations',0,''],['L6','Qualification aux JO',0,''],['L7','Jeux Olympiques',0,'']];
+ lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?`onclick="${x[3]}"`:'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
+ show('lessons')
+}
 function options(){return '<option value="">Choisir...</option>'+studentEntries().map((x,i)=>`<option value="${i}">${esc(studentNameAt(i))}</option>`).join('')}
 function renderNations(){nationGrid.innerHTML=NATIONS.map(n=>`<button class="nationBtn ${selectedNation===n?'selected':''}" onclick="selectNation('${n}')"><div class="nationName">${n}</div></button>`).join('')}
 function selectNation(n){
@@ -451,11 +518,107 @@ function leaveRace(){
  openPair();
 }
 
+
+function l23Cfg(){
+ return currentLesson===2?
+ {title:'Leçon 2',sub:'Sprint individuel',theme:'Rapidité',s1:'La chasse aux temps morts',main:'Le Sprint individuel'}:
+ {title:'Leçon 3',sub:'Poursuite',theme:'Respiration',s1:'Le sas de décompression',main:'La Poursuite'};
+}
+function l23Key(name){return `${sc()[0]}|${name}|L${currentLesson}`}
+function l23Record(name){return read(RES,[]).find(r=>r.key===l23Key(name))||null}
+function l23Save(r){let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
+function l23Ensure(name){
+ let r=l23Record(name);
+ if(!r)r={key:l23Key(name),className:sc()[0],name,date:day(),lesson:currentLesson,nation:studentNationAt(studentEntries().findIndex((x,i)=>studentNameAt(i)===name)),challenge:null,stars:null,time:null,misses:0,place:null};
+ return r
+}
+function openLesson23(n){
+ currentLesson=n;l23pair=[];
+ const c=l23Cfg();
+ l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=c.theme;
+ l23S1Title.textContent=`Situation 1 · ${c.s1}`;l23MainTitle.textContent=`Situation principale · ${c.main}`;
+ l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
+}
+function validateL23Pair(){
+ if(l23a.value===''||l23b.value===''||l23a.value===l23b.value)return alert('Choisis deux élèves différents.');
+ l23pair=[{i:+l23a.value,name:studentNameAt(+l23a.value)},{i:+l23b.value,name:studentNameAt(+l23b.value)}];renderL23Pair()
+}
+function renderL23Pair(){
+ l23Work.classList.remove('hidden');
+ l23S1Buttons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?(currentLesson===2?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
+ l23MainButtons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name);return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')
+}
+function startL23Challenge(i){
+ l23active={i,name:studentNameAt(i)};let c=l23Cfg(),r=l23Record(l23active.name);
+ chTitle.textContent=c.s1;chName.textContent=`${l23active.name} · ${studentNationAt(i)||''}`;chTheme.textContent=c.theme;
+ speedChallenge.classList.toggle('hidden',currentLesson!==2);breathChallenge.classList.toggle('hidden',currentLesson!==3);
+ if(currentLesson===2){speedLed.value=r&&r.challenge!=null?r.challenge:'';speedStars.value=r&&r.stars!=null?r.stars:0}
+ else breathStars.value=r&&r.stars!=null?r.stars:0;
+ show('l23challenge')
+}
+function saveL23Challenge(){
+ let r=l23Ensure(l23active.name);r.date=day();r.nation=studentNationAt(l23active.i)||null;
+ if(currentLesson===2){let led=+speedLed.value;if(!Number.isFinite(led)||led<0)return alert('Indique la LED maximale atteinte.');r.challenge=led;r.stars=+speedStars.value}
+ else{r.challenge=+breathStars.value;r.stars=+breathStars.value}
+ l23Save(r);show('lesson23');renderL23Pair()
+}
+function l2ClassTimes(){
+ let local=read(RES,[]).filter(r=>r.className===sc()[0]&&r.lesson===2&&r.time!=null);
+ let hist=((installed.history||[]).find(x=>x[0]===sc()[0])||[null,[]])[1].filter(r=>r.lesson===2&&r.time!=null);
+ let map=new Map();[...hist,...local].forEach(r=>map.set(r.name,r));
+ return [...map.values()].sort((a,b)=>a.time-b.time)
+}
+function pursuitInfo(name){
+ let a=l2ClassTimes(),i=a.findIndex(r=>r.name===name);
+ if(i<0)return {rank:null,gap:null};
+ return {rank:i+1,gap:i===0?0:a[i].time-a[0].time}
+}
+function startL23Race(i){
+ l23active={i,name:studentNameAt(i)};
+ l23race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,shots:0,hits:0,misses:0,totalMisses:0};
+ clearInterval(l23tick);let c=l23Cfg();r23Title.textContent=c.main;r23Name.textContent=`${l23active.name} · ${studentNationAt(i)||''}`;
+ r23PursuitInfo.classList.toggle('hidden',currentLesson!==3);
+ if(currentLesson===3){let pi=pursuitInfo(l23active.name);r23PursuitInfo.textContent=pi.rank?`Classement Sprint L2 : ${pi.rank}e · départ à +${fmt(pi.gap)} du meilleur temps.`:'Aucun résultat L2 trouvé : départ sans décalage enregistré.'}
+ resetL23Race();show('l23race')
+}
+function resetL23Race(){
+ r23Timer.textContent='00:00.0';r23Lap.textContent='0 / 4';r23Shoot.textContent='0 / 3';r23Shots.textContent='0 / 5';r23Status.textContent='Prêt';
+ r23ShootPanel.classList.add('hidden');r23Penalty.classList.add('hidden');r23Action.classList.remove('hidden');r23Action.textContent='DÉMARRER';r23Action.disabled=false;renderR23Dots()
+}
+function r23Clock(){l23race.elapsed=performance.now()-l23race.start;r23Timer.textContent=fmt(l23race.elapsed)}
+function r23Stats(){r23Lap.textContent=`${l23race.lap} / 4`;r23Shoot.textContent=`${l23race.shoot} / 3`;r23Shots.textContent=`${l23race.shots} / 5`}
+function renderR23Dots(){r23Dots.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${i<l23race.shots?(i<l23race.hits?'on':'missdot'):''}"></div>`).join('')}
+function r23Action(){
+ if(l23race.state==='ready'){l23race.start=performance.now();l23race.state='run';l23race.lap=1;l23tick=setInterval(r23Clock,100);r23Action.textContent='ARRIVÉE AU PAS DE TIR 1';r23Status.textContent='Boucle 1';r23Stats();return}
+ if(l23race.state==='run'){
+  if(l23race.shoot<3){l23race.state='shoot';l23race.shots=0;l23race.hits=0;l23race.misses=0;r23ShootPanel.classList.remove('hidden');r23Action.classList.add('hidden');r23Penalty.classList.add('hidden');r23Status.textContent=`Pas de tir ${l23race.shoot+1}`;r23Stats();renderR23Dots()}
+  else finishL23Race();return
+ }
+ if(l23race.state==='readyToRun'){l23race.lap++;l23race.state='run';r23ShootPanel.classList.add('hidden');r23Penalty.classList.add('hidden');r23Action.classList.remove('hidden');r23Action.textContent=l23race.shoot<3?`ARRIVÉE AU PAS DE TIR ${l23race.shoot+1}`:'ARRIVÉE';r23Status.textContent=`Boucle ${l23race.lap}`;r23Stats()}
+}
+function r23Shot(hit){
+ if(l23race.state!=='shoot'||l23race.shots>=5)return;
+ l23race.shots++;if(hit)l23race.hits++;else{l23race.misses++;l23race.totalMisses++}r23Stats();renderR23Dots();
+ if(l23race.hits===5||l23race.shots===5){
+  l23race.shoot++;l23race.state='readyToRun';r23ShootPanel.classList.add('hidden');
+  r23Penalty.classList.remove('hidden');
+  if(currentLesson===3&&l23race.misses>0)r23Penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b><br>${l23race.misses} tour(s) de pénalité de 20 m avant de repartir.`;
+  else if(currentLesson===2&&l23race.misses>0)r23Penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b> sur ce passage.`;
+  else r23Penalty.innerHTML='<b>TIR VALIDÉ</b> · 5/5';
+  r23Action.classList.remove('hidden');r23Action.textContent=l23race.shoot<3?'REPARTIR POUR LA BOUCLE SUIVANTE':'REPARTIR POUR LA DERNIÈRE BOUCLE'
+ }
+}
+function finishL23Race(){
+ clearInterval(l23tick);r23Clock();l23race.state='done';let r=l23Ensure(l23active.name);r.date=day();r.nation=studentNationAt(l23active.i)||null;r.time=Math.round(l23race.elapsed);r.misses=l23race.totalMisses;l23Save(r);
+ r23Status.textContent='Terminé';r23Action.textContent='RÉSULTAT ENREGISTRÉ';r23Action.disabled=true;setTimeout(()=>{show('lesson23');renderL23Pair()},700)
+}
+function leaveL23Race(){if(l23race&&l23race.state!=='ready'&&l23race.state!=='done'&&!confirm('Abandonner cette performance ?'))return;clearInterval(l23tick);show('lesson23')}
+
 function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove('hidden');scanTitle.textContent=mode==='config'?'Installer les classes':'Scanner les résultats';scanMsg.textContent=mode==='config'?'Scanne les QR de configuration dans l’ordre.':'Scanne les QR de chaque tablette élève.';scanProgress.textContent='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanMsg.textContent+=' Caméra non disponible dans ce navigateur : utilise « Ouvrir une photo ».';return}navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(async s=>{stream=s;video.srcObject=s;await video.play();scanFrame()}).catch(()=>{scanMsg.textContent+=' Caméra inaccessible : utilise « Ouvrir une photo ».'})}
 function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
 function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
 scanFile.addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let img=new Image();img.onload=()=>{canvas.width=img.width;canvas.height=img.height;let ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);if(typeof jsQR==='undefined'){scanMsg.textContent='Lecteur QR non chargé. Ouvre l’application une fois avec Internet.';return}let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height);if(code)consume(code.data);else scanMsg.textContent='QR non reconnu sur cette image.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value=''});
-let lastScan=''; function consume(txt){if(txt===lastScan)return;lastScan=txt;setTimeout(()=>lastScan='',1200);let p;try{p=JSON.parse(txt)}catch(e){return}if(!p.a||!p.id||!p.p||!p.t)return;if((scanMode==='config'&&p.a!=='LR10C')||(scanMode==='results'&&p.a!=='LR10R')){scanMsg.textContent='Ce QR ne correspond pas à cette opération.';return}scanBuffer[p.id]=scanBuffer[p.id]||{t:p.t,parts:{}};scanBuffer[p.id].parts[p.p]=p.d;let b=scanBuffer[p.id],n=Object.keys(b.parts).length;scanProgress.textContent=`QR ${n} / ${b.t} reçu(s)`;scanMsg.textContent=`✅ Partie ${p.p}/${p.t} reçue.`;if(n===b.t){let raw='';for(let i=1;i<=b.t;i++)raw+=b.parts[i];let obj;try{obj=JSON.parse(raw)}catch(e){scanMsg.textContent='Erreur de reconstruction.';return}if(scanMode==='config'){installed=obj;write(INST,installed);normalizeInstalled();scanMsg.textContent=`✅ ${obj.classes.length} classe(s) installée(s).`;scanProgress.textContent='Configuration terminée';setTimeout(stopScanner,900)}else{mergeResults(obj);delete scanBuffer[p.id]}}}
+let lastScan=''; function consume(txt){if(txt===lastScan)return;lastScan=txt;setTimeout(()=>lastScan='',1200);let p;try{p=JSON.parse(txt)}catch(e){return}if(!p.a||!p.id||!p.p||!p.t)return;if((scanMode==='config'&&p.a!=='LR10C')||(scanMode==='results'&&!['LR10R','LR11R'].includes(p.a))){scanMsg.textContent='Ce QR ne correspond pas à cette opération.';return}scanBuffer[p.id]=scanBuffer[p.id]||{t:p.t,parts:{}};scanBuffer[p.id].parts[p.p]=p.d;let b=scanBuffer[p.id],n=Object.keys(b.parts).length;scanProgress.textContent=`QR ${n} / ${b.t} reçu(s)`;scanMsg.textContent=`✅ Partie ${p.p}/${p.t} reçue.`;if(n===b.t){let raw='';for(let i=1;i<=b.t;i++)raw+=b.parts[i];let obj;try{obj=JSON.parse(raw)}catch(e){scanMsg.textContent='Erreur de reconstruction.';return}if(scanMode==='config'){installed=obj;write(INST,installed);normalizeInstalled();scanMsg.textContent=`✅ ${obj.classes.length} classe(s) installée(s).`;scanProgress.textContent='Configuration terminée';setTimeout(stopScanner,900)}else{mergeResults(obj);delete scanBuffer[p.id]}}}
 function mergeResults(obj){let added=0,updated=0;(obj.r||[]).forEach(a=>{let [cn,n,nation,s1v,stars,tim,key]=a;let c=db.classes.find(x=>x.name===cn);if(!c)return;c.results=c.results||[];c.nations=c.nations||{};if(nation)c.nations[n]=nation;let ex=c.results.find(x=>x.key===key);let item={key,name:n,nation:nation||null,s1:s1v,stars:stars,time:tim,date:obj.d};if(ex){Object.assign(ex,item);updated++}else{c.results.push(item);added++}});write(DB,db);scanMsg.textContent=`✅ ${added} nouveau(x), ${updated} mis à jour.`;scanProgress.textContent='Tu peux scanner la tablette suivante.'}
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}

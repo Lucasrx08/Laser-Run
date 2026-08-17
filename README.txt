@@ -1,46 +1,36 @@
-LASER RUN 6ème — V10
+LASER RUN 6ème — V11
 
-MODIFICATIONS PRINCIPALES
-- Accueil :
-  Application EPS - Le Bon Sauveur - Créé par L. RIGAUX
-  Numéro de version masqué.
+Base : V10.1 stable.
 
-- Espace Élèves :
-  suppression de l’encadré bleu ;
-  « Installer / mettre à jour les classes » n’est plus visible ;
-  l’accès se fait via Administration puis code enseignant.
+LEÇON 2
+- Situation 1 : La chasse aux temps morts.
+- Deux Défis XP puis saisie du Défi Étoile.
+- Enregistrement : LED maximale + étoiles de rapidité.
+- Situation principale : Sprint individuel.
+- 4 boucles, 3 passages au tir, 5 rechargements maximum.
+- Boutons CIBLE TOUCHÉE / CIBLE RATÉE.
+- Chronomètre continu et total des cibles manquées.
 
-- Nations :
-  attribuées une seule fois lors de la Leçon 1 ;
-  mémorisées pour chaque élève ;
-  la nation s’affiche automatiquement lorsque le binôme est choisi ;
-  blocage si deux élèves appartiennent déjà à deux nations différentes ;
-  maximum 2 élèves par nation.
-  Après récupération des résultats, l’espace professeur mémorise aussi les nations.
-  Une nouvelle diffusion des classes permet donc de transmettre les nations connues à toutes les tablettes pour la suite du cycle.
+LEÇON 3
+- Situation 1 : Le sas de décompression.
+- Deux Défis XP puis Défi Étoile.
+- Enregistrement : étoiles de respiration.
+- Situation principale : Poursuite.
+- Affichage automatique du classement et de l'écart issus du Sprint L2.
+- 4 boucles, 3 passages au tir, 5 rechargements maximum.
+- Chaque cible ratée affiche un tour de pénalité de 20 m.
+- Le chronomètre continue pendant les pénalités.
 
-- Situation principale L1 :
-  au pas de tir, le bouton orange disparaît ;
-  seules les 5 touches sont saisies ;
-  à 5 touches : TIR VALIDÉ ;
-  puis bouton REPARTIR POUR LA BOUCLE SUIVANTE / REPARTIR POUR LA DERNIÈRE BOUCLE ;
-  le chronomètre reste continu.
+CONTINUITÉ
+- L'espace professeur récupère les résultats L2.
+- La configuration des tablettes contient l'historique nécessaire à la Poursuite L3.
+- Les nations restent celles mémorisées par élève.
 
-- Export iDoceo :
-  bouton « Exporter iDoceo » dans la classe ;
-  fichier CSV trié par ordre alphabétique ;
-  colonnes :
-  Nom Prénom
-  Défi Précision
-  Centre national de recrutement
-  Défi Précision = nombre d’étoiles de 0 à 4.
-
-Les futures leçons pourront utiliser la même structure d’export avec Défi Rapidité ou Défi Respiration selon le thème travaillé.
-
-
-V10.1
-- Correction du bouton Situation principale : accès DOM explicite, fiable sur ordinateur/tablette/smartphone.
-- Les élèves de deux nations différentes peuvent former un binôme temporaire.
-- Chaque performance reste comptabilisée pour la nation propre de l’élève.
-- La nation s’affiche dès qu’un élève sélectionné possède déjà une nation.
-- Si un élève n’a pas encore de nation, celle-ci peut lui être attribuée sans modifier la nation de son partenaire.
+EXPORT IDOCEO
+Nom Prénom
+Défi Précision
+Centre national de recrutement
+Défi Rapidité
+Sprint individuel
+Défi Respiration
+Poursuite
