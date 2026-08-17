@@ -1,17 +1,12 @@
-LASER RUN 6ème — V8
+LASER RUN 6ème — V9
 
-Nouveautés :
-- Mise en page responsive pour ordinateur, tablette et smartphone.
-- Les classes sont créées une seule fois dans l’espace professeur.
-- Import CSV / Excel.
-- « Diffuser les classes » génère automatiquement 1 ou plusieurs QR selon la taille des listes.
-- Sur chaque tablette élève : « Installer / mettre à jour les classes » puis scanner ces QR une seule fois.
-- Une nouvelle diffusion remplace automatiquement les listes installées.
-- L1 complète : Situation 1 + Situation principale.
-- Résultats locaux puis transfert par QR vers l’espace professeur.
-- Les gros lots de données sont automatiquement découpés en plusieurs QR.
-- Sur ordinateur, le scanner propose la webcam ou l’ouverture d’une photo/capture d’écran.
-
-Mise à jour GitHub : déposer les 5 fichiers à la racine du dépôt et remplacer les versions précédentes.
-
-Important : lors de la toute première ouverture de cette version, garder Internet quelques secondes afin que les bibliothèques Excel/QR puissent se charger et être mises en cache.
+L1 finalisée :
+- choix du binôme + nation ;
+- Défi XP 1 et XP 2 : observation PIEDS / BRAS / REGARD + conseil ;
+- Défi Étoile : 5 rechargements maximum, vert/rouge, score /5 et 0 à 4 étoiles ;
+- situation principale : 4 x 150 m, 3 passages au tir, rechargements illimités et non comptabilisés ;
+- uniquement 5 touches à valider à chaque passage ;
+- chrono continu pendant course et tir ;
+- classement professeur par nation = somme des deux temps de la nation ;
+- QR de configuration et QR de résultats conservés ;
+- compatible ordinateur, tablette et smartphone.
