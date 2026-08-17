@@ -46,7 +46,19 @@
 .rankRow{background:white;border-radius:17px;padding:15px;display:grid;grid-template-columns:70px 1fr auto;align-items:center;gap:12px}
 .rankPos{font-size:28px;font-weight:950;text-align:center}
 @media(max-width:650px){.nationGrid,.xpCriteria{grid-template-columns:1fr}.rankRow{grid-template-columns:52px 1fr}.rankRow>div:last-child{grid-column:2}}
-.dot.missdot{background:#d9534f;border-color:#d9534f}</style>
+.dot.missdot{background:#d9534f;border-color:#d9534f}
+.pursuitBoard{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.masterTimer{font-size:clamp(64px,12vw,130px);font-weight:950;text-align:center;letter-spacing:-5px}
+.nextNation{text-align:center;background:var(--c1);border-radius:22px;padding:22px;margin:16px 0}
+.nextNation .country{font-size:clamp(36px,7vw,68px);font-weight:950}
+.nextNation .count{font-size:clamp(28px,5vw,48px);font-weight:950;margin-top:8px}
+.startRow{display:grid;grid-template-columns:90px 1fr 150px;gap:12px;align-items:center;background:white;border-radius:17px;padding:14px}
+.startRow.started{opacity:.55}
+.startRow.current{outline:4px solid var(--c4)}
+.startFlag{font-size:30px;text-align:center}
+@media(max-width:800px){.pursuitBoard{grid-template-columns:1fr}.startRow{grid-template-columns:60px 1fr 105px}}
+
+</style>
 </head>
 <body>
 <div class="app">
@@ -69,7 +81,7 @@
 
 <section id="profClass" class="hidden">
  <button class="back" onclick="openProf()">← Mes classes</button>
- <div class="top"><div><div id="pcTitle" class="title"></div><div id="pcSub" class="sub"></div></div><div class="toolbar" style="margin:0"><button class="btn light" onclick="exportIDoceo()">Exporter iDoceo</button><button class="btn red" onclick="deleteClass()">Supprimer</button></div></div>
+ <div class="top"><div><div id="pcTitle" class="title"></div><div id="pcSub" class="sub"></div></div><div class="toolbar" style="margin:0"><button class="btn light" onclick="openPursuitMaster()">Départs Poursuite</button><button class="btn light" onclick="exportIDoceo()">Exporter iDoceo</button><button class="btn red" onclick="deleteClass()">Supprimer</button></div></div>
  <div class="grid2">
   <div class="card"><div class="section" style="margin-top:0">Élèves</div><div class="notice">Importe un fichier <b>CSV, XLS ou XLSX</b>. L’application accepte une colonne « Nom Prénom » ou deux colonnes « Nom » / « Prénom ».</div><div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.xls,.xlsx"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button></div><div id="pcStudents" class="list"></div></div>
   <div class="card"><div class="section" style="margin-top:0">Classement des nations · L1</div><div id="nationRanking" class="rankGrid"></div><div class="section">Résultats individuels</div><div id="pcResults" class="list"></div></div>
@@ -199,13 +211,43 @@
    <div class="section" style="text-align:center">5 rechargements maximum</div>
    <div id="r23Dots" class="fivehits"></div>
    <div class="grid2" style="max-width:850px;margin:20px auto">
-    <button class="shoot hit" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
-    <button class="shoot miss" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
+    <button class="shoot hit" type="button" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
+    <button class="shoot miss" type="button" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
    </div>
    <div class="muted" style="text-align:center">Le chronomètre continue pendant le tir.</div>
   </div>
   <div id="r23Penalty" class="hidden card" style="margin-top:18px;text-align:center"></div>
-  <button id="r23Action" class="mainAction" onclick="r23Action()">DÉMARRER</button>
+  <button id="r23Action" class="mainAction" type="button" onclick="r23Action()">DÉMARRER</button>
+ </div>
+</section>
+
+<section id="pursuitMaster" class="hidden">
+ <button class="back" onclick="show('profClass')">← Classe</button>
+ <div class="top"><div><div class="title">Poursuite · Départs</div><div id="pmClass" class="sub"></div></div><span class="pill">Leçon 3</span></div>
+ <div class="toolbar">
+  <button id="pmMode1" class="btn orange" onclick="setPursuitMode(1)">Biathlètes 1</button>
+  <button id="pmMode2" class="btn ghost" onclick="setPursuitMode(2)">Biathlètes 2</button>
+ </div>
+ <div class="pursuitBoard">
+  <div class="card">
+   <div class="section" style="margin-top:0">Chronomètre général</div>
+   <div id="pmTimer" class="masterTimer">00:00.0</div>
+   <div id="pmNext" class="nextNation">
+    <div class="muted">PROCHAIN DÉPART</div>
+    <div id="pmNextNation" class="country">—</div>
+    <div id="pmCountdown" class="count">Prêt</div>
+   </div>
+   <div class="toolbar">
+    <button id="pmStartBtn" class="btn orange" onclick="startPursuitMaster()">DÉMARRER</button>
+    <button class="btn ghost" onclick="pausePursuitMaster()">PAUSE</button>
+    <button class="btn red" onclick="resetPursuitMaster()">RÉINITIALISER</button>
+   </div>
+   <div class="notice">Un signal sonore retentit à chaque départ. Les écarts sont calculés automatiquement à partir des temps du Sprint individuel de la L2.</div>
+  </div>
+  <div class="card">
+   <div class="section" style="margin-top:0">Ordre des départs</div>
+   <div id="pmStarts" class="list"></div>
+  </div>
  </div>
 </section>
 <section id="qr" class="hidden">
@@ -220,7 +262,7 @@
 <script>
 const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
 let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof',currentLesson=1,l23pair=[],l23active=null,l23race=null,l23tick=null;
-let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={};
+let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1;
 const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Espagne','Suisse','Finlande'];
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -628,7 +670,7 @@ function saveL23Challenge(){
   if(chBreath.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;
   const hits=chBreath.filter(x=>x===1).length;r.challenge=hits;r.stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0
  }
- l23Save(r);show('lesson23');renderL23Pair()
+ r.pairSlot=currentL23Slot(l23active.i);l23Save(r);show('lesson23');renderL23Pair()
 }
 function l2ClassTimes(){
  let local=read(RES,[]).filter(r=>r.className===sc()[0]&&r.lesson===2&&r.time!=null);
@@ -641,47 +683,349 @@ function pursuitInfo(name){
  if(i<0)return {rank:null,gap:null};
  return {rank:i+1,gap:i===0?0:a[i].time-a[0].time}
 }
+function currentL23Slot(i){
+ const pos=l23pair.findIndex(p=>p.i===Number(i));
+ return pos>=0?pos+1:null;
+}
 function startL23Race(i){
- l23active={i,name:studentNameAt(i)};
+ currentLesson=Number(currentLesson);
+ l23active={i:Number(i),name:studentNameAt(Number(i))};
+ const nation=studentNationAt(Number(i))||'Nation non attribuée';
  l23race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,shots:0,hits:0,misses:0,totalMisses:0};
- clearInterval(l23tick);let c=l23Cfg();r23Title.textContent=c.main;r23Name.textContent=`${l23active.name} · ${studentNationAt(i)||''}`;
- r23PursuitInfo.classList.toggle('hidden',currentLesson!==3);
- if(currentLesson===3){let pi=pursuitInfo(l23active.name);r23PursuitInfo.textContent=pi.rank?`Classement Sprint L2 : ${pi.rank}e · départ à +${fmt(pi.gap)} du meilleur temps.`:'Aucun résultat L2 trouvé : départ sans décalage enregistré.'}
- resetL23Race();show('l23race')
-}
-function resetL23Race(){
- r23Timer.textContent='00:00.0';r23Lap.textContent='0 / 4';r23Shoot.textContent='0 / 3';r23Shots.textContent='0 / 5';r23Status.textContent='Prêt';
- r23ShootPanel.classList.add('hidden');r23Penalty.classList.add('hidden');r23Action.classList.remove('hidden');r23Action.textContent='DÉMARRER';r23Action.disabled=false;renderR23Dots()
-}
-function r23Clock(){l23race.elapsed=performance.now()-l23race.start;r23Timer.textContent=fmt(l23race.elapsed)}
-function r23Stats(){r23Lap.textContent=`${l23race.lap} / 4`;r23Shoot.textContent=`${l23race.shoot} / 3`;r23Shots.textContent=`${l23race.shots} / 5`}
-function renderR23Dots(){r23Dots.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${i<l23race.shots?(i<l23race.hits?'on':'missdot'):''}"></div>`).join('')}
-function r23Action(){
- if(l23race.state==='ready'){l23race.start=performance.now();l23race.state='run';l23race.lap=1;l23tick=setInterval(r23Clock,100);r23Action.textContent='ARRIVÉE AU PAS DE TIR 1';r23Status.textContent='Boucle 1';r23Stats();return}
- if(l23race.state==='run'){
-  if(l23race.shoot<3){l23race.state='shoot';l23race.shots=0;l23race.hits=0;l23race.misses=0;r23ShootPanel.classList.remove('hidden');r23Action.classList.add('hidden');r23Penalty.classList.add('hidden');r23Status.textContent=`Pas de tir ${l23race.shoot+1}`;r23Stats();renderR23Dots()}
-  else finishL23Race();return
- }
- if(l23race.state==='readyToRun'){l23race.lap++;l23race.state='run';r23ShootPanel.classList.add('hidden');r23Penalty.classList.add('hidden');r23Action.classList.remove('hidden');r23Action.textContent=l23race.shoot<3?`ARRIVÉE AU PAS DE TIR ${l23race.shoot+1}`:'ARRIVÉE';r23Status.textContent=`Boucle ${l23race.lap}`;r23Stats()}
-}
-function r23Shot(hit){
- if(l23race.state!=='shoot'||l23race.shots>=5)return;
- l23race.shots++;if(hit)l23race.hits++;else{l23race.misses++;l23race.totalMisses++}r23Stats();renderR23Dots();
- if(l23race.hits===5||l23race.shots===5){
-  l23race.shoot++;l23race.state='readyToRun';r23ShootPanel.classList.add('hidden');
-  r23Penalty.classList.remove('hidden');
-  if(currentLesson===3&&l23race.misses>0)r23Penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b><br>${l23race.misses} tour(s) de pénalité de 20 m avant de repartir.`;
-  else if(currentLesson===2&&l23race.misses>0)r23Penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b> sur ce passage.`;
-  else r23Penalty.innerHTML='<b>TIR VALIDÉ</b> · 5/5';
-  r23Action.classList.remove('hidden');r23Action.textContent=l23race.shoot<3?'REPARTIR POUR LA BOUCLE SUIVANTE':'REPARTIR POUR LA DERNIÈRE BOUCLE'
- }
-}
-function finishL23Race(){
- clearInterval(l23tick);r23Clock();l23race.state='done';let r=l23Ensure(l23active.name);r.date=day();r.nation=studentNationAt(l23active.i)||null;r.time=Math.round(l23race.elapsed);r.misses=l23race.totalMisses;l23Save(r);
- r23Status.textContent='Terminé';r23Action.textContent='RÉSULTAT ENREGISTRÉ';r23Action.disabled=true;setTimeout(()=>{show('lesson23');renderL23Pair()},700)
-}
-function leaveL23Race(){if(l23race&&l23race.state!=='ready'&&l23race.state!=='done'&&!confirm('Abandonner cette performance ?'))return;clearInterval(l23tick);show('lesson23')}
 
+ clearInterval(l23tick);
+
+ const cfg=l23Cfg();
+ document.getElementById('r23Title').textContent=cfg.main;
+ document.getElementById('r23Name').textContent=`${l23active.name} · ${nation}`;
+
+ const pursuitBox=document.getElementById('r23PursuitInfo');
+ if(currentLesson===3){
+   const pi=pursuitInfo(l23active.name);
+   pursuitBox.classList.remove('hidden');
+   pursuitBox.textContent=pi.rank
+     ? `Classement Sprint L2 : ${pi.rank}e · départ à +${fmt(pi.gap)} du meilleur temps.`
+     : 'Aucun résultat L2 trouvé : départ sans décalage enregistré.';
+ }else{
+   pursuitBox.classList.add('hidden');
+   pursuitBox.textContent='';
+ }
+
+ resetL23Race();
+ show('l23race');
+}
+
+function resetL23Race(){
+ document.getElementById('r23Timer').textContent='00:00.0';
+ document.getElementById('r23Lap').textContent='0 / 4';
+ document.getElementById('r23Shoot').textContent='0 / 3';
+ document.getElementById('r23Shots').textContent='0 / 5';
+ document.getElementById('r23Status').textContent='Prêt';
+ document.getElementById('r23ShootPanel').classList.add('hidden');
+ document.getElementById('r23Penalty').classList.add('hidden');
+
+ const action=document.getElementById('r23Action');
+ action.classList.remove('hidden');
+ action.textContent='DÉMARRER';
+ action.disabled=false;
+
+ renderR23Dots();
+}
+
+function r23Clock(){
+ if(!l23race)return;
+ l23race.elapsed=performance.now()-l23race.start;
+ document.getElementById('r23Timer').textContent=fmt(l23race.elapsed);
+}
+
+function r23Stats(){
+ if(!l23race)return;
+ document.getElementById('r23Lap').textContent=`${l23race.lap} / 4`;
+ document.getElementById('r23Shoot').textContent=`${l23race.shoot} / 3`;
+ document.getElementById('r23Shots').textContent=`${l23race.shots} / 5`;
+}
+
+function renderR23Dots(){
+ const box=document.getElementById('r23Dots');
+ if(!box)return;
+ box.innerHTML=Array.from({length:5},(_,i)=>{
+   let cls='dot';
+   if(l23race && i<l23race.shots){
+     cls += i<l23race.hits ? ' on' : ' missdot';
+   }
+   return `<div class="${cls}"></div>`;
+ }).join('');
+}
+
+function r23Action(){
+ if(!l23race)return;
+
+ const action=document.getElementById('r23Action');
+ const status=document.getElementById('r23Status');
+ const shootPanel=document.getElementById('r23ShootPanel');
+ const penalty=document.getElementById('r23Penalty');
+
+ if(l23race.state==='ready'){
+   l23race.start=performance.now();
+   l23race.state='run';
+   l23race.lap=1;
+   l23tick=setInterval(r23Clock,100);
+
+   action.textContent='ARRIVÉE AU PAS DE TIR 1';
+   status.textContent='Boucle 1';
+   r23Stats();
+   return;
+ }
+
+ if(l23race.state==='run'){
+   if(l23race.shoot<3){
+     l23race.state='shoot';
+     l23race.shots=0;
+     l23race.hits=0;
+     l23race.misses=0;
+
+     shootPanel.classList.remove('hidden');
+     penalty.classList.add('hidden');
+     action.classList.add('hidden');
+     status.textContent=`Pas de tir ${l23race.shoot+1}`;
+
+     r23Stats();
+     renderR23Dots();
+   }else{
+     finishL23Race();
+   }
+   return;
+ }
+
+ if(l23race.state==='readyToRun'){
+   l23race.lap++;
+   l23race.state='run';
+
+   shootPanel.classList.add('hidden');
+   penalty.classList.add('hidden');
+   action.classList.remove('hidden');
+   action.textContent=l23race.shoot<3
+     ? `ARRIVÉE AU PAS DE TIR ${l23race.shoot+1}`
+     : 'ARRIVÉE';
+
+   status.textContent=`Boucle ${l23race.lap}`;
+   r23Stats();
+ }
+}
+
+function r23Shot(hit){
+ if(!l23race || l23race.state!=='shoot' || l23race.shots>=5)return;
+
+ l23race.shots++;
+
+ if(hit){
+   l23race.hits++;
+ }else{
+   l23race.misses++;
+   l23race.totalMisses++;
+ }
+
+ r23Stats();
+ renderR23Dots();
+
+ if(l23race.hits===5 || l23race.shots===5){
+   l23race.shoot++;
+   l23race.state='readyToRun';
+
+   const shootPanel=document.getElementById('r23ShootPanel');
+   const penalty=document.getElementById('r23Penalty');
+   const action=document.getElementById('r23Action');
+   const status=document.getElementById('r23Status');
+
+   shootPanel.classList.add('hidden');
+   penalty.classList.remove('hidden');
+
+   if(currentLesson===3 && l23race.misses>0){
+     penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b><br>${l23race.misses} tour(s) de pénalité de 20 m avant de repartir.`;
+     status.textContent='PÉNALITÉ';
+   }else if(currentLesson===2 && l23race.misses>0){
+     penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b> sur ce passage.`;
+     status.textContent='TIR TERMINÉ';
+   }else{
+     penalty.innerHTML='<b>TIR VALIDÉ</b> · 5/5';
+     status.textContent='TIR VALIDÉ';
+   }
+
+   action.classList.remove('hidden');
+   action.textContent=l23race.shoot<3
+     ? 'REPARTIR POUR LA BOUCLE SUIVANTE'
+     : 'REPARTIR POUR LA DERNIÈRE BOUCLE';
+ }
+}
+
+function finishL23Race(){
+ if(!l23race)return;
+
+ clearInterval(l23tick);
+ r23Clock();
+ l23race.state='done';
+
+ let r=l23Ensure(l23active.name);
+ r.date=day();
+ r.nation=studentNationAt(l23active.i)||null;
+ r.time=Math.round(l23race.elapsed);
+ r.misses=l23race.totalMisses;
+ l23Save(r);
+
+ document.getElementById('r23Status').textContent='Terminé';
+
+ const action=document.getElementById('r23Action');
+ action.classList.remove('hidden');
+ action.textContent='RÉSULTAT ENREGISTRÉ';
+ action.disabled=true;
+
+ setTimeout(()=>{
+   show('lesson23');
+   renderL23Pair();
+ },700);
+}
+
+function leaveL23Race(){
+ if(l23race && l23race.state!=='ready' && l23race.state!=='done' && !confirm('Abandonner cette performance ?'))return;
+ clearInterval(l23tick);
+ show('lesson23');
+}
+
+
+const FLAG_EMOJI={France:'🇫🇷','Norvège':'🇳🇴','Suède':'🇸🇪','Allemagne':'🇩🇪',Italie:'🇮🇹',Espagne:'🇪🇸',Suisse:'🇨🇭',Finlande:'🇫🇮'};
+
+function getPursuitStarts(mode=pursuitMode){
+ const c=pc();
+ const results=(c.results||[]).filter(r=>(r.lesson||1)===2 && r.time!=null && Number(r.pairSlot)===Number(mode));
+ const byNation={};
+ results.forEach(r=>{
+   if(!r.nation)return;
+   if(!byNation[r.nation] || r.time<byNation[r.nation].time)byNation[r.nation]=r;
+ });
+ const arr=Object.values(byNation).sort((a,b)=>a.time-b.time);
+ if(!arr.length)return [];
+ const best=arr[0].time;
+ return arr.map((r,i)=>({nation:r.nation,name:r.name,time:r.time,gap:r.time-best,rank:i+1}));
+}
+
+function openPursuitMaster(){
+ pursuitMode=1;pmRunning=false;pmElapsed=0;pmLastSignal=-1;
+ clearInterval(pmTick);
+ document.getElementById('pmClass').textContent=pc().name;
+ setPursuitMode(1);
+ show('pursuitMaster');
+}
+
+function setPursuitMode(mode){
+ pursuitMode=Number(mode);
+ resetPursuitMaster();
+ document.getElementById('pmMode1').className=pursuitMode===1?'btn orange':'btn ghost';
+ document.getElementById('pmMode2').className=pursuitMode===2?'btn orange':'btn ghost';
+ renderPursuitStarts();
+}
+
+function renderPursuitStarts(){
+ const starts=getPursuitStarts();
+ const box=document.getElementById('pmStarts');
+ if(!starts.length){
+   box.innerHTML='<div class="warn">Aucun temps L2 avec position Biathlète '+pursuitMode+' n’a encore été récupéré. Scanne d’abord les résultats de la L2.</div>';
+   document.getElementById('pmNextNation').textContent='—';
+   document.getElementById('pmCountdown').textContent='Aucun départ';
+   return;
+ }
+ box.innerHTML=starts.map((x,i)=>`<div id="pmRow${i}" class="startRow">
+   <div class="startFlag">${FLAG_EMOJI[x.nation]||'🏳️'}</div>
+   <div><div class="big">${esc(x.nation)}</div><div class="muted">${esc(x.name)} · Sprint ${fmt(x.time)}</div></div>
+   <div style="text-align:right"><b>${x.gap===0?'0 s':'+'+(x.gap/1000).toFixed(1)+' s'}</b></div>
+ </div>`).join('');
+ updatePursuitDisplay();
+}
+
+function pursuitNow(){
+ return pmRunning ? pmElapsed + (performance.now()-pmStartPerf) : pmElapsed;
+}
+
+function formatCountdown(ms){
+ if(ms<=0)return 'PARTEZ !';
+ if(ms<10000)return (ms/1000).toFixed(1)+' s';
+ return Math.ceil(ms/1000)+' s';
+}
+
+function updatePursuitDisplay(){
+ const starts=getPursuitStarts();
+ const now=pursuitNow();
+ document.getElementById('pmTimer').textContent=fmt(now);
+
+ starts.forEach((x,i)=>{
+   const row=document.getElementById('pmRow'+i);
+   if(!row)return;
+   row.classList.toggle('started',now>=x.gap+1500);
+   row.classList.toggle('current',now>=x.gap-1000 && now<x.gap+1500);
+ });
+
+ let nextIndex=starts.findIndex(x=>now < x.gap+1200);
+ if(nextIndex<0){
+   document.getElementById('pmNextNation').textContent='Tous partis';
+   document.getElementById('pmCountdown').textContent='Bonne poursuite !';
+   return;
+ }
+
+ const next=starts[nextIndex];
+ const remain=next.gap-now;
+ document.getElementById('pmNextNation').textContent=`${FLAG_EMOJI[next.nation]||''} ${next.nation}`;
+ document.getElementById('pmCountdown').textContent=formatCountdown(remain);
+
+ if(pmRunning){
+   const sec=Math.ceil(remain/1000);
+   const signalKey=remain<=200 && remain>=-200 ? nextIndex*100+99 :
+     (sec>=1 && sec<=3 && remain>0 ? nextIndex*100+sec : -1);
+   if(signalKey>=0 && signalKey!==pmLastSignal){
+     pmLastSignal=signalKey;
+     beepPursuit(remain<=200 ? 0.65 : 0.16, remain<=200 ? 880 : 660);
+     if(remain<=200 && navigator.vibrate)navigator.vibrate([180,80,180]);
+   }
+ }
+}
+
+function beepPursuit(duration=0.15,freq=700){
+ try{
+   const ctx=new (window.AudioContext||window.webkitAudioContext)();
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.frequency.value=freq;osc.type='sine';
+   gain.gain.setValueAtTime(0.001,ctx.currentTime);
+   gain.gain.exponentialRampToValueAtTime(0.35,ctx.currentTime+0.01);
+   gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+duration);
+   osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+duration+0.02);
+ }catch(e){}
+}
+
+function startPursuitMaster(){
+ if(!getPursuitStarts().length)return alert('Aucun départ disponible pour ce groupe.');
+ if(pmRunning)return;
+ pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;
+ document.getElementById('pmStartBtn').textContent='EN COURS';
+ beepPursuit(0.65,880);
+ if(navigator.vibrate)navigator.vibrate([180,80,180]);
+ clearInterval(pmTick);
+ pmTick=setInterval(updatePursuitDisplay,50);
+ updatePursuitDisplay();
+}
+
+function pausePursuitMaster(){
+ if(!pmRunning)return;
+ pmElapsed += performance.now()-pmStartPerf;
+ pmRunning=false;clearInterval(pmTick);
+ document.getElementById('pmStartBtn').textContent='REPRENDRE';
+ updatePursuitDisplay();
+}
+
+function resetPursuitMaster(){
+ clearInterval(pmTick);
+ pmRunning=false;pmElapsed=0;pmStartPerf=0;pmLastSignal=-1;
+ const timer=document.getElementById('pmTimer');if(timer)timer.textContent='00:00.0';
+ const btn=document.getElementById('pmStartBtn');if(btn)btn.textContent='DÉMARRER';
+ if(document.getElementById('pmStarts'))renderPursuitStarts();
+}
 function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove('hidden');scanTitle.textContent=mode==='config'?'Installer les classes':'Scanner les résultats';scanMsg.textContent=mode==='config'?'Scanne les QR de configuration dans l’ordre.':'Scanne les QR de chaque tablette élève.';scanProgress.textContent='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanMsg.textContent+=' Caméra non disponible dans ce navigateur : utilise « Ouvrir une photo ».';return}navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(async s=>{stream=s;video.srcObject=s;await video.play();scanFrame()}).catch(()=>{scanMsg.textContent+=' Caméra inaccessible : utilise « Ouvrir une photo ».'})}
 function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
 function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
