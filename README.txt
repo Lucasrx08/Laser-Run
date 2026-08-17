@@ -1,12 +1,38 @@
-LASER RUN 6ème — V9
+LASER RUN 6ème — V10
 
-L1 finalisée :
-- choix du binôme + nation ;
-- Défi XP 1 et XP 2 : observation PIEDS / BRAS / REGARD + conseil ;
-- Défi Étoile : 5 rechargements maximum, vert/rouge, score /5 et 0 à 4 étoiles ;
-- situation principale : 4 x 150 m, 3 passages au tir, rechargements illimités et non comptabilisés ;
-- uniquement 5 touches à valider à chaque passage ;
-- chrono continu pendant course et tir ;
-- classement professeur par nation = somme des deux temps de la nation ;
-- QR de configuration et QR de résultats conservés ;
-- compatible ordinateur, tablette et smartphone.
+MODIFICATIONS PRINCIPALES
+- Accueil :
+  Application EPS - Le Bon Sauveur - Créé par L. RIGAUX
+  Numéro de version masqué.
+
+- Espace Élèves :
+  suppression de l’encadré bleu ;
+  « Installer / mettre à jour les classes » n’est plus visible ;
+  l’accès se fait via Administration puis code enseignant.
+
+- Nations :
+  attribuées une seule fois lors de la Leçon 1 ;
+  mémorisées pour chaque élève ;
+  la nation s’affiche automatiquement lorsque le binôme est choisi ;
+  blocage si deux élèves appartiennent déjà à deux nations différentes ;
+  maximum 2 élèves par nation.
+  Après récupération des résultats, l’espace professeur mémorise aussi les nations.
+  Une nouvelle diffusion des classes permet donc de transmettre les nations connues à toutes les tablettes pour la suite du cycle.
+
+- Situation principale L1 :
+  au pas de tir, le bouton orange disparaît ;
+  seules les 5 touches sont saisies ;
+  à 5 touches : TIR VALIDÉ ;
+  puis bouton REPARTIR POUR LA BOUCLE SUIVANTE / REPARTIR POUR LA DERNIÈRE BOUCLE ;
+  le chronomètre reste continu.
+
+- Export iDoceo :
+  bouton « Exporter iDoceo » dans la classe ;
+  fichier CSV trié par ordre alphabétique ;
+  colonnes :
+  Nom Prénom
+  Défi Précision
+  Centre national de recrutement
+  Défi Précision = nombre d’étoiles de 0 à 4.
+
+Les futures leçons pourront utiliser la même structure d’export avec Défi Rapidité ou Défi Respiration selon le thème travaillé.
