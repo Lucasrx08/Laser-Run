@@ -51,7 +51,7 @@
 <body>
 <div class="app">
 <section id="home">
- <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS · ordinateur, tablette et smartphone</div></div><span class="pill">Version 9</span></div>
+ <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS · ordinateur, tablette et smartphone</div></div><span class="pill">Version 9.1</span></div>
  <div class="statusbar"><span id="netdot" class="okdot"></span><span id="nettext" class="muted"></span><span class="muted">· Les données de séance restent enregistrées sur l’appareil.</span></div>
  <div class="rolegrid">
   <button class="role profrole" onclick="teacherGate()"><div class="roleicon">👨‍🏫</div><div><div class="roletitle">Professeur</div><div class="roledesc">Créer les classes, importer les élèves, diffuser les listes et récupérer les résultats.</div></div></button>
@@ -186,12 +186,27 @@ function options(){return '<option value="">Choisir...</option>'+sc()[1].map((n,
 function renderNations(){nationGrid.innerHTML=NATIONS.map(n=>`<button class="nationBtn ${selectedNation===n?'selected':''}" onclick="selectNation('${n}')"><div class="nationName">${n}</div></button>`).join('')}
 function selectNation(n){selectedNation=n;renderNations()}
 function openPair(){pa.innerHTML=options();pb.innerHTML=options();pairWork.classList.add('hidden');renderNations();if(pair.length===2){pa.value=pair[0].i;pb.value=pair[1].i;renderPair()}show('pair')}
-function validatePair(){if(pa.value===''||pb.value===''||pa.value===pb.value)return alert('Choisis deux élèves différents.');if(!selectedNation)return alert('Choisis la nation du binôme.');pair=[{i:+pa.value,name:sc()[1][+pa.value]},{i:+pb.value,name:sc()[1][+pb.value]}];renderPair()},{i:+pb.value,name:sc()[1][+pb.value]}];renderPair()}
+function validatePair(){
+ if(pa.value===''||pb.value===''||pa.value===pb.value)return alert('Choisis deux élèves différents.');
+ if(!selectedNation)return alert('Choisis la nation du binôme.');
+ pair=[{i:+pa.value,name:sc()[1][+pa.value]},{i:+pb.value,name:sc()[1][+pb.value]}];
+ renderPair();
+}
 function keyFor(n){return `${sc()[0]}|${n}|${day()}|L1`}
 function record(n){return read(RES,[]).find(r=>r.key===keyFor(n))||null}
 function ensure(n){let a=read(RES,[]),r=a.find(x=>x.key===keyFor(n));if(!r){r={key:keyFor(n),className:sc()[0],name:n,date:day(),nation:selectedNation,s1:null,stars:null,time:null};a.push(r);write(RES,a)}else if(selectedNation){r.nation=selectedNation;saveRecord(r)}return r}
 function saveRecord(r){let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
-function renderPair(){pairWork.classList.remove('hidden');s1Buttons.innerHTML=pair.map(p=>{let r=record(p.name);return `<button class="role studentrole" style="min-height:145px" onclick="startS1(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(selectedNation||'')}</div></div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5 · '+(r.stars??0)+' ⭐':'Commencer'}</div></button>`}).join('');mainButtons.innerHTML=pair.map(p=>{let r=record(p.name);return `<button class="role profrole" style="min-height:145px" onclick="startRace(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(selectedNation||'')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')})"><div class="big">${esc(p.name)}</div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5':'Commencer'}</div></button>`}).join('');mainButtons.innerHTML=pair.map(p=>{let r=record(p.name);return `<button class="role profrole" style="min-height:145px" onclick="startRace(${p.i})"><div class="big">${esc(p.name)}</div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')}
+function renderPair(){
+ pairWork.classList.remove('hidden');
+ s1Buttons.innerHTML=pair.map(p=>{
+  let r=record(p.name);
+  return `<button class="role studentrole" style="min-height:145px" onclick="startS1(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(selectedNation||'')}</div></div><div>${r&&r.s1!=null?'✅ '+r.s1+'/5 · '+(r.stars??0)+' ⭐':'Commencer'}</div></button>`;
+ }).join('');
+ mainButtons.innerHTML=pair.map(p=>{
+  let r=record(p.name);
+  return `<button class="role profrole" style="min-height:145px" onclick="startRace(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(selectedNation||'')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`;
+ }).join('');
+}
 function startS1(i){active={i,name:sc()[1][i]};s1=[0,0,0,0,0];xp1=null;xp2=null;s1Name.textContent=`${active.name} · ${selectedNation}`;renderXP('xp1');xp1Card.classList.remove('hidden');xp2Card.classList.add('hidden');starCard.classList.add('hidden');show('s1')}
 function criterionHTML(prefix){return [['pieds','PIEDS','Stabilité des appuis'],['bras','BRAS','Tenue du pistolet'],['regard','REGARD','Alignement de la visée']].map(x=>`<button class="criterion ${(prefix==='xp1'?xp1:xp2)===x[0]?'active':''}" onclick="chooseCriterion('${prefix}','${x[0]}')"><div class="criterionTitle">${x[1]}</div><div class="muted">${x[2]}</div></button>`).join('')}
 function renderXP(prefix){document.getElementById(prefix+'Criteria').innerHTML=criterionHTML(prefix);const chosen=prefix==='xp1'?xp1:xp2;document.getElementById(prefix+'Advice').textContent=chosen?XP_ADVICE[chosen]:'Sélectionne PIEDS, BRAS ou REGARD.'}
@@ -216,7 +231,22 @@ function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;
 function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
 scanFile.addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let img=new Image();img.onload=()=>{canvas.width=img.width;canvas.height=img.height;let ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);if(typeof jsQR==='undefined'){scanMsg.textContent='Lecteur QR non chargé. Ouvre l’application une fois avec Internet.';return}let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height);if(code)consume(code.data);else scanMsg.textContent='QR non reconnu sur cette image.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value=''});
 let lastScan=''; function consume(txt){if(txt===lastScan)return;lastScan=txt;setTimeout(()=>lastScan='',1200);let p;try{p=JSON.parse(txt)}catch(e){return}if(!p.a||!p.id||!p.p||!p.t)return;if((scanMode==='config'&&p.a!=='LR9C')||(scanMode==='results'&&p.a!=='LR9R')){scanMsg.textContent='Ce QR ne correspond pas à cette opération.';return}scanBuffer[p.id]=scanBuffer[p.id]||{t:p.t,parts:{}};scanBuffer[p.id].parts[p.p]=p.d;let b=scanBuffer[p.id],n=Object.keys(b.parts).length;scanProgress.textContent=`QR ${n} / ${b.t} reçu(s)`;scanMsg.textContent=`✅ Partie ${p.p}/${p.t} reçue.`;if(n===b.t){let raw='';for(let i=1;i<=b.t;i++)raw+=b.parts[i];let obj;try{obj=JSON.parse(raw)}catch(e){scanMsg.textContent='Erreur de reconstruction.';return}if(scanMode==='config'){installed=obj;write(INST,installed);scanMsg.textContent=`✅ ${obj.classes.length} classe(s) installée(s).`;scanProgress.textContent='Configuration terminée';setTimeout(stopScanner,900)}else{mergeResults(obj);delete scanBuffer[p.id]}}}
-function mergeResults(obj){let added=0,updated=0;(obj.r||[]).forEach(a=>{let [cn,n,nation,s1v,stars,tim,key]=a,c=db.classes.find(x=>x.name===cn);if(!c)return;c.results=c.results||[];let ex=c.results.find(x=>x.key===key);let item={key,name:n,nation:nation||null,s1:s1v,stars:stars,time:tim,date:obj.d};if(ex){Object.assign(ex,item);updated++}else{c.results.push(item);added++}});write(DB,db);scanMsg.textContent=`✅ ${added} nouveau(x), ${updated} mis à jour.`;scanProgress.textContent='Tu peux scanner la tablette suivante.'};if(ex){Object.assign(ex,item);updated++}else{c.results.push(item);added++}});write(DB,db);scanMsg.textContent=`✅ ${added} nouveau(x), ${updated} mis à jour.`;scanProgress.textContent='Tu peux scanner la tablette suivante.'}
+function mergeResults(obj){
+ let added=0,updated=0;
+ (obj.r||[]).forEach(a=>{
+  let [cn,n,nation,s1v,stars,tim,key]=a;
+  let c=db.classes.find(x=>x.name===cn);
+  if(!c)return;
+  c.results=c.results||[];
+  let ex=c.results.find(x=>x.key===key);
+  let item={key,name:n,nation:nation||null,s1:s1v,stars:stars,time:tim,date:obj.d};
+  if(ex){Object.assign(ex,item);updated++}
+  else{c.results.push(item);added++}
+ });
+ write(DB,db);
+ scanMsg.textContent=`✅ ${added} nouveau(x), ${updated} mis à jour.`;
+ scanProgress.textContent='Tu peux scanner la tablette suivante.';
+}
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}
 </script>
