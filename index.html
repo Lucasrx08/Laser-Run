@@ -157,18 +157,34 @@
 <section id="l23challenge" class="hidden">
  <button class="back" onclick="show('lesson23')">← Binôme</button>
  <div class="top"><div><div id="chTitle" class="title"></div><div id="chName" class="sub"></div></div><span id="chTheme" class="pill"></span></div>
- <div class="card">
-  <div class="notice"><b>Deux Défis XP :</b> le coach observe et donne un seul conseil après chaque essai. <b>Défi Étoile :</b> aucune aide.</div>
-  <div class="section">Défi Étoile · résultat final</div>
-  <div id="speedChallenge" class="hidden">
-   <div class="field"><label>LED maximale atteinte en 50 secondes</label><input id="speedLed" type="number" inputmode="numeric" min="0" max="99" placeholder="Ex. 12"></div>
-   <div class="field" style="margin-top:14px"><label>Étoiles de rapidité obtenues</label><select id="speedStars"><option value="0">0 étoile</option><option value="1">1 étoile</option><option value="2">2 étoiles</option><option value="3">3 étoiles</option><option value="4">4 étoiles</option></select></div>
+ <div id="chXP1Card" class="card">
+  <div class="section" style="margin-top:0">Défi XP 1 · Observer et conseiller</div>
+  <div id="chXP1Notice" class="notice"></div>
+  <div id="chXP1Criteria" class="xpCriteria"></div><div id="chXP1Advice" class="advice"></div>
+  <button class="mainAction" onclick="chGoXP2()">PASSER AU DÉFI XP 2</button>
+ </div>
+ <div id="chXP2Card" class="card hidden">
+  <div class="section" style="margin-top:0">Défi XP 2 · Observer et conseiller</div>
+  <div id="chXP2Notice" class="notice"></div>
+  <div id="chXP2Criteria" class="xpCriteria"></div><div id="chXP2Advice" class="advice"></div>
+  <button class="mainAction" onclick="chGoStar()">PASSER AU DÉFI ÉTOILE</button>
+ </div>
+ <div id="chStarCard" class="card hidden">
+  <div class="section" style="margin-top:0">⭐ Défi Étoile · Évaluation</div>
+  <div id="chStarNotice" class="notice"></div>
+  <div id="chSpeedStar" class="hidden">
+   <div class="timer" id="chSpeedTimer">00:50.0</div>
+   <div class="section" style="text-align:center">LED maximale atteinte</div>
+   <div class="targetset" id="chLedButtons"></div>
+   <div id="chStarDisplay" class="starline">☆☆☆☆</div><div id="chStarText" class="muted" style="text-align:center"></div>
   </div>
-  <div id="breathChallenge" class="hidden">
-   <div class="muted" style="margin-bottom:12px">Le coach valide le niveau atteint sur la routine respiratoire.</div>
-   <div class="field"><label>Étoiles de respiration obtenues</label><select id="breathStars"><option value="0">0 étoile</option><option value="1">1 étoile</option><option value="2">2 étoiles</option><option value="3">3 étoiles</option><option value="4">4 étoiles</option></select></div>
+  <div id="chBreathStar" class="hidden">
+   <div class="section" style="text-align:center">Valide les 5 tirs du Défi Étoile</div>
+   <div id="chBreathTargets" class="targetset"></div>
+   <div id="chBreathScore" class="score">0 / 5</div>
+   <div id="chBreathStars" class="starline">☆☆☆☆</div><div id="chBreathText" class="muted" style="text-align:center"></div>
   </div>
-  <div class="toolbar"><button class="btn orange" onclick="saveL23Challenge()">Enregistrer le Défi Étoile</button></div>
+  <button class="mainAction" onclick="saveL23Challenge()">VALIDER LE DÉFI ÉTOILE</button>
  </div>
 </section>
 
@@ -548,18 +564,70 @@ function renderL23Pair(){
  l23S1Buttons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?(currentLesson===2?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
  l23MainButtons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name);return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')
 }
+let chxp1=null,chxp2=null,chLed=0,chBreath=[0,0,0,0,0];
+const L23_CRITERIA={
+ 2:[
+  ['reload','RECHARGEMENT','Retour rapide à la ceinture','Ramène immédiatement le pistolet à la ceinture après chaque tir.'],
+  ['raise','MONTÉE DU PISTOLET','Mise en visée rapide','Monte directement le pistolet vers la cible sans mouvement inutile.'],
+  ['aim','VISÉE','Regard fixé sur la cible','Garde ton regard fixé devant toi pendant que tu replaces ton bras.']
+ ],
+ 3:[
+  ['slow','RALENTISSEMENT','Préparer l’arrivée au tir','Ralentis avant le pas de tir et pose tes pieds avant de prendre le pistolet.'],
+  ['breathe','RESPIRATION','Deux respirations lentes','Inspire puis souffle lentement deux fois avant de viser.'],
+  ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de l’expiration.']
+ ]
+};
 function startL23Challenge(i){
- l23active={i,name:studentNameAt(i)};let c=l23Cfg(),r=l23Record(l23active.name);
- chTitle.textContent=c.s1;chName.textContent=`${l23active.name} · ${studentNationAt(i)||''}`;chTheme.textContent=c.theme;
- speedChallenge.classList.toggle('hidden',currentLesson!==2);breathChallenge.classList.toggle('hidden',currentLesson!==3);
- if(currentLesson===2){speedLed.value=r&&r.challenge!=null?r.challenge:'';speedStars.value=r&&r.stars!=null?r.stars:0}
- else breathStars.value=r&&r.stars!=null?r.stars:0;
- show('l23challenge')
+ l23active={i,name:studentNameAt(i)};chxp1=null;chxp2=null;chLed=0;chBreath=[0,0,0,0,0];
+ const c=l23Cfg(),r=l23Record(l23active.name);
+ chTitle.textContent=c.s1;chName.textContent=`${l23active.name} · ${studentNationAt(i)||'Nation non attribuée'}`;chTheme.textContent=c.theme;
+ chXP1Card.classList.remove('hidden');chXP2Card.classList.add('hidden');chStarCard.classList.add('hidden');
+ chXP1Notice.innerHTML=currentLesson===2?'Le coach observe où le tireur <b>perd du temps</b>. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.':'Le coach observe la <b>routine respiratoire</b>. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.';
+ chXP2Notice.innerHTML=currentLesson===2?'Observe à nouveau ton partenaire. Choisis le critère qui lui permettra d’enchaîner plus rapidement avant le Défi Étoile.':'Observe à nouveau ton partenaire. Choisis l’étape respiratoire à améliorer avant le Défi Étoile.';
+ renderChXP('xp1');show('l23challenge')
 }
+function chCriteriaHTML(prefix){
+ const selected=prefix==='xp1'?chxp1:chxp2;
+ return L23_CRITERIA[currentLesson].map(x=>`<button class="criterion ${selected===x[0]?'active':''}" onclick="chooseChCriterion('${prefix}','${x[0]}')"><div class="criterionTitle">${x[1]}</div><div class="muted">${x[2]}</div></button>`).join('')
+}
+function renderChXP(prefix){
+ document.getElementById(prefix==='xp1'?'chXP1Criteria':'chXP2Criteria').innerHTML=chCriteriaHTML(prefix);
+ const selected=prefix==='xp1'?chxp1:chxp2, item=L23_CRITERIA[currentLesson].find(x=>x[0]===selected);
+ document.getElementById(prefix==='xp1'?'chXP1Advice':'chXP2Advice').textContent=item?item[3]:'Sélectionne un critère à améliorer.'
+}
+function chooseChCriterion(prefix,c){if(prefix==='xp1')chxp1=c;else chxp2=c;renderChXP(prefix)}
+function chGoXP2(){if(!chxp1)return alert('Choisis un critère à conseiller avant de passer au Défi XP 2.');chXP1Card.classList.add('hidden');chXP2Card.classList.remove('hidden');renderChXP('xp2')}
+function chGoStar(){
+ if(!chxp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');
+ chXP2Card.classList.add('hidden');chStarCard.classList.remove('hidden');
+ chSpeedStar.classList.toggle('hidden',currentLesson!==2);chBreathStar.classList.toggle('hidden',currentLesson!==3);
+ if(currentLesson===2){chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur dispose de <b>5 rechargements maximum</b> pour atteindre la LED la plus élevée en <b>50 secondes</b>.';renderLedButtons()}
+ else{chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur réalise sa routine respiratoire puis dispose de <b>5 rechargements maximum</b>. Vert = cible touchée, rouge = cible non touchée.';renderBreathTargets()}
+}
+function speedStarsForLed(led){
+ // Barème visuel automatique, modifiable ensuite si nécessaire.
+ return led>=5?4:led===4?3:led===3?2:led===2?1:0
+}
+function renderLedButtons(){
+ chLedButtons.innerHTML=[1,2,3,4,5].map(n=>`<button class="target ${chLed===n?'hit':''}" onclick="setLed(${n})"><span style="font-size:26px;font-weight:900">${n}</span></button>`).join('');
+ const stars=speedStarsForLed(chLed);chStarDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chStarText.textContent=chLed?`LED ${chLed} atteinte · ${stars} étoile(s) de rapidité.`:'Sélectionne la LED maximale atteinte.'
+}
+function setLed(n){chLed=n;renderLedButtons()}
+function renderBreathTargets(){
+ chBreathTargets.innerHTML=chBreath.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycleBreath(${i})"></button>`).join('');
+ const hits=chBreath.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;
+ chBreathScore.textContent=`${hits} / 5`;chBreathStars.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chBreathText.textContent=`${stars} étoile(s) de respiration.`
+}
+function cycleBreath(i){chBreath[i]=(chBreath[i]+1)%3;renderBreathTargets()}
 function saveL23Challenge(){
  let r=l23Ensure(l23active.name);r.date=day();r.nation=studentNationAt(l23active.i)||null;
- if(currentLesson===2){let led=+speedLed.value;if(!Number.isFinite(led)||led<0)return alert('Indique la LED maximale atteinte.');r.challenge=led;r.stars=+speedStars.value}
- else{r.challenge=+breathStars.value;r.stars=+breathStars.value}
+ if(currentLesson===2){
+  if(!chLed)return alert('Sélectionne la LED maximale atteinte.');
+  r.challenge=chLed;r.stars=speedStarsForLed(chLed)
+ }else{
+  if(chBreath.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;
+  const hits=chBreath.filter(x=>x===1).length;r.challenge=hits;r.stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0
+ }
  l23Save(r);show('lesson23');renderL23Pair()
 }
 function l2ClassTimes(){
