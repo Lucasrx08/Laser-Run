@@ -443,6 +443,16 @@ html,body,.app{overscroll-behavior-y:none}
   box-shadow:inset 0 0 0 2px #323c3a;
 }
 
+
+/* V21.3 — L6 mode 3 */
+#r23ShootPanel .grid2:has(#r23MissBtn.hidden){
+  grid-template-columns:1fr!important;
+  max-width:650px!important;
+}
+#r23ShootPanel .grid2:has(#r23MissBtn.hidden) .shoot.hit{
+  width:100%!important;
+}
+
 </style>
 </head>
 <body>
@@ -703,7 +713,7 @@ html,body,.app{overscroll-behavior-y:none}
  <div class="card">
   <div id="r23PursuitInfo" class="notice hidden"></div>
   <div id="r23Timer" class="timer">00:00.0</div>
-  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat">Rechargements<b id="r23Shots">0 / 5</b></div></div>
+  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat"><span id="r23ShotsLabel">Rechargements</span><b id="r23Shots">0 / 5</b></div></div>
   <div id="r23HistoryWrap" class="hidden" style="margin-top:18px">
    <div class="section" style="margin-bottom:10px">Tirs précédents</div>
    <div id="r23History" class="grid3"></div>
@@ -713,9 +723,9 @@ html,body,.app{overscroll-behavior-y:none}
    <div id="r23Dots" class="fivehits"></div>
    <div class="grid2" style="max-width:850px;margin:20px auto">
     <button type="button" class="shoot hit" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
-    <button type="button" class="shoot miss" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
+    <button id="r23MissBtn" type="button" class="shoot miss" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
    </div>
-   <div class="muted" style="text-align:center">Le chronomètre continue pendant tout le passage au tir.</div>
+   <div id="r23ShootHelp" class="muted" style="text-align:center">Le chronomètre continue pendant tout le passage au tir.</div>
   </div>
   <button id="r23Action" class="mainAction" type="button" onclick="r23Action()">DÉMARRER</button>
  </div>
@@ -1667,13 +1677,21 @@ function startL23Race(i){
  document.getElementById('r23Title').textContent=cfg.main;
  document.getElementById('r23Name').textContent=`${l23active.name} · ${nation}`;
  const reloadRule=document.getElementById('r23ReloadRule');
- if(reloadRule)reloadRule.textContent=currentLesson===6?'50 secondes maximum · rechargements illimités':'5 rechargements maximum';
+ const shotsLabel=document.getElementById('r23ShotsLabel');
+ const missBtn=document.getElementById('r23MissBtn');
+ if(reloadRule)reloadRule.textContent=currentLesson===6?'50 secondes à partir de la 1re cible touchée · valide les 5 cibles':'5 rechargements maximum';
+ if(shotsLabel)shotsLabel.textContent=currentLesson===6?'Touches':'Rechargements';
+ if(missBtn)missBtn.classList.toggle('hidden',currentLesson===6);
+ const shootHelp=document.getElementById('r23ShootHelp');
+ if(shootHelp)shootHelp.textContent=currentLesson===6
+   ? 'Le chrono de 50 secondes démarre au moment où la première cible est touchée.'
+   : 'Le chronomètre continue pendant tout le passage au tir.';
  const mainNotice=document.querySelector('#l23race .notice');
  if(mainNotice){
    const notes={
     4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 2 · 5 rechargements à chaque passage.',
     5:'Relais des nations · 4 boucles de 150 m par athlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
-    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · 50 secondes maximum par passage · rechargements illimités.'
+    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · les 50 secondes démarrent à la première cible touchée · rechargements illimités.'
    };
    if(notes[currentLesson])mainNotice.textContent=notes[currentLesson];
  }
@@ -1698,7 +1716,7 @@ function resetL23Race(){
  document.getElementById('r23Timer').textContent='00:00.0';
  document.getElementById('r23Lap').textContent='0 / 4';
  document.getElementById('r23Shoot').textContent='0 / 3';
- document.getElementById('r23Shots').textContent='0 / 5';
+ document.getElementById('r23Shots').textContent=currentLesson===6?'0 / 5':'0 / 5';
  document.getElementById('r23Status').textContent='Prêt';
  document.getElementById('r23ShootPanel').classList.add('hidden');
  document.getElementById('r23HistoryWrap').classList.add('hidden');
@@ -1717,20 +1735,41 @@ function r23Clock(){
  if(!l23race)return;
  l23race.elapsed=performance.now()-l23race.start;
  document.getElementById('r23Timer').textContent=fmt(l23race.elapsed);
+
+ // L6 · Mode 3 : les 50 s commencent seulement à la première cible touchée.
+ if(currentLesson===6 && l23race.state==='shoot' && l23race.shootStart!=null){
+   const shotElapsed=performance.now()-l23race.shootStart;
+   const left=Math.max(0,50000-shotElapsed);
+   const status=document.getElementById('r23Status');
+   if(status && shotElapsed<50000){
+     status.textContent=`Pas de tir ${l23race.shoot+1} · ${Math.ceil(left/1000)} s`;
+   }
+   if(shotElapsed>=50000)finishL6Shoot(true);
+ }
 }
 
 function r23Stats(){
  if(!l23race)return;
  document.getElementById('r23Lap').textContent=`${l23race.lap} / 4`;
  document.getElementById('r23Shoot').textContent=`${l23race.shoot} / 3`;
- document.getElementById('r23Shots').textContent=(currentLesson===5||currentLesson===6)?`${l23race.hits} touches · ${l23race.shots} tirs`:`${l23race.shots} / 5`;
+ if(currentLesson===6)document.getElementById('r23Shots').textContent=`${l23race.hits} / 5`;
+ else if(currentLesson===5)document.getElementById('r23Shots').textContent=`${l23race.hits} touches · ${l23race.shots} tirs`;
+ else document.getElementById('r23Shots').textContent=`${l23race.shots} / 5`;
 }
 
 function renderR23Dots(){
  const box=document.getElementById('r23Dots');
  if(!box)return;
  const arr=l23race?.currentShots||[];
- if(currentLesson===5||currentLesson===6){
+ if(currentLesson===6){
+   const hits=l23race?.hits||0;
+   const timedOut=Boolean(l23race?.l6TimedOut);
+   box.innerHTML=Array.from({length:5},(_,i)=>{
+     if(i<hits)return '<div class="dot on"></div>';
+     if(timedOut)return '<div class="dot missdot"></div>';
+     return '<div class="dot"></div>';
+   }).join('');
+ }else if(currentLesson===5){
    const hits=arr.filter(Boolean).length;
    box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${i<hits?'on':''}"></div>`).join('');
  }else{
@@ -1760,7 +1799,7 @@ function renderR23History(){
      <b>Tir ${i+1}</b>
      <div class="shotHistoryDots">${dots}</div>
      <div class="shotTime">${hits}/5 · ${fmt(serie.duration)}</div>
-     <div class="muted">résultat · temps au tir</div>
+     <div class="muted">${currentLesson===6?'cibles validées · temps écoulé':'résultat · temps au tir'}</div>
    </div>`;
  }).join('');
 }
@@ -1789,11 +1828,15 @@ function r23Action(){
      l23race.shots=0;
      l23race.hits=0;
      l23race.currentShots=[];
-     l23race.shootStart=performance.now();
+     l23race.l6TimedOut=false;
+     // En L6, le chrono de 50 s reste en attente jusqu'à la première cible touchée.
+     l23race.shootStart=currentLesson===6?null:performance.now();
 
      shootPanel.classList.remove('hidden');
      action.classList.add('hidden');
-     status.textContent=`Pas de tir ${l23race.shoot+1}`;
+     status.textContent=currentLesson===6
+       ? `Pas de tir ${l23race.shoot+1} · en attente de la 1re touche`
+       : `Pas de tir ${l23race.shoot+1}`;
 
      r23Stats();
      renderR23Dots();
@@ -1804,12 +1847,77 @@ function r23Action(){
  }
 }
 
+function finishL6Shoot(timedOut=false){
+ if(!l23race || currentLesson!==6 || l23race.state!=='shoot')return;
+ if(l23race.shootStart==null)return; // aucune cible encore touchée : les 50 s n'ont pas commencé.
+
+ const duration=Math.min(50000,Math.round(performance.now()-l23race.shootStart));
+ if(timedOut)l23race.l6TimedOut=true;
+
+ // Historique sur 5 cibles : vertes si validées, rouges si non validées à 50 s.
+ const targetStates=Array.from({length:5},(_,i)=>i<l23race.hits);
+ l23race.currentShots=[...targetStates];
+ renderR23Dots();
+
+ l23race.series.push({
+   shots:[...targetStates],
+   duration
+ });
+
+ l23race.shoot++;
+ l23race.lap++;
+ l23race.state='run';
+
+ document.getElementById('r23Status').textContent=timedOut?'50 S · TIR TERMINÉ':'5 CIBLES VALIDÉES';
+ renderR23History();
+ r23Stats();
+
+ const action=document.getElementById('r23Action');
+ action.classList.remove('hidden');
+ action.disabled=false;
+ action.textContent=l23race.shoot<3
+   ? `ARRIVÉE AU PAS DE TIR ${l23race.shoot+1}`
+   : 'ARRIVÉE';
+
+ // Laisser brièvement visibles les cibles rouges à la fin des 50 secondes.
+ setTimeout(()=>{
+   if(!l23race || l23race.state!=='run')return;
+   document.getElementById('r23ShootPanel').classList.add('hidden');
+   document.getElementById('r23Status').textContent=`Boucle ${l23race.lap}`;
+ },timedOut?1200:450);
+}
+
 function r23Shot(hit){
  if(!l23race || l23race.state!=='shoot')return;
- const unlimitedMode=(currentLesson===5||currentLesson===6);
+
+ // L6 · Mode 3 : on ne saisit jamais une cible ratée.
+ // L'élève ne valide que les cibles touchées. À 50 s, les cibles restantes passent en rouge.
+ if(currentLesson===6){
+   if(!hit || l23race.hits>=5)return;
+
+   // PREMIÈRE cible touchée : départ du chrono de 50 secondes.
+   if(l23race.shootStart==null){
+     l23race.shootStart=performance.now();
+     document.getElementById('r23Status').textContent=`Pas de tir ${l23race.shoot+1} · 50 s`;
+   }else if(performance.now()-l23race.shootStart>=50000){
+     finishL6Shoot(true);
+     return;
+   }
+
+   l23race.hits++;
+   l23race.shots=l23race.hits; // compatibilité interne : seuls les impacts validés sont comptés
+   l23race.currentShots=Array.from({length:l23race.hits},()=>true);
+
+   r23Stats();
+   renderR23Dots();
+
+   if(l23race.hits===5)finishL6Shoot(false);
+   return;
+ }
+
+ const unlimitedMode=currentLesson===5;
  if(!unlimitedMode && l23race.shots>=5)return;
  if(unlimitedMode && l23race.hits>=5)return;
- if(currentLesson===6 && l23race.shotStart!=null && performance.now()-l23race.shotStart>=50000)return;
 
  const isHit=Boolean(hit);
  l23race.currentShots.push(isHit);
@@ -1819,7 +1927,7 @@ function r23Shot(hit){
  r23Stats();
  renderR23Dots();
 
- if((currentLesson===6 ? (l23race.hits===5 || (l23race.shotStart!=null && performance.now()-l23race.shotStart>=50000)) : (currentLesson===5 ? l23race.hits===5 : l23race.shots===5))){
+ if((currentLesson===5 ? l23race.hits===5 : l23race.shots===5)){
    const duration=Math.round(performance.now()-l23race.shootStart);
    l23race.series.push({
      shots:[...l23race.currentShots],
