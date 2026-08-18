@@ -66,6 +66,50 @@
 .shotHistoryDot.miss{background:var(--red);border-color:#861a12}
 
 .shotTime{font-weight:900;margin-top:6px}
+
+.dashboardTabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 20px}
+.dashboardTab{border:2px solid rgba(50,60,58,.12);background:rgba(255,255,255,.62);color:var(--c2);padding:12px 16px;border-radius:14px;font-weight:900}
+.dashboardTab.active{background:var(--c2);color:white;border-color:var(--c2)}
+.subTabs{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 18px}
+.subTab{border:0;background:var(--c1);color:var(--c2);padding:10px 14px;border-radius:999px;font-weight:900}
+.subTab.active{background:var(--c4)}
+.dashboardPanel{min-height:260px}
+.kpiGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:white;border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.kpi .num{font-size:30px;font-weight:950;margin-top:5px}
+.rankTable{display:grid;gap:9px}
+.rankItem{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;background:white;border-radius:17px;padding:14px 16px}
+.rankItem .place{font-size:26px;font-weight:950;text-align:center}
+.rankItem .value{font-size:21px;font-weight:950;text-align:right}
+.rankItem.provisional{opacity:.65}
+.globeHeader{background:var(--c2);color:white;border-radius:22px;padding:20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.globeTitle{font-size:clamp(26px,4vw,40px);font-weight:950}
+.crystal{font-size:24px;font-weight:950}
+.crystalDetail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:8px}
+.crystalLesson{font-size:12px;background:var(--c1);padding:6px;border-radius:8px;text-align:center}
+.quickActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 20px}
+.quickAction{border:0;border-radius:18px;padding:20px;text-align:left;background:white;box-shadow:var(--shadow);color:var(--c2)}
+.quickAction b{font-size:19px;display:block;margin-bottom:5px}
+.pursuitGrid{display:grid;grid-template-columns:minmax(320px,.8fr) 1.2fr;gap:18px}
+.pursuitTimer{font-size:clamp(58px,10vw,112px);font-weight:950;text-align:center;letter-spacing:-3px}
+.pursuitNext{text-align:center;background:var(--c1);border-radius:20px;padding:18px;margin:14px 0}
+.pursuitNextNation{font-size:clamp(28px,5vw,48px);font-weight:950}
+.pursuitCountdown{font-size:clamp(24px,4vw,40px);font-weight:950}
+.pursuitRow{display:grid;grid-template-columns:55px 1fr 110px;gap:12px;align-items:center;padding:12px;background:white;border-radius:14px;margin-bottom:8px}
+.pursuitRow.done{opacity:.48}
+.pursuitRow.now{outline:4px solid var(--c4)}
+.studentTopTools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+@media(max-width:850px){
+ .kpiGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .quickActions{grid-template-columns:1fr}
+ .pursuitGrid{grid-template-columns:1fr}
+ .crystalDetail{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .rankItem{grid-template-columns:46px 1fr}.rankItem .value{grid-column:2;text-align:left}
+ .kpiGrid{grid-template-columns:1fr 1fr}
+}
+
 </style>
 </head>
 <body>
@@ -89,22 +133,116 @@
 
 <section id="profClass" class="hidden">
  <button class="back" onclick="openProf()">← Mes classes</button>
- <div class="top"><div><div id="pcTitle" class="title"></div><div id="pcSub" class="sub"></div></div><div class="toolbar" style="margin:0"><button class="btn light" onclick="openPursuitMaster()">Départs Poursuite</button><button class="btn light" onclick="exportIDoceo()">Exporter iDoceo</button><button class="btn red" onclick="deleteClass()">Supprimer</button></div></div>
- <div class="grid2">
-  <div class="card"><div class="section" style="margin-top:0">Élèves</div><div class="notice">Importe un fichier <b>CSV, XLS ou XLSX</b>. L’application accepte une colonne « Nom Prénom » ou deux colonnes « Nom » / « Prénom ».</div><div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.xls,.xlsx"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button></div><div id="pcStudents" class="list"></div></div>
-  <div class="card"><div class="section" style="margin-top:0">Classement des nations · L1</div><div id="nationRanking" class="rankGrid"></div><div class="section">Résultats individuels</div><div id="pcResults" class="list"></div></div>
+ <div class="top">
+  <div><div id="pcTitle" class="title"></div><div id="pcSub" class="sub"></div></div>
+  <div class="toolbar" style="margin:0">
+   <button class="btn light" onclick="startScanner('results')">📷 Scanner résultats</button>
+   <button class="btn light" onclick="openConfigQR()">▦ Diffuser classes</button>
+  </div>
+ </div>
+
+ <div class="dashboardTabs">
+  <button id="pcTabBtnOverview" class="dashboardTab active" onclick="showPcTab('overview')">Vue générale</button>
+  <button id="pcTabBtnStudents" class="dashboardTab" onclick="showPcTab('students')">Élèves</button>
+  <button id="pcTabBtnResults" class="dashboardTab" onclick="showPcTab('results')">Résultats</button>
+  <button id="pcTabBtnRankings" class="dashboardTab" onclick="showPcTab('rankings')">Classements</button>
+  <button id="pcTabBtnPursuit" class="dashboardTab" onclick="showPcTab('pursuit')">Poursuite</button>
+  <button id="pcTabBtnExport" class="dashboardTab" onclick="showPcTab('export')">Export</button>
+ </div>
+
+ <div id="pcPanelOverview" class="dashboardPanel">
+  <div id="pcKpis" class="kpiGrid"></div>
+  <div class="quickActions">
+   <button class="quickAction" onclick="showPcTab('rankings')"><b>🏆 Classements</b><span>Défis Étoile et Globe de cristal</span></button>
+   <button class="quickAction" onclick="showPcTab('pursuit')"><b>⏱️ Départs Poursuite</b><span>Chronomètre général et départs décalés</span></button>
+   <button class="quickAction" onclick="showPcTab('results')"><b>📊 Résultats</b><span>Consulter les performances par leçon</span></button>
+  </div>
+  <div class="card">
+   <div class="section" style="margin-top:0">Globe de cristal · aperçu</div>
+   <div id="pcGlobePreview"></div>
+  </div>
+ </div>
+
+ <div id="pcPanelStudents" class="dashboardPanel hidden">
+  <div class="card">
+   <div class="section" style="margin-top:0">Élèves</div>
+   <div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.xls,.xlsx"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button></div>
+   <div id="pcStudents" class="list"></div>
+  </div>
+ </div>
+
+ <div id="pcPanelResults" class="dashboardPanel hidden">
+  <div class="card">
+   <div class="section" style="margin-top:0">Résultats individuels</div>
+   <div id="pcResults" class="list"></div>
+  </div>
+ </div>
+
+ <div id="pcPanelRankings" class="dashboardPanel hidden">
+  <div class="card">
+   <div class="section" style="margin-top:0">Classements</div>
+   <div class="subTabs">
+    <button id="rankTabPrecision" class="subTab active" onclick="showRankingTab('precision')">🎯 Précision</button>
+    <button id="rankTabRapidity" class="subTab" onclick="showRankingTab('rapidity')">⚡ Rapidité</button>
+    <button id="rankTabRespiration" class="subTab" onclick="showRankingTab('respiration')">🌬️ Respiration</button>
+    <button id="rankTabGlobe" class="subTab" onclick="showRankingTab('globe')">💎 Globe de cristal</button>
+   </div>
+   <div id="rankingContent"></div>
+  </div>
+ </div>
+
+ <div id="pcPanelPursuit" class="dashboardPanel hidden">
+  <div class="pursuitGrid">
+   <div class="card">
+    <div class="section" style="margin-top:0">Chronomètre Poursuite</div>
+    <div class="subTabs">
+     <button id="pursuitMode1Btn" class="subTab active" onclick="setPursuitMode(1)">Biathlètes 1</button>
+     <button id="pursuitMode2Btn" class="subTab" onclick="setPursuitMode(2)">Biathlètes 2</button>
+    </div>
+    <div id="pursuitTimerDisplay" class="pursuitTimer">00:00.0</div>
+    <div class="pursuitNext">
+     <div class="muted">PROCHAIN DÉPART</div>
+     <div id="pursuitNextNation" class="pursuitNextNation">—</div>
+     <div id="pursuitCountdown" class="pursuitCountdown">Prêt</div>
+    </div>
+    <div class="toolbar">
+     <button id="pursuitStartBtn" class="btn orange" onclick="startPursuitClock()">DÉMARRER</button>
+     <button class="btn ghost" onclick="pausePursuitClock()">PAUSE</button>
+     <button class="btn red" onclick="resetPursuitClock()">RÉINITIALISER</button>
+    </div>
+   </div>
+   <div class="card">
+    <div class="section" style="margin-top:0">Ordre des départs</div>
+    <div id="pursuitStarts"></div>
+   </div>
+  </div>
+ </div>
+
+ <div id="pcPanelExport" class="dashboardPanel hidden">
+  <div class="card">
+   <div class="section" style="margin-top:0">Export iDoceo</div>
+   <div class="notice">Les élèves sont triés par ordre alphabétique. Les colonnes reprennent les Défis Étoile et les situations principales disponibles.</div>
+   <div class="toolbar"><button class="btn orange" onclick="exportIDoceo()">Exporter le fichier CSV</button></div>
+   <div class="section">Gestion de la classe</div>
+   <button class="btn red" onclick="deleteClass()">Supprimer la classe</button>
+  </div>
  </div>
 </section>
 
 <section id="studentHome" class="hidden">
  <button class="back" onclick="show('home')">← Accueil</button>
  <div class="top"><div><div class="title">Espace élèves</div><div class="sub">Choisis ta classe</div></div><span class="pill">Élèves</span></div>
- <div class="toolbar"><button class="btn ghost" onclick="openResultsQR()">▦ QR des résultats de la tablette</button><button class="btn ghost" onclick="requestStudentAdmin()">⚙️ Administration</button></div>
+ <div class="toolbar"><button class="btn ghost" onclick="requestStudentAdmin()">⚙️ Administration</button></div>
  <div id="studentClasses" class="list"></div>
 </section>
 
 <section id="lessons" class="hidden">
- <button class="back" onclick="openStudentHome()">← Classes</button><div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis la leçon</div></div></div><div id="lessonGrid" class="lessonGrid"></div>
+ <div class="studentTopTools">
+  <button class="back" onclick="openStudentHome()">← Classes</button>
+  <button class="btn ghost" onclick="openResultsQR()">▦ QR résultats</button>
+ </div>
+ <div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis directement ta leçon</div></div><span class="pill">Élèves</span></div>
+ <div id="lessonGrid" class="lessonGrid"></div>
 </section>
 
 <section id="pair" class="hidden">
@@ -276,8 +414,28 @@
 <script>
 const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
 let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof',currentLesson=1,l23pair=[],l23active=null,l23race=null,l23tick=null;
-let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1;
+let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1,currentPcTab='overview',currentRankingTab='precision';
 const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Espagne','Suisse','Finlande'];
+const CHALLENGE_LESSONS={
+ precision:[1,4],
+ rapidity:[2,5],
+ respiration:[3,6]
+};
+const CHALLENGE_LABELS={
+ precision:'Précision',
+ rapidity:'Rapidité',
+ respiration:'Respiration'
+};
+const LESSON_MAIN_NAMES={
+ 1:'Centre national de recrutement',
+ 2:'Sprint individuel',
+ 3:'Poursuite',
+ 4:'Mass-start',
+ 5:'Relais des nations',
+ 6:'Qualification aux JO',
+ 7:'Jeux Olympiques'
+};
+
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');scrollTo(0,0)}
@@ -306,24 +464,150 @@ function changePin(){pendingTeacherAction='prof';pinMode='change';pinTitle.textC
 function lockTeacher(){teacher=false;pendingTeacherAction='prof';show('home')}
 function openProf(){renderProf();show('prof')} function renderProf(){profClasses.innerHTML=db.classes.length?db.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="openProfClass(${i})"><div><div class="big">${esc(c.name)}</div><div class="muted">${c.students.length} élèves · ${(c.results||[]).length} résultat(s)</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe enregistrée.</div>'}
 function toggleCreate(){createBox.classList.toggle('hidden')} function createClass(){let n=newClass.value.trim();if(!n)return alert('Entre un nom de classe.');db.classes.push({name:n,students:[],results:[]});write(DB,db);newClass.value='';toggleCreate();renderProf()}
-function openProfClass(i){currentProf=i;renderProfClass();show('profClass')} function pc(){return db.classes[currentProf]} function renderProfClass(){
- let c=pc();pcTitle.textContent=c.name;pcSub.textContent=`${c.students.length} élèves`;
- pcStudents.innerHTML=c.students.length?c.students.map((n,i)=>`<div class="row"><div><div class="big">${esc(n)}</div><div class="muted">${(c.nations&&c.nations[n])?esc(c.nations[n]):'Nation non attribuée'}</div></div><button class="btn ghost" onclick="removeStudent(${i})">Retirer</button></div>`).join(''):'<div class="muted">Aucun élève.</div>';
- let rs=c.results||[];
- pcResults.innerHTML=rs.length?rs.slice().sort((a,b)=>a.name.localeCompare(b.name)||Number(a.lesson||1)-Number(b.lesson||1)).map(r=>{
- const lesson=Number(r.lesson||1);
- let detail='';
- if(lesson===1)detail=`Défi Précision : ${r.stars==null?'—':r.stars+' ⭐'} · Centre national : ${r.time==null?'—':fmt(r.time)}`;
- if(lesson===2)detail=`Défi Rapidité : ${r.stars==null?'—':r.stars+' ⭐'}${r.challenge!=null?' · LED '+r.challenge:''} · Sprint : ${r.time==null?'—':fmt(r.time)}`;
- if(lesson===3)detail=`Défi Respiration : ${r.stars==null?'—':r.stars+' ⭐'} · Poursuite : ${r.time==null?'—':fmt(r.time)}`;
- return `<div class="row"><div><div class="big">${esc(r.name)}</div><div class="muted">${r.nation||'Nation non définie'} · L${lesson}${r.pairSlot?' · Biathlète '+r.pairSlot:''}</div></div><div><b>${detail}</b></div></div>`;
-}).join(''):'<div class="muted">Aucun résultat récupéré.</div>';
- renderNationRanking(rs);
+function openProfClass(i){
+ currentProf=i;
+ currentPcTab='overview';
+ currentRankingTab='precision';
+ renderProfClass();
+ show('profClass');
+ showPcTab('overview');
 }
-function renderNationRanking(rs){
- const grouped={};rs.filter(r=>r.nation&&r.time!=null).forEach(r=>{grouped[r.nation]=grouped[r.nation]||[];grouped[r.nation].push(r)});
- let rows=Object.entries(grouped).filter(([n,a])=>a.length>=2).map(([nation,a])=>{a=a.slice().sort((x,y)=>x.time-y.time).slice(0,2);return {nation,total:a[0].time+a[1].time,people:a}}).sort((a,b)=>a.total-b.total);
- nationRanking.innerHTML=rows.length?rows.map((x,i)=>`<div class="rankRow"><div class="rankPos">${i+1}</div><div><div class="big">${esc(x.nation)}</div><div class="muted">${esc(x.people[0].name)} ${fmt(x.people[0].time)} + ${esc(x.people[1].name)} ${fmt(x.people[1].time)}</div></div><div><b>${fmt(x.total)}</b></div></div>`).join(''):'<div class="muted">Le classement apparaît lorsqu’une nation possède deux temps enregistrés.</div>';
+function pc(){return db.classes[currentProf]}
+
+function latestByNameLesson(c,name,lesson){
+ const arr=(c.results||[]).filter(r=>r.name===name&&Number(r.lesson||1)===Number(lesson));
+ if(!arr.length)return null;
+ return arr.slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).pop();
+}
+function uniqueLessonResults(c,lesson){
+ const map=new Map();
+ (c.results||[]).filter(r=>Number(r.lesson||1)===Number(lesson)).forEach(r=>{
+   const old=map.get(r.name);
+   if(!old||String(r.date||'')>=String(old.date||''))map.set(r.name,r);
+ });
+ return [...map.values()];
+}
+function challengeAverage(c,name,type){
+ const lessons=CHALLENGE_LESSONS[type]||[];
+ const vals=lessons.map(l=>latestByNameLesson(c,name,l)).filter(r=>r&&r.stars!=null).map(r=>Number(r.stars));
+ if(!vals.length)return {avg:null,count:0,values:[]};
+ return {avg:vals.reduce((a,b)=>a+b,0)/vals.length,count:vals.length,values:vals};
+}
+function challengeRanking(c,type){
+ return c.students.map(name=>{
+   const x=challengeAverage(c,name,type);
+   return {name,nation:(c.nations&&c.nations[name])||'—',...x};
+ }).filter(x=>x.count>0).sort((a,b)=>{
+   const ac=a.count===2?1:0,bc=b.count===2?1:0;
+   if(ac!==bc)return bc-ac;
+   if(b.avg!==a.avg)return b.avg-a.avg;
+   return a.name.localeCompare(b.name,'fr');
+ });
+}
+function crystalsForPlace(place,lesson){
+ if(Number(lesson)===7){
+   if(place<=4)return 12;
+   if(place<=8)return 9;
+   return 6;
+ }
+ if(place<=4)return 4;
+ if(place<=8)return 3;
+ return 2;
+}
+function lessonIndividualRanking(c,lesson){
+ const arr=uniqueLessonResults(c,lesson).filter(r=>r.time!=null&&Number.isFinite(Number(r.time)));
+ return arr.sort((a,b)=>Number(a.time)-Number(b.time)||String(a.name).localeCompare(String(b.name),'fr'));
+}
+function globeStandings(c){
+ const nations={};
+ for(let lesson=1;lesson<=7;lesson++){
+   const ranking=lessonIndividualRanking(c,lesson);
+   ranking.forEach((r,index)=>{
+     const nation=r.nation||(c.nations&&c.nations[r.name]);
+     if(!nation)return;
+     if(!nations[nation])nations[nation]={nation,total:0,lessons:{}};
+     const pts=crystalsForPlace(index+1,lesson);
+     nations[nation].total+=pts;
+     nations[nation].lessons[lesson]=(nations[nation].lessons[lesson]||0)+pts;
+   });
+ }
+ return Object.values(nations).sort((a,b)=>b.total-a.total||a.nation.localeCompare(b.nation,'fr'));
+}
+function renderGlobe(targetId,compact=false){
+ const c=pc(),rows=globeStandings(c),box=document.getElementById(targetId);
+ if(!box)return;
+ if(!rows.length){box.innerHTML='<div class="muted">Les cristaux apparaîtront dès qu’une situation principale aura été enregistrée.</div>';return}
+ if(compact){
+   box.innerHTML=rows.slice(0,4).map((x,i)=>`<div class="rankItem"><div class="place">${i+1}</div><div><div class="big">${esc(x.nation)}</div><div class="muted">${Object.entries(x.lessons).map(([l,p])=>`L${l} +${p}`).join(' · ')}</div></div><div class="value">💎 ${x.total}</div></div>`).join('');
+   return;
+ }
+ box.innerHTML=`<div class="globeHeader"><div><div class="globeTitle">💎 Conquête du Globe de cristal</div><div style="opacity:.75">Cristaux cumulés de L1 à L7</div></div><div class="crystal">${rows[0]?esc(rows[0].nation)+' · '+rows[0].total+' 💎':''}</div></div><div class="notice"><b>L1 à L6 :</b> places 1–4 = 4 💎 · 5–8 = 3 💎 · 9 et + = 2 💎. <b>L7 JO :</b> 12 💎 · 9 💎 · 6 💎. Chaque élève rapporte ses cristaux à sa nation.</div>`+
+ rows.map((x,i)=>`<div class="rankItem"><div class="place">${i+1}</div><div><div class="big">${esc(x.nation)}</div><div class="crystalDetail">${Array.from({length:7},(_,j)=>`<div class="crystalLesson">L${j+1}<br><b>${x.lessons[j+1]||0} 💎</b></div>`).join('')}</div></div><div class="value">${x.total} 💎</div></div>`).join('');
+}
+function renderChallengeRanking(type){
+ const c=pc(),rows=challengeRanking(c,type);
+ if(!rows.length){
+   document.getElementById('rankingContent').innerHTML=`<div class="muted">Aucun Défi Étoile ${CHALLENGE_LABELS[type].toLowerCase()} enregistré.</div>`;
+   return;
+ }
+ document.getElementById('rankingContent').innerHTML=`<div class="notice">Le classement final correspond à la moyenne des <b>2 Défis Étoile ${CHALLENGE_LABELS[type]}</b> (L${CHALLENGE_LESSONS[type][0]} + L${CHALLENGE_LESSONS[type][1]}). Une moyenne avec un seul défi est affichée comme provisoire.</div><div class="rankTable">`+
+ rows.map((x,i)=>`<div class="rankItem ${x.count<2?'provisional':''}"><div class="place">${i+1}</div><div><div class="big">${esc(x.name)}</div><div class="muted">${esc(x.nation)} · ${x.values.map(v=>v+' ⭐').join(' + ')}${x.count<2?' · provisoire':''}</div></div><div class="value">${x.avg.toFixed(1)} ⭐</div></div>`).join('')+
+ '</div>';
+}
+function showRankingTab(type){
+ currentRankingTab=type;
+ ['precision','rapidity','respiration','globe'].forEach(t=>{
+   const id=t==='rapidity'?'Rapidity':t.charAt(0).toUpperCase()+t.slice(1);
+   const btn=document.getElementById('rankTab'+id);
+   if(btn)btn.classList.toggle('active',t===type);
+ });
+ if(type==='globe')renderGlobe('rankingContent',false);
+ else renderChallengeRanking(type);
+}
+function showPcTab(tab){
+ currentPcTab=tab;
+ ['overview','students','results','rankings','pursuit','export'].forEach(t=>{
+   const panel=document.getElementById('pcPanel'+t.charAt(0).toUpperCase()+t.slice(1));
+   const btn=document.getElementById('pcTabBtn'+t.charAt(0).toUpperCase()+t.slice(1));
+   if(panel)panel.classList.toggle('hidden',t!==tab);
+   if(btn)btn.classList.toggle('active',t===tab);
+ });
+ if(tab==='rankings')showRankingTab(currentRankingTab);
+ if(tab==='pursuit'){resetPursuitClock();renderPursuitStarts()}
+}
+function resultDetail(r){
+ const lesson=Number(r.lesson||1);
+ const main=LESSON_MAIN_NAMES[lesson]||`Leçon ${lesson}`;
+ let challenge='';
+ if(lesson===1)challenge=`Défi Précision : ${r.stars==null?'—':r.stars+' ⭐'}`;
+ else if(lesson===2)challenge=`Défi Rapidité : ${r.stars==null?'—':r.stars+' ⭐'}${r.challenge!=null?' · LED '+r.challenge:''}`;
+ else if(lesson===3)challenge=`Défi Respiration : ${r.stars==null?'—':r.stars+' ⭐'}`;
+ else challenge=r.stars==null?'':`Défi Étoile : ${r.stars} ⭐`;
+ return `${challenge}${challenge?' · ':''}${main} : ${r.time==null?'—':fmt(r.time)}`;
+}
+function renderProfClass(){
+ const c=pc();
+ document.getElementById('pcTitle').textContent=c.name;
+ document.getElementById('pcSub').textContent=`${c.students.length} élèves · ${(c.results||[]).length} résultat(s)`;
+
+ document.getElementById('pcStudents').innerHTML=c.students.length?c.students.slice().sort((a,b)=>a.localeCompare(b,'fr')).map(n=>{
+   const i=c.students.indexOf(n);
+   return `<div class="row"><div><div class="big">${esc(n)}</div><div class="muted">${(c.nations&&c.nations[n])?esc(c.nations[n]):'Nation non attribuée'}</div></div><button class="btn ghost" onclick="removeStudent(${i})">Retirer</button></div>`;
+ }).join(''):'<div class="muted">Aucun élève.</div>';
+
+ const rs=(c.results||[]).slice().sort((a,b)=>a.name.localeCompare(b.name,'fr')||Number(a.lesson||1)-Number(b.lesson||1));
+ document.getElementById('pcResults').innerHTML=rs.length?rs.map(r=>`<div class="row"><div><div class="big">${esc(r.name)}</div><div class="muted">${esc(r.nation||'Nation non définie')} · L${Number(r.lesson||1)}${r.pairSlot?' · Biathlète '+r.pairSlot:''}</div></div><div><b>${resultDetail(r)}</b></div></div>`).join(''):'<div class="muted">Aucun résultat récupéré.</div>';
+
+ const globe=globeStandings(c);
+ const completedLessons=new Set((c.results||[]).filter(r=>r.time!=null).map(r=>Number(r.lesson||1))).size;
+ const knownNations=new Set(c.students.map(n=>(c.nations&&c.nations[n])||null).filter(Boolean)).size;
+ document.getElementById('pcKpis').innerHTML=`
+  <div class="kpi"><div class="muted">Élèves</div><div class="num">${c.students.length}</div></div>
+  <div class="kpi"><div class="muted">Nations</div><div class="num">${knownNations}</div></div>
+  <div class="kpi"><div class="muted">Leçons avec résultats</div><div class="num">${completedLessons}/7</div></div>
+  <div class="kpi"><div class="muted">Leader Globe</div><div class="num">${globe[0]?esc(globe[0].nation):'—'}</div></div>`;
+ renderGlobe('pcGlobePreview',true);
+ if(currentPcTab==='rankings')showRankingTab(currentRankingTab);
 }
 function csvEscape(v){v=v==null?'':String(v);if(/[;"\n\r]/.test(v))v='"'+v.replace(/"/g,'""')+'"';return v}
 function exportIDoceo(){
@@ -339,9 +623,40 @@ roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;
 
 function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=2)])}}
 function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
-function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject());qrIndex=0;qrReturn='prof';qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
-function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:11,d:day(),r:arr};qrPages=makeChunks('LR13R',compact,420);qrIndex=0;qrReturn=(!document.getElementById('pair').classList.contains('hidden')?'pair':(!document.getElementById('lesson23').classList.contains('hidden')?'lesson23':'studentHome'));qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
-function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='pair')show('pair');else if(qrReturn==='lesson23')show('lesson23');else openStudentHome()}
+function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject(),520);qrIndex=0;qrReturn=(!document.getElementById('profClass').classList.contains('hidden')?'profClass':'prof');qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
+function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))}
+function compactResult(r){
+ return {
+  key:r.key,
+  className:r.className,
+  name:r.name,
+  nation:r.nation||null,
+  lesson:Number(r.lesson||1),
+  date:r.date||day(),
+  s1:r.s1??null,
+  stars:r.stars??null,
+  challenge:r.challenge??null,
+  time:r.time??null,
+  pairSlot:r.pairSlot??null
+ };
+}
+function openResultsQR(){
+ let arr=resultRecords();
+ if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');
+ let compact={v:14,d:day(),r:arr.map(compactResult)};
+ qrPages=makeChunks('LR14R',compact,420);
+ qrIndex=0;
+ if(!document.getElementById('pair').classList.contains('hidden'))qrReturn='pair';
+ else if(!document.getElementById('lesson23').classList.contains('hidden'))qrReturn='lesson23';
+ else if(!document.getElementById('lessons').classList.contains('hidden'))qrReturn='lessons';
+ else qrReturn='studentHome';
+ qrTitle.textContent='Résultats de la tablette';
+ qrSub.textContent='Le professeur scanne les QR dans l’ordre';
+ qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR à scanner dans l’ordre.`;
+ qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');
+ renderQR();show('qr');
+}
+function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='profClass'){renderProfClass();show('profClass');showPcTab(currentPcTab||'overview')}else if(qrReturn==='pair')show('pair');else if(qrReturn==='lesson23')show('lesson23');else if(qrReturn==='lessons')show('lessons');else openStudentHome()}
 
 function normalizeInstalled(){installed=read(INST,{version:0,classes:[]});installed.classes=(installed.classes||[]).map(c=>[c[0],(c[1]||[]).map(x=>Array.isArray(x)?[x[0],x[1]||null]:[x,null])]);write(INST,installed)}
 function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
@@ -907,8 +1222,157 @@ function leaveL23Race(){
  show('lesson23');
 }
 
+
+const PURSUIT_FLAGS={France:'🇫🇷','Norvège':'🇳🇴','Suède':'🇸🇪','Allemagne':'🇩🇪',Italie:'🇮🇹',Espagne:'🇪🇸',Suisse:'🇨🇭',Finlande:'🇫🇮'};
+
+function pursuitL2Results(){
+ const c=pc();
+ const map=new Map();
+ (c.results||[]).filter(r=>Number(r.lesson||1)===2&&r.time!=null).forEach(r=>{
+   const old=map.get(r.name);
+   if(!old||String(r.date||'')>=String(old.date||''))map.set(r.name,r);
+ });
+ return [...map.values()];
+}
+function pursuitStartsForMode(mode=pursuitMode){
+ const c=pc(),all=pursuitL2Results(),groups={};
+ all.forEach(r=>{
+   const nation=r.nation||(c.nations&&c.nations[r.name]);
+   if(!nation)return;
+   (groups[nation]||(groups[nation]=[])).push({...r,nation});
+ });
+ const chosen=[];
+ Object.entries(groups).forEach(([nation,arr])=>{
+   arr.sort((a,b)=>{
+     const sa=Number(a.pairSlot||99),sb=Number(b.pairSlot||99);
+     if(sa!==sb)return sa-sb;
+     return Number(a.time)-Number(b.time)||String(a.name).localeCompare(String(b.name),'fr');
+   });
+   let r=arr.find(x=>Number(x.pairSlot)===Number(mode));
+   if(!r)r=arr[Number(mode)-1]||null;
+   if(r)chosen.push(r);
+ });
+ chosen.sort((a,b)=>Number(a.time)-Number(b.time));
+ if(!chosen.length)return [];
+ const best=Number(chosen[0].time);
+ return chosen.map((r,i)=>({
+   rank:i+1,
+   nation:r.nation,
+   name:r.name,
+   time:Number(r.time),
+   gap:Number(r.time)-best
+ }));
+}
+function setPursuitMode(mode){
+ pursuitMode=Number(mode);
+ document.getElementById('pursuitMode1Btn').classList.toggle('active',pursuitMode===1);
+ document.getElementById('pursuitMode2Btn').classList.toggle('active',pursuitMode===2);
+ resetPursuitClock();
+ renderPursuitStarts();
+}
+function renderPursuitStarts(){
+ const box=document.getElementById('pursuitStarts');
+ if(!box)return;
+ const starts=pursuitStartsForMode();
+ if(!starts.length){
+   box.innerHTML='<div class="warn">Aucun temps du Sprint L2 disponible pour ce groupe. Récupère d’abord les résultats L2.</div>';
+   document.getElementById('pursuitNextNation').textContent='—';
+   document.getElementById('pursuitCountdown').textContent='Aucun départ';
+   return;
+ }
+ box.innerHTML=starts.map((x,i)=>`<div id="pursuitRow${i}" class="pursuitRow">
+  <div style="font-size:28px;text-align:center">${PURSUIT_FLAGS[x.nation]||'🏳️'}</div>
+  <div><div class="big">${esc(x.nation)}</div><div class="muted">${esc(x.name)} · Sprint ${fmt(x.time)}</div></div>
+  <div style="text-align:right"><b>${x.gap===0?'0 s':'+'+(x.gap/1000).toFixed(1)+' s'}</b></div>
+ </div>`).join('');
+ updatePursuitClock();
+}
+function pursuitClockNow(){
+ return pmRunning ? pmElapsed+(performance.now()-pmStartPerf) : pmElapsed;
+}
+function pursuitBeep(duration=.14,freq=700){
+ try{
+  const C=window.AudioContext||window.webkitAudioContext;
+  if(!C)return;
+  const ctx=new C(),osc=ctx.createOscillator(),gain=ctx.createGain();
+  osc.type='sine';osc.frequency.value=freq;
+  gain.gain.setValueAtTime(.001,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.28,ctx.currentTime+.01);
+  gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+  osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+duration+.03);
+  setTimeout(()=>ctx.close().catch(()=>{}),500);
+ }catch(e){}
+}
+function updatePursuitClock(){
+ const starts=pursuitStartsForMode(),now=pursuitClockNow();
+ const timer=document.getElementById('pursuitTimerDisplay');
+ if(timer)timer.textContent=fmt(now);
+ if(!starts.length)return;
+
+ starts.forEach((x,i)=>{
+   const row=document.getElementById('pursuitRow'+i);
+   if(!row)return;
+   row.classList.toggle('done',now>x.gap+1200);
+   row.classList.toggle('now',now>=Math.max(0,x.gap-1000)&&now<=x.gap+900);
+ });
+
+ let idx=starts.findIndex(x=>now<=x.gap+900);
+ if(idx<0){
+   document.getElementById('pursuitNextNation').textContent='Tous partis';
+   document.getElementById('pursuitCountdown').textContent='Bonne poursuite !';
+   return;
+ }
+
+ const x=starts[idx],remain=x.gap-now;
+ document.getElementById('pursuitNextNation').textContent=`${PURSUIT_FLAGS[x.nation]||''} ${x.nation}`;
+ document.getElementById('pursuitCountdown').textContent=remain<=0?'PARTEZ !':remain<10000?(remain/1000).toFixed(1)+' s':Math.ceil(remain/1000)+' s';
+
+ if(pmRunning){
+   let key=-1;
+   const sec=Math.ceil(remain/1000);
+   if(remain<=80&&remain>=-160)key=idx*10+9;
+   else if(remain>0&&sec>=1&&sec<=3)key=idx*10+sec;
+   if(key>=0&&key!==pmLastSignal){
+     pmLastSignal=key;
+     const depart=(key%10===9);
+     pursuitBeep(depart?.55:.13,depart?900:650);
+     if(depart&&navigator.vibrate)navigator.vibrate([160,70,160]);
+   }
+ }
+}
+function startPursuitClock(){
+ const starts=pursuitStartsForMode();
+ if(!starts.length)return alert('Aucun départ disponible. Il faut d’abord récupérer les résultats du Sprint L2.');
+ if(pmRunning)return;
+ pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;
+ document.getElementById('pursuitStartBtn').textContent='EN COURS';
+ // The first nation always leaves at 0.
+ if(pmElapsed===0){pursuitBeep(.55,900);if(navigator.vibrate)navigator.vibrate([160,70,160])}
+ clearInterval(pmTick);
+ pmTick=setInterval(updatePursuitClock,50);
+ updatePursuitClock();
+}
+function pausePursuitClock(){
+ if(!pmRunning)return;
+ pmElapsed+=performance.now()-pmStartPerf;
+ pmRunning=false;
+ clearInterval(pmTick);pmTick=null;
+ document.getElementById('pursuitStartBtn').textContent='REPRENDRE';
+ updatePursuitClock();
+}
+function resetPursuitClock(){
+ clearInterval(pmTick);pmTick=null;
+ pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;
+ const timer=document.getElementById('pursuitTimerDisplay');if(timer)timer.textContent='00:00.0';
+ const btn=document.getElementById('pursuitStartBtn');if(btn)btn.textContent='DÉMARRER';
+ const next=document.getElementById('pursuitNextNation'),count=document.getElementById('pursuitCountdown');
+ const starts=pursuitStartsForMode();
+ if(next)next.textContent=starts[0]?`${PURSUIT_FLAGS[starts[0].nation]||''} ${starts[0].nation}`:'—';
+ if(count)count.textContent=starts.length?'Prêt':'Aucun départ';
+}
+
 function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove('hidden');scanTitle.textContent=mode==='config'?'Installer les classes':'Scanner les résultats';scanMsg.textContent=mode==='config'?'Scanne les QR de configuration dans l’ordre.':'Scanne les QR de chaque tablette élève.';scanProgress.textContent='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanMsg.textContent+=' Caméra non disponible dans ce navigateur : utilise « Ouvrir une photo ».';return}navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(async s=>{stream=s;video.srcObject=s;await video.play();scanFrame()}).catch(()=>{scanMsg.textContent+=' Caméra inaccessible : utilise « Ouvrir une photo ».'})}
-function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
+function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher){if(typeof currentProf==='number'&&db.classes[currentProf]){renderProfClass();show('profClass');showPcTab(currentPcTab||'overview')}else openProf()}}
 function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
 scanFile.addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let img=new Image();img.onload=()=>{canvas.width=img.width;canvas.height=img.height;let ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);if(typeof jsQR==='undefined'){scanMsg.textContent='Lecteur QR non chargé. Ouvre l’application une fois avec Internet.';return}let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height);if(code)consume(code.data);else scanMsg.textContent='QR non reconnu sur cette image.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value=''});
 let lastScan=''; function consume(txt){
@@ -922,7 +1386,7 @@ let lastScan=''; function consume(txt){
  if(!packet.a||!packet.id||!packet.p||!packet.t)return;
 
  const configTypes=['LR10C','LR11C','LR12C','LR13C'];
- const resultTypes=['LR10R','LR11R','LR12R','LR13R'];
+ const resultTypes=['LR10R','LR11R','LR12R','LR13R','LR14R'];
  if((scanMode==='config'&&!configTypes.includes(packet.a))||(scanMode==='results'&&!resultTypes.includes(packet.a))){
    document.getElementById('scanMsg').textContent='Ce QR ne correspond pas à cette opération.';
    return;
