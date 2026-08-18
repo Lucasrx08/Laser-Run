@@ -1,4 +1,4 @@
-const CACHE='laser-run-v26-redesign-jeune-20260819';
+const CACHE='laser-run-v27-sport-game-ui-20260819';
 const LOCAL=['./','./index.html','./styles.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png'];
 const XLSX_URL='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
 self.addEventListener('install',e=>e.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(LOCAL);try{const r=await fetch(XLSX_URL,{mode:'cors'});await cache.put(XLSX_URL,r);}catch(_){}await self.skipWaiting();})()));

@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#062f2e">
+<meta name="theme-color" content="#0d252b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V26</title>
+<title>Laser Run 6ème · V27</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -473,54 +473,45 @@ html,body,.app{overscroll-behavior-y:none}
 #r23Action[disabled],.shoot[disabled]{pointer-events:none!important}
 
 
-/* V26 — STRUCTURAL REDESIGN, inspired by the validated young/sport dashboard */
-:root{--ink:#062f2e;--ink2:#0b4140;--teal:#0aa5a5;--sky:#d8f0f2;--paper:#f7f4ee;--panel:#ffffff;--orange:#ffb31f;--line:#dfe8e8;--muted2:#6b7b7b;--shadow2:0 16px 36px rgba(6,47,46,.09)}
-html,body{background:var(--paper)!important;color:var(--ink)!important}
-body{padding-top:0}
-.app{width:min(1500px,100%)!important;padding:0 22px 34px!important}
-.sportShell{height:68px;background:linear-gradient(100deg,#052b2b 0%,#073d3b 70%,#0a5550 100%);color:#fff;margin:0 -22px 24px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:3000;box-shadow:0 8px 22px rgba(6,47,46,.18)}
-.sportLogo{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:950;letter-spacing:-1px;font-style:italic}.sportLogo b{color:#8fe7e5}.sportLogo em{color:var(--orange);font-size:16px}.sportContext{font-size:13px;font-weight:950;letter-spacing:.15em;color:#c8eeee}.sportRight{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800}.sportDot{width:9px;height:9px;background:var(--orange);border-radius:50%;box-shadow:0 0 0 5px rgba(255,179,31,.13)}
-.targetMark{width:36px;height:36px;border:3px solid white;border-radius:50%;position:relative;display:inline-grid;place-items:center}.targetMark:before,.targetMark:after{content:"";position:absolute;background:white}.targetMark:before{width:46px;height:3px}.targetMark:after{height:46px;width:3px}.targetMark i{width:10px;height:10px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 5px #0b4140,0 0 0 8px white}
-#home{padding-top:34px}.brand{font-size:clamp(44px,6vw,76px)!important;color:var(--ink);letter-spacing:-3px!important}.rolegrid{gap:22px}.role{border-radius:28px!important;border:1px solid rgba(6,47,46,.08)!important;box-shadow:var(--shadow2)!important;overflow:hidden;position:relative}.profrole{background:linear-gradient(135deg,#073c3b,#0b5550)!important}.studentrole{background:linear-gradient(135deg,#eaf8f8,#cdebed)!important}.role:after{content:"";position:absolute;width:180px;height:180px;border:30px solid rgba(255,255,255,.08);border-radius:50%;right:-60px;top:-60px}.roletitle{font-size:clamp(30px,4vw,48px)!important}.roleicon{font-size:58px!important}
-.card,.lesson,.row,.kpi,.rankItem,.profileCard,.teacherClassCard,.teacherAction,.quickAction,.stat,.shotHistoryCard{background:#fff!important;border:1px solid var(--line)!important;border-radius:20px!important;box-shadow:0 8px 22px rgba(6,47,46,.055)!important}
-.btn{border-radius:12px!important;box-shadow:none!important}.btn.orange,.mainAction{background:linear-gradient(135deg,#ffc038,#ffad10)!important;color:var(--ink)!important}.btn.light{background:#e7f5f5!important}.btn.ghost{background:#fff!important;border:1px solid #ccd9d9!important}.btn.red{background:#e53a31!important}.btn.green{background:#15a34a!important}
-.pill{background:#daf1f2!important;color:var(--ink)!important;border-radius:999px!important;font-weight:950!important;text-transform:uppercase;letter-spacing:.06em}
-.notice{background:#e9f7f7!important;border:1px solid #cfe8e9!important;border-radius:14px!important}.warn{border-radius:14px!important}
-.section{font-size:clamp(22px,2.4vw,30px)!important;color:var(--ink);letter-spacing:-.8px}.title{font-size:clamp(38px,5vw,64px)!important;color:var(--ink);letter-spacing:-2.4px!important}.muted,.sub{color:var(--muted2)!important;opacity:1!important}
-/* Professor class becomes a real app dashboard with a left navigation rail */
-#profClass{display:grid;grid-template-columns:210px minmax(0,1fr);column-gap:24px;align-items:start}
-#profClass.hidden{display:none!important}#profClass>.back{grid-column:2}#profClass>.top{grid-column:2}
-#profClass>.dashboardTabs{grid-column:1;grid-row:1 / span 12;display:flex!important;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;position:sticky;top:92px;box-shadow:var(--shadow2);margin:0}
-#profClass>.dashboardPanel{grid-column:2;width:100%}
-.dashboardTab{width:100%;text-align:left;border:0!important;background:transparent!important;padding:13px 14px!important;border-radius:11px!important;color:#234744!important;box-shadow:none!important}
-.dashboardTab.active{background:linear-gradient(90deg,#ffbe2e,#ffa800)!important;color:#142f2d!important;box-shadow:0 7px 16px rgba(255,179,31,.22)!important}
-.dashboardTab:before{display:inline-block;width:24px;opacity:.8}.dashboardTab:nth-child(1):before{content:"▦"}.dashboardTab:nth-child(2):before{content:"♟"}.dashboardTab:nth-child(3):before{content:"◉"}.dashboardTab:nth-child(4):before{content:"▥"}.dashboardTab:nth-child(5):before{content:"◷"}.dashboardTab:nth-child(6):before{content:"⚡"}.dashboardTab:nth-child(7):before{content:"⇄"}.dashboardTab:nth-child(8):before{content:"◎"}.dashboardTab:nth-child(9):before{content:"↗"}
-.kpiGrid{gap:14px}.kpi{padding:20px!important;border-top:4px solid var(--teal)!important}.kpi .num{font-size:38px!important}.globeHeader{background:linear-gradient(110deg,#062f2e,#0b5550)!important;border-radius:18px!important}
-.teacherHead .title{color:var(--ink)!important}.teacherActionMain{background:linear-gradient(135deg,#dff4f4,#cbe9eb)!important}.teacherAction{min-height:120px!important}.taIcon{width:54px;height:54px;border-radius:15px;background:#eef8f8;display:grid;place-items:center}.teacherClassCard{border-top:5px solid var(--orange)!important}.tccName{color:var(--ink)!important}
-/* Student lesson selection: game tiles */
-.lessonGrid{gap:16px!important}.lesson{min-height:150px!important;position:relative;overflow:hidden;padding:22px!important;border-top:5px solid #d4e8e8!important}.lesson:before{content:"";position:absolute;width:90px;height:90px;border:18px solid rgba(10,165,165,.06);border-radius:50%;right:-26px;bottom:-25px}.lesson.active{outline:none!important;border-top-color:var(--orange)!important;box-shadow:0 0 0 2px rgba(255,179,31,.22),var(--shadow2)!important}.lessonnum{font-size:12px!important;letter-spacing:.1em!important;color:var(--teal)!important;opacity:1!important}
-/* L7 = final event, no challenge tile */
-#lesson23{position:relative}#lesson23>.top{background:linear-gradient(105deg,#062f2e,#0b5550);color:#fff;border-radius:22px;padding:24px 26px;box-shadow:var(--shadow2)}#lesson23>.top .title,#lesson23>.top .sub{color:#fff!important}#lesson23>.top .pill{background:var(--orange)!important;color:var(--ink)!important}
-#lesson23>.card{border-top:5px solid var(--orange)!important;padding:26px!important}#lesson23 .field label{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#597574}#lesson23 select{border:1px solid #cbdada!important;border-radius:12px!important;padding:14px!important}
-#l23MainTitle{margin-top:26px!important;background:linear-gradient(90deg,#062f2e,#0b5550);color:#fff;border-radius:14px;padding:14px 18px!important;font-size:22px!important}
-#l23MainButtons{gap:16px!important}#l23MainButtons .role{min-height:170px!important;border-radius:20px!important;padding:22px!important}#l23MainButtons .profrole{background:linear-gradient(130deg,#0a4442,#062f2e)!important}.launchLabel{font-size:14px;font-weight:950;letter-spacing:.08em;color:#ffcb59}.joDone{font-weight:950;color:#98edc1}
-/* Race/evaluation screens */
-#l23race .top,#race .top{background:linear-gradient(105deg,#062f2e,#0b5550);color:#fff;border-radius:22px;padding:22px 26px}#l23race .top .title,#l23race .top .sub,#race .top .title,#race .top .sub{color:#fff!important}.timer{color:var(--ink)!important}.stat{background:#f4f9f9!important}.shoot{box-shadow:0 8px 18px rgba(6,47,46,.12)!important}.shoot.hit{background:#16a34a!important}.shoot.miss{background:#e53a31!important}
-/* Pursuit retains large gym visibility */
-.pursuitNext{background:#dff2f3!important}.pursuitRow.now{outline:none!important;border:3px solid var(--orange)!important}
-@media(max-width:900px){#profClass{grid-template-columns:1fr}#profClass>.dashboardTabs{grid-column:1;grid-row:auto;position:static;flex-direction:row;overflow:auto;white-space:nowrap;margin:8px 0 18px}#profClass>.dashboardTab{width:auto}#profClass>.back,#profClass>.top,#profClass>.dashboardPanel{grid-column:1}.sportRight{display:none}}
-@media(max-width:650px){.app{padding:0 12px 24px!important}.sportShell{margin:0 -12px 18px;padding:0 14px;height:60px}.sportLogo{font-size:19px}.sportContext{display:none}.role{min-height:180px!important}.lesson{min-height:120px!important}.title{font-size:38px!important}}
+/* V27 — SPORT GAME UI : vraie refonte structurelle */
+:root{--ink:#0d252b;--ink2:#163a42;--ice:#d9eef1;--paper:#f4f1ec;--sun:#f7b738;--line:rgba(13,37,43,.12);--soft:#eef5f5}
+body{background:#eef2f2;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{width:100%;max-width:none;padding:84px 0 0;min-height:100vh}
+section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;padding:28px 0 44px}
+.sportTopbar{height:72px;position:fixed;inset:0 0 auto 0;z-index:1000;background:linear-gradient(100deg,#081c21,#0f3037 62%,#123c43);color:#fff;display:flex;align-items:center;padding:0 26px;box-shadow:0 10px 28px rgba(8,28,33,.22);border-bottom:1px solid rgba(255,255,255,.08)}
+.sportBrand{border:0;background:transparent;color:#fff;display:flex;align-items:center;gap:9px;font-size:25px;font-weight:1000;font-style:italic;letter-spacing:-1.1px}.sportBrand b{color:var(--sun)}.sportBrand em{font-size:13px;color:#092229;background:var(--sun);border-radius:8px;padding:4px 7px;font-style:normal}.crosshair{width:38px;height:38px;border:2px solid var(--sun);border-radius:50%;display:grid;place-items:center;color:var(--sun);font-size:23px}.sportNav{margin-left:55px;display:flex;height:100%}.sportNav button{border:0;background:transparent;color:#c8d6d8;font-size:12px;font-weight:900;letter-spacing:.08em;padding:0 18px;position:relative}.sportNav button:hover{color:#fff}.sportNav button:after{content:"";position:absolute;left:18px;right:18px;bottom:0;height:3px;background:var(--sun);transform:scaleX(0);transition:.15s}.sportNav button:hover:after{transform:scaleX(1)}.sportBadge{margin-left:auto;font-size:11px;font-weight:800;letter-spacing:.06em;color:#b9cbce}.liveDot{display:inline-block;width:8px;height:8px;background:var(--sun);border-radius:50%;margin-right:8px;box-shadow:0 0 0 5px rgba(247,183,56,.13)}
+/* accueil : cartes façon choix de mode de jeu */
+#home .top{background:linear-gradient(110deg,#0d252b 0 54%,#143d45 54%);color:#fff;padding:38px 42px;border-radius:30px;position:relative;overflow:hidden;margin-top:10px}#home .top:after{content:"◎";position:absolute;right:45px;top:-40px;font-size:210px;color:rgba(247,183,56,.11);font-weight:900}#home .brand{font-size:clamp(46px,6vw,76px);font-style:italic;text-transform:uppercase}#home .sub{color:#c8d6d8;opacity:1}.statusbar{padding:8px 4px}
+.rolegrid{gap:18px}.role{border-radius:24px!important;min-height:250px!important;overflow:hidden;position:relative!important;padding:28px!important}.role:after{content:"";position:absolute;width:180px;height:180px;border:36px solid rgba(255,255,255,.08);border-radius:50%;right:-65px;top:-60px}.profrole{background:linear-gradient(135deg,#0d252b,#17434b)!important}.studentrole{background:linear-gradient(135deg,#d9eef1,#eef9fa)!important}.roleicon{font-size:58px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.1))}.roletitle{font-size:38px;text-transform:uppercase;font-style:italic;letter-spacing:-1.5px}
+/* professeur : vraie structure dashboard/sidebar */
+.proScreen{width:100%;margin:0;padding:0!important}.proShell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 72px)}.proSidebar{background:#0d252b;color:#fff;padding:22px 14px;position:sticky;top:72px;height:calc(100vh - 72px);display:flex;flex-direction:column;gap:5px;overflow:auto}.proSideTitle{display:flex;align-items:center;gap:10px;padding:8px 10px 23px;font-weight:1000;font-style:italic}.proSideTitle>span{color:var(--sun);font-size:30px}.proSideTitle small{display:block;font-size:9px;letter-spacing:.14em;color:#9eb6ba;font-style:normal;margin-top:3px}.proSidebar button{border:0;background:transparent;color:#b8c9cc;padding:12px 12px;border-radius:12px;text-align:left;font-weight:800;display:flex;gap:11px;align-items:center}.proSidebar button:hover,.proSidebar button.active{background:#173a42;color:#fff}.proSidebar button.active{box-shadow:inset 3px 0 0 var(--sun)}.proSidebar .joSide{color:#ffd976}.sideDivider{font-size:9px;letter-spacing:.14em;color:#6f8e93;font-weight:900;padding:17px 12px 5px}.sideFoot{margin-top:auto;border-top:1px solid rgba(255,255,255,.1);padding:16px 12px 4px;font-size:12px;font-weight:900}.sideFoot small{color:#7e9ca1}.proMain{padding:28px 32px 50px;min-width:0;background:linear-gradient(180deg,#f5f7f7,#edf2f2)}.proMain>.back{font-size:12px;text-transform:uppercase;letter-spacing:.08em}.legacyTabs{display:none!important}
+#profClass .top{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:0 8px 24px rgba(13,37,43,.06)}#profClass .title{font-size:42px}.dashboardPanel{padding-top:18px}.kpiGrid{gap:12px}.kpi{border:0!important;border-radius:18px!important;background:#fff!important;box-shadow:0 8px 22px rgba(13,37,43,.06)!important;border-top:4px solid var(--sun)!important}.kpi .num{font-size:38px}.card{border-radius:20px!important;border:1px solid var(--line)!important;box-shadow:0 10px 28px rgba(13,37,43,.055)!important;background:#fff!important}.section{text-transform:uppercase;font-style:italic;letter-spacing:-.7px}.globeHeader{background:linear-gradient(110deg,#0d252b,#17434b)!important;border-radius:18px!important}
+/* élèves : écrans type jeu sportif */
+#studentHome .top,#lessons .top,#lesson23 .top,#l23race .top,#race .top{background:linear-gradient(105deg,#0d252b,#17434b);color:#fff;border-radius:24px;padding:24px 26px;box-shadow:0 12px 30px rgba(13,37,43,.14);position:relative;overflow:hidden}#studentHome .top:after,#lessons .top:after,#lesson23 .top:after,#l23race .top:after{content:"◎";position:absolute;right:24px;top:-32px;font-size:130px;color:rgba(247,183,56,.10)}#studentHome .pill,#lessons .pill,#lesson23 .pill,#l23race .pill{background:var(--sun);color:#102a30}
+.lessonGrid{gap:16px}.lesson{min-height:155px!important;border-radius:20px!important;background:#fff!important;border:1px solid var(--line)!important;position:relative;overflow:hidden;padding:22px!important;box-shadow:0 10px 24px rgba(13,37,43,.06)!important}.lesson:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--ice)}.lesson.active:before{background:var(--sun)}.lessonnum{display:inline-flex;background:#0d252b;color:#fff;padding:5px 8px;border-radius:7px;font-size:11px!important;letter-spacing:.08em}.lesson .big{font-size:23px;margin-top:12px}.lesson.active{outline:none!important;box-shadow:0 0 0 2px var(--sun),0 12px 26px rgba(13,37,43,.09)!important}.lesson.locked{filter:grayscale(.5);opacity:.5}
+#lesson23 .card{border-top:5px solid var(--sun)!important}#l23MainTitle{font-size:27px;color:#0d252b;border-left:6px solid var(--sun);padding-left:12px;margin-top:26px}#l23MainButtons .role{background:linear-gradient(135deg,#0d252b,#17434b)!important;color:#fff!important;min-height:165px!important}#l23MainButtons .role .muted{color:#b9cacc;opacity:1}#l23MainButtons .role>div:last-child{color:var(--sun);font-weight:950;font-size:18px}
+/* boutons / actions */
+.btn,.mainAction{border-radius:12px!important;text-transform:uppercase;letter-spacing:.025em}.btn.orange,.mainAction{background:var(--sun)!important;color:#0d252b!important;box-shadow:0 7px 0 #d6981f!important}.btn.orange:active,.mainAction:active{transform:translateY(4px)!important;box-shadow:0 3px 0 #d6981f!important}.btn.light{background:#dceff1!important;color:#0d252b!important}.btn.ghost{background:#fff!important;border:1px solid var(--line)!important;color:#0d252b!important}.timer,.pursuitTimer,.masterTimer{font-variant-numeric:tabular-nums;color:#0d252b}.stat{border-top:4px solid #d9eef1}.stat b{font-size:30px}.shoot.hit{background:#15a04a!important}.shoot.miss{background:#df3329!important}.targetset{filter:drop-shadow(0 10px 16px rgba(13,37,43,.10))}
+/* profils = cartes de joueur */
+.profileCard{border-radius:20px!important;overflow:hidden}.profileHead{background:linear-gradient(105deg,#0d252b,#17434b);color:#fff;margin:-20px -20px 14px;padding:18px 20px!important}.profileNation{color:#bfd0d3}.profileBadge{background:var(--sun)!important;color:#0d252b!important}.skillTrack{background:#dfe8e9}.profileStat{background:#eff4f4!important}
+/* JO prof */
+.joCodeCard{background:linear-gradient(115deg,#0d252b,#17434b)!important;color:#fff!important;position:relative;overflow:hidden}.joCodeCard:after{content:"◉";position:absolute;right:30px;top:-70px;font-size:230px;color:rgba(247,183,56,.08)}.joCodeCard .muted{color:#bfd0d3}.joCodeCard .notice{background:rgba(255,255,255,.08)!important;color:#fff}.joBigCode{color:var(--sun)!important;text-shadow:0 7px 0 rgba(0,0,0,.15)}
+@media(max-width:900px){.sportNav{display:none}.proShell{grid-template-columns:72px 1fr}.proSidebar{padding:14px 8px}.proSidebar button span,.proSideTitle div,.sideDivider,.sideFoot{display:none}.proSidebar button{justify-content:center;font-size:18px}.proMain{padding:22px 18px}.sportBadge{display:none}}
+@media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
 </style>
 </head>
 <body>
 <div class="app">
-<div id="sportShell" class="sportShell hidden">
- <div class="sportLogo"><span class="targetMark"><i></i></span><span>LASER <b>RUN</b> <em>6e</em></span></div>
- <div id="sportContext" class="sportContext">ESPACE EPS</div>
- <div class="sportRight"><span class="sportDot"></span><span>Le Bon Sauveur</span></div>
+<div class="sportTopbar" id="sportTopbar">
+  <button class="sportBrand" onclick="show('home')"><span class="crosshair">◎</span><span>LASER <b>RUN</b></span><em>6ᵉ</em></button>
+  <div class="sportNav">
+    <button onclick="show('home')">ACCUEIL</button>
+    <button onclick="openStudentHome()">ATHLÈTES</button>
+    <button onclick="teacherGate()">PROFESSEUR</button>
+  </div>
+  <div class="sportBadge"><span class="liveDot"></span> EPS · LE BON SAUVEUR</div>
 </div>
-
 <section id="home">
  <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS - Le Bon Sauveur - Créé par L. RIGAUX</div></div></div>
  <div class="statusbar"><span id="netdot" class="okdot"></span><span id="nettext" class="muted"></span><span class="muted">· Les données de séance restent enregistrées sur l’appareil.</span></div>
@@ -546,7 +537,24 @@ body{padding-top:0}
  <div id="profClasses" class="teacherClassGrid"></div>
 </section>
 
-<section id="profClass" class="hidden">
+<section id="profClass" class="hidden proScreen">
+ <div class="proShell">
+  <aside class="proSidebar">
+   <div class="proSideTitle"><span>◎</span><div>LASER RUN<small>ESPACE PROF</small></div></div>
+   <button onclick="openProf()">⌂ <span>Mes classes</span></button>
+   <button class="sideTab active" data-pctab="overview" onclick="showPcTab('overview')">▦ <span>Tableau de bord</span></button>
+   <button class="sideTab" data-pctab="students" onclick="showPcTab('students')">♟ <span>Athlètes</span></button>
+   <button class="sideTab" data-pctab="results" onclick="showPcTab('results')">◈ <span>Profils</span></button>
+   <button class="sideTab" data-pctab="rankings" onclick="showPcTab('rankings')">▥ <span>Classements</span></button>
+   <div class="sideDivider">ÉPREUVES</div>
+   <button class="sideTab" data-pctab="pursuit" onclick="showPcTab('pursuit')">◷ <span>Poursuite</span></button>
+   <button class="sideTab" data-pctab="mass" onclick="showPcTab('mass')">⚡ <span>Mass-start</span></button>
+   <button class="sideTab" data-pctab="relay" onclick="showPcTab('relay')">↻ <span>Relais</span></button>
+   <button class="sideTab joSide" data-pctab="jo" onclick="showPcTab('jo')">◉ <span>JEUX OLYMPIQU'EPS</span></button>
+   <button class="sideTab" data-pctab="export" onclick="showPcTab('export')">⇩ <span>Export</span></button>
+   <div class="sideFoot">L. RIGAUX<br><small>Application EPS</small></div>
+  </aside>
+  <main class="proMain">
  <button class="back" onclick="openProf()">← Mes classes</button>
  <div class="top">
   <div><div id="pcTitle" class="title"></div><div id="pcSub" class="sub"></div></div>
@@ -556,7 +564,7 @@ body{padding-top:0}
   </div>
  </div>
 
- <div class="dashboardTabs">
+ <div class="dashboardTabs legacyTabs">
   <button id="pcTabBtnOverview" class="dashboardTab active" onclick="showPcTab('overview')">Vue générale</button>
   <button id="pcTabBtnStudents" class="dashboardTab" onclick="showPcTab('students')">Élèves</button>
   <button id="pcTabBtnResults" class="dashboardTab" onclick="showPcTab('results')">Profils</button>
@@ -668,6 +676,8 @@ body{padding-top:0}
    <div class="section">Gestion de la classe</div>
    <button class="btn red" onclick="deleteClass()">Supprimer la classe</button>
   </div>
+ </div>
+  </main>
  </div>
 </section>
 
@@ -880,13 +890,7 @@ const LESSON_MAIN_NAMES={
 
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function show(id){
- document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
- document.getElementById(id).classList.remove('hidden');
- const shell=document.getElementById('sportShell'),ctx=document.getElementById('sportContext');
- if(shell){shell.classList.toggle('hidden',id==='home');ctx.textContent=(id==='prof'||id==='profClass')?'PROFESSEUR':(id==='lesson23'||id==='l23race'||id==='l23challenge')?'JEUX OLYMPIQU’EPS':'ESPACE ÉLÈVES'}
- document.body.dataset.screen=id;scrollTo(0,0)
-}
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.body.dataset.screen=id;scrollTo(0,0)}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))} function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)} function day(){return new Date().toISOString().slice(0,10)}
 function fmt(ms){ms=Math.max(0,ms||0);let m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`}
 function updateNet(){let on=navigator.onLine;document.getElementById('netdot').className=on?'okdot':'baddot';document.getElementById('nettext').textContent=on?'Internet disponible':'Mode hors connexion'} addEventListener('online',updateNet);addEventListener('offline',updateNet);updateNet();
@@ -1042,7 +1046,7 @@ function showRankingTab(type){
  if(type==='globe')renderGlobe('rankingContent',false);
  else renderChallengeRanking(type);
 }
-function showPcTab(tab){
+function showPcTab(tab){document.querySelectorAll('.sideTab').forEach(b=>b.classList.toggle('active',b.dataset.pctab===tab));
  currentPcTab=tab;
  ['overview','students','results','rankings','pursuit','mass','relay','jo','export'].forEach(t=>{
    const panel=document.getElementById('pcPanel'+t.charAt(0).toUpperCase()+t.slice(1));
@@ -1678,7 +1682,7 @@ function l23Cfg(){
   4:{title:'Leçon 4',sub:'Mass-start',theme:'Précision',s1:'Précis dans la zone rouge',main:'La Mass-start'},
   5:{title:'Leçon 5',sub:'Relais des nations',theme:'Rapidité',s1:"L’escalier de vitesse",main:'Le Relais des nations'},
   6:{title:'Leçon 6',sub:'Qualification aux JO',theme:'Respiration',s1:"L’escalier de vitesse",main:'La Qualification aux JO'},
-  7:{title:'Leçon 7',sub:'Jeux Olympiques',theme:'ÉPREUVE JO',s1:'',main:"Jeux Olympiqu’EPS"}
+  7:{title:'Leçon 7',sub:'Jeux Olympiques',theme:'Respiration',s1:"L’escalier de vitesse",main:'Les Jeux Olympiques'}
  };
  return cfg[currentLesson]||cfg[2];
 }
@@ -1692,12 +1696,10 @@ function l23Ensure(name){
 }
 function openLesson23(n){
  currentLesson=n;l23pair=[];
- const c=l23Cfg(),joOnly=(currentLesson===7);
- l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=c.theme;
- l23S1Title.textContent=joOnly?'':`Situation 1 · ${c.s1}`;
- l23MainTitle.textContent=joOnly?`🏅 ${c.main}`:`Situation principale · ${c.main}`;
- l23S1Title.classList.toggle('hidden',joOnly);
- l23S1Buttons.classList.toggle('hidden',joOnly);
+ const c=l23Cfg(),joOnly=(n===7);
+ l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=joOnly?'FINALE JO':c.theme;
+ l23S1Title.textContent=`Situation 1 · ${c.s1}`;l23MainTitle.textContent=joOnly?`🏅 ÉPREUVE OFFICIELLE · ${c.main}`:`Situation principale · ${c.main}`;
+ l23S1Title.classList.toggle('hidden',joOnly);l23S1Buttons.classList.toggle('hidden',joOnly);
  l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
 }
 function validateL23Pair(){
@@ -1709,19 +1711,16 @@ function validateL23Pair(){
 }
 function renderL23Pair(){
  l23Work.classList.remove('hidden');
- const joOnly=(currentLesson===7);
- l23S1Title.classList.toggle('hidden',joOnly);
- l23S1Buttons.classList.toggle('hidden',joOnly);
- l23S1Buttons.innerHTML=joOnly?'':l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
+ l23S1Buttons.innerHTML=currentLesson===7?'':l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
  l23MainButtons.innerHTML=l23pair.map(p=>{
-  let r=l23Record(p.name);
-  if(currentLesson===7){
+ let r=l23Record(p.name);
+ if(currentLesson===7){
    const st=joAttemptState(p.name);
-   if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div class="joDone">✓ ÉPREUVE TERMINÉE</div></div>`;
-   if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\'")}')">Déverrouillage enseignant</button></div>`;
-  }
-  return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div class="launchLabel">${r&&r.time!=null?'✓ '+fmt(r.time):(currentLesson===7?'LANCER L’ÉPREUVE →':'Commencer')}</div></button>`;
- }).join('');
+   if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>✅ Épreuve terminée 🔒</div></div>`;
+   if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\\'")}')">Déverrouillage enseignant</button></div>`;
+ }
+ return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`
+}).join('')
 }
 let chxp1=null,chxp2=null,chLed=0,chBreath=[0,0,0,0,0];
 const L23_CRITERIA={
