@@ -217,18 +217,19 @@
  <div class="card">
   <div id="r23PursuitInfo" class="notice hidden"></div>
   <div id="r23Timer" class="timer">00:00.0</div>
-  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat">Touches du passage<b id="r23Shots">0 / 5</b></div></div>
+  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat">Rechargements<b id="r23Shots">0 / 5</b></div></div>
   <div id="r23HistoryWrap" class="hidden" style="margin-top:18px">
    <div class="section" style="margin-bottom:10px">Tirs précédents</div>
    <div id="r23History" class="grid3"></div>
   </div>
   <div id="r23ShootPanel" class="hidden">
-   <div class="section" style="text-align:center">Valider 5 touches avant de repartir</div>
+   <div class="section" style="text-align:center">5 rechargements maximum</div>
    <div id="r23Dots" class="fivehits"></div>
-   <div style="max-width:520px;margin:20px auto">
-    <button type="button" class="shoot hit" style="width:100%" onclick="r23Touch()">◎ CIBLE TOUCHÉE</button>
+   <div class="grid2" style="max-width:850px;margin:20px auto">
+    <button type="button" class="shoot hit" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
+    <button type="button" class="shoot miss" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
    </div>
-   <div class="muted" style="text-align:center">Rechargements illimités. Le chronomètre continue pendant tout le passage au tir.</div>
+   <div class="muted" style="text-align:center">Le chronomètre continue pendant tout le passage au tir.</div>
   </div>
   <button id="r23Action" class="mainAction" type="button" onclick="r23Action()">DÉMARRER</button>
  </div>
@@ -339,7 +340,7 @@ roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;
 function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=2)])}}
 function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
 function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject());qrIndex=0;qrReturn='prof';qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
-function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:11,d:day(),r:arr};qrPages=makeChunks('LR13R',compact,850);qrIndex=0;qrReturn=(!document.getElementById('pair').classList.contains('hidden')?'pair':(!document.getElementById('lesson23').classList.contains('hidden')?'lesson23':'studentHome'));qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
+function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:11,d:day(),r:arr};qrPages=makeChunks('LR13R',compact,420);qrIndex=0;qrReturn=(!document.getElementById('pair').classList.contains('hidden')?'pair':(!document.getElementById('lesson23').classList.contains('hidden')?'lesson23':'studentHome'));qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
 function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='pair')show('pair');else if(qrReturn==='lesson23')show('lesson23');else openStudentHome()}
 
 function normalizeInstalled(){installed=read(INST,{version:0,classes:[]});installed.classes=(installed.classes||[]).map(c=>[c[0],(c[1]||[]).map(x=>Array.isArray(x)?[x[0],x[1]||null]:[x,null])]);write(INST,installed)}
@@ -694,14 +695,9 @@ function startL23Race(i){
  const nation=studentNationAt(Number(i))||'Nation non attribuée';
 
  l23race={
-   start:0,
-   elapsed:0,
-   state:'ready',
-   lap:0,
-   shoot:0,
-   hits:0,
-   shootStart:0,
-   series:[]
+   start:0,elapsed:0,state:'ready',
+   lap:0,shoot:0,shots:0,hits:0,
+   shootStart:0,currentShots:[],series:[]
  };
 
  clearInterval(l23tick);
@@ -755,13 +751,17 @@ function r23Stats(){
  if(!l23race)return;
  document.getElementById('r23Lap').textContent=`${l23race.lap} / 4`;
  document.getElementById('r23Shoot').textContent=`${l23race.shoot} / 3`;
- document.getElementById('r23Shots').textContent=`${l23race.hits} / 5`;
+ document.getElementById('r23Shots').textContent=`${l23race.shots} / 5`;
 }
 
 function renderR23Dots(){
  const box=document.getElementById('r23Dots');
  if(!box)return;
- box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${l23race&&i<l23race.hits?'on':''}"></div>`).join('');
+ const arr=l23race?.currentShots||[];
+ box.innerHTML=Array.from({length:5},(_,i)=>{
+   if(i>=arr.length)return '<div class="dot"></div>';
+   return `<div class="dot ${arr[i]?'on':'missdot'}"></div>`;
+ }).join('');
 }
 
 function renderR23History(){
@@ -777,12 +777,13 @@ function renderR23History(){
 
  wrap.classList.remove('hidden');
  box.innerHTML=l23race.series.map((serie,i)=>{
-   const dots=Array.from({length:5},()=>'<span class="shotHistoryDot hit"></span>').join('');
+   const dots=serie.shots.map(v=>`<span class="shotHistoryDot ${v?'hit':'miss'}"></span>`).join('');
+   const hits=serie.shots.filter(Boolean).length;
    return `<div class="shotHistoryCard">
      <b>Tir ${i+1}</b>
      <div class="shotHistoryDots">${dots}</div>
-     <div class="shotTime">${fmt(serie.duration)}</div>
-     <div class="muted">temps passé au tir</div>
+     <div class="shotTime">${hits}/5 · ${fmt(serie.duration)}</div>
+     <div class="muted">résultat · temps au tir</div>
    </div>`;
  }).join('');
 }
@@ -799,7 +800,6 @@ function r23Action(){
    l23race.state='run';
    l23race.lap=1;
    l23tick=setInterval(r23Clock,100);
-
    action.textContent='ARRIVÉE AU PAS DE TIR 1';
    status.textContent='Boucle 1';
    r23Stats();
@@ -809,7 +809,9 @@ function r23Action(){
  if(l23race.state==='run'){
    if(l23race.shoot<3){
      l23race.state='shoot';
+     l23race.shots=0;
      l23race.hits=0;
+     l23race.currentShots=[];
      l23race.shootStart=performance.now();
 
      shootPanel.classList.remove('hidden');
@@ -825,23 +827,30 @@ function r23Action(){
  }
 }
 
-function r23Touch(){
- if(!l23race || l23race.state!=='shoot' || l23race.hits>=5)return;
+function r23Shot(hit){
+ if(!l23race || l23race.state!=='shoot' || l23race.shots>=5)return;
 
- l23race.hits++;
+ const isHit=Boolean(hit);
+ l23race.currentShots.push(isHit);
+ l23race.shots++;
+ if(isHit)l23race.hits++;
+
  r23Stats();
  renderR23Dots();
 
- if(l23race.hits===5){
-   const duration=performance.now()-l23race.shootStart;
-   l23race.series.push({hits:5,duration:Math.round(duration)});
+ if(l23race.shots===5){
+   const duration=Math.round(performance.now()-l23race.shootStart);
+   l23race.series.push({
+     shots:[...l23race.currentShots],
+     duration
+   });
 
    l23race.shoot++;
    l23race.lap++;
    l23race.state='run';
 
    document.getElementById('r23ShootPanel').classList.add('hidden');
-   document.getElementById('r23Status').textContent='TIR VALIDÉ';
+   document.getElementById('r23Status').textContent='TIR TERMINÉ';
 
    renderR23History();
 
@@ -872,7 +881,10 @@ function finishL23Race(){
  r.date=day();
  r.nation=studentNationAt(l23active.i)||null;
  r.time=Math.round(l23race.elapsed);
- r.shotSeries=l23race.series.map(x=>({hits:5,duration:x.duration}));
+ r.shotSeries=l23race.series.map(x=>({
+   shots:[...x.shots],
+   duration:x.duration
+ }));
  r.pairSlot=currentL23Slot(l23active.i);
  l23Save(r);
 
@@ -921,7 +933,7 @@ let lastScan=''; function consume(txt){
 
  const buffer=scanBuffer[packet.id];
  const received=Object.keys(buffer.parts).length;
- document.getElementById('scanProgress').textContent=`QR ${received} / ${buffer.t} reçu(s)`;
+ document.getElementById('scanProgress').textContent=`${received} partie(s) sur ${buffer.t} reçue(s)`;
  document.getElementById('scanMsg').textContent=`✅ Partie ${packet.p}/${packet.t} reçue.`;
 
  if(received!==buffer.t)return;
