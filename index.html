@@ -58,6 +58,14 @@
 .startFlag{font-size:30px;text-align:center}
 @media(max-width:800px){.pursuitBoard{grid-template-columns:1fr}.startRow{grid-template-columns:60px 1fr 105px}}
 
+
+.shotHistoryCard{background:white;border-radius:16px;padding:14px;text-align:center}
+.shotHistoryDots{display:flex;justify-content:center;gap:7px;margin-top:9px}
+.shotHistoryDot{width:28px;height:28px;border-radius:50%;border:3px solid #999;background:#ddd}
+.shotHistoryDot.hit{background:var(--green);border-color:#12652f}
+.shotHistoryDot.miss{background:var(--red);border-color:#861a12}
+
+.shotTime{font-weight:900;margin-top:6px}
 </style>
 </head>
 <body>
@@ -206,17 +214,19 @@
  <div class="card">
   <div id="r23PursuitInfo" class="notice hidden"></div>
   <div id="r23Timer" class="timer">00:00.0</div>
-  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat">Rechargements<b id="r23Shots">0 / 5</b></div></div>
-  <div id="r23ShootPanel" class="hidden">
-   <div class="section" style="text-align:center">5 rechargements maximum</div>
-   <div id="r23Dots" class="fivehits"></div>
-   <div class="grid2" style="max-width:850px;margin:20px auto">
-    <button class="shoot hit" type="button" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
-    <button class="shoot miss" type="button" onclick="r23Shot(false)">✕ CIBLE RATÉE</button>
-   </div>
-   <div class="muted" style="text-align:center">Le chronomètre continue pendant le tir.</div>
+  <div class="stats"><div class="stat">Boucle<b id="r23Lap">0 / 4</b></div><div class="stat">Passage tir<b id="r23Shoot">0 / 3</b></div><div class="stat">Touches du passage<b id="r23Shots">0 / 5</b></div></div>
+  <div id="r23HistoryWrap" class="hidden" style="margin-top:18px">
+   <div class="section" style="margin-bottom:10px">Tirs précédents</div>
+   <div id="r23History" class="grid3"></div>
   </div>
-  <div id="r23Penalty" class="hidden card" style="margin-top:18px;text-align:center"></div>
+  <div id="r23ShootPanel" class="hidden">
+   <div class="section" style="text-align:center">Valider 5 touches avant de repartir</div>
+   <div id="r23Dots" class="fivehits"></div>
+   <div style="max-width:520px;margin:20px auto">
+    <button type="button" class="shoot hit" style="width:100%" onclick="r23Touch()">◎ CIBLE TOUCHÉE</button>
+   </div>
+   <div class="muted" style="text-align:center">Rechargements illimités. Le chronomètre continue pendant tout le passage au tir.</div>
+  </div>
   <button id="r23Action" class="mainAction" type="button" onclick="r23Action()">DÉMARRER</button>
  </div>
 </section>
@@ -296,7 +306,14 @@ function openProfClass(i){currentProf=i;renderProfClass();show('profClass')} fun
  let c=pc();pcTitle.textContent=c.name;pcSub.textContent=`${c.students.length} élèves`;
  pcStudents.innerHTML=c.students.length?c.students.map((n,i)=>`<div class="row"><div><div class="big">${esc(n)}</div><div class="muted">${(c.nations&&c.nations[n])?esc(c.nations[n]):'Nation non attribuée'}</div></div><button class="btn ghost" onclick="removeStudent(${i})">Retirer</button></div>`).join(''):'<div class="muted">Aucun élève.</div>';
  let rs=c.results||[];
- pcResults.innerHTML=rs.length?rs.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(r=>`<div class="row"><div><div class="big">${esc(r.name)}</div><div class="muted">${r.nation||'Nation non définie'} · Défi Étoile : ${r.s1==null?'—':r.s1+'/5'} ${r.stars!=null?'· '+r.stars+' ⭐':''}</div></div><div><b>${r.time==null?'—':fmt(r.time)}</b></div></div>`).join(''):'<div class="muted">Aucun résultat récupéré.</div>';
+ pcResults.innerHTML=rs.length?rs.slice().sort((a,b)=>a.name.localeCompare(b.name)||Number(a.lesson||1)-Number(b.lesson||1)).map(r=>{
+ const lesson=Number(r.lesson||1);
+ let detail='';
+ if(lesson===1)detail=`Défi Précision : ${r.stars==null?'—':r.stars+' ⭐'} · Centre national : ${r.time==null?'—':fmt(r.time)}`;
+ if(lesson===2)detail=`Défi Rapidité : ${r.stars==null?'—':r.stars+' ⭐'}${r.challenge!=null?' · LED '+r.challenge:''} · Sprint : ${r.time==null?'—':fmt(r.time)}`;
+ if(lesson===3)detail=`Défi Respiration : ${r.stars==null?'—':r.stars+' ⭐'} · Poursuite : ${r.time==null?'—':fmt(r.time)}`;
+ return `<div class="row"><div><div class="big">${esc(r.name)}</div><div class="muted">${r.nation||'Nation non définie'} · L${lesson}${r.pairSlot?' · Biathlète '+r.pairSlot:''}</div></div><div><b>${detail}</b></div></div>`;
+}).join(''):'<div class="muted">Aucun résultat récupéré.</div>';
  renderNationRanking(rs);
 }
 function renderNationRanking(rs){
@@ -691,7 +708,17 @@ function startL23Race(i){
  currentLesson=Number(currentLesson);
  l23active={i:Number(i),name:studentNameAt(Number(i))};
  const nation=studentNationAt(Number(i))||'Nation non attribuée';
- l23race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,shots:0,hits:0,misses:0,totalMisses:0};
+
+ l23race={
+   start:0,
+   elapsed:0,
+   state:'ready',
+   lap:0,
+   shoot:0,
+   hits:0,
+   shootStart:0,
+   series:[]
+ };
 
  clearInterval(l23tick);
 
@@ -722,7 +749,8 @@ function resetL23Race(){
  document.getElementById('r23Shots').textContent='0 / 5';
  document.getElementById('r23Status').textContent='Prêt';
  document.getElementById('r23ShootPanel').classList.add('hidden');
- document.getElementById('r23Penalty').classList.add('hidden');
+ document.getElementById('r23HistoryWrap').classList.add('hidden');
+ document.getElementById('r23History').innerHTML='';
 
  const action=document.getElementById('r23Action');
  action.classList.remove('hidden');
@@ -730,6 +758,7 @@ function resetL23Race(){
  action.disabled=false;
 
  renderR23Dots();
+ renderR23History();
 }
 
 function r23Clock(){
@@ -742,18 +771,35 @@ function r23Stats(){
  if(!l23race)return;
  document.getElementById('r23Lap').textContent=`${l23race.lap} / 4`;
  document.getElementById('r23Shoot').textContent=`${l23race.shoot} / 3`;
- document.getElementById('r23Shots').textContent=`${l23race.shots} / 5`;
+ document.getElementById('r23Shots').textContent=`${l23race.hits} / 5`;
 }
 
 function renderR23Dots(){
  const box=document.getElementById('r23Dots');
  if(!box)return;
- box.innerHTML=Array.from({length:5},(_,i)=>{
-   let cls='dot';
-   if(l23race && i<l23race.shots){
-     cls += i<l23race.hits ? ' on' : ' missdot';
-   }
-   return `<div class="${cls}"></div>`;
+ box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${l23race&&i<l23race.hits?'on':''}"></div>`).join('');
+}
+
+function renderR23History(){
+ const wrap=document.getElementById('r23HistoryWrap');
+ const box=document.getElementById('r23History');
+ if(!wrap||!box||!l23race)return;
+
+ if(!l23race.series.length){
+   wrap.classList.add('hidden');
+   box.innerHTML='';
+   return;
+ }
+
+ wrap.classList.remove('hidden');
+ box.innerHTML=l23race.series.map((serie,i)=>{
+   const dots=Array.from({length:5},()=>'<span class="shotHistoryDot hit"></span>').join('');
+   return `<div class="shotHistoryCard">
+     <b>Tir ${i+1}</b>
+     <div class="shotHistoryDots">${dots}</div>
+     <div class="shotTime">${fmt(serie.duration)}</div>
+     <div class="muted">temps passé au tir</div>
+   </div>`;
  }).join('');
 }
 
@@ -763,7 +809,6 @@ function r23Action(){
  const action=document.getElementById('r23Action');
  const status=document.getElementById('r23Status');
  const shootPanel=document.getElementById('r23ShootPanel');
- const penalty=document.getElementById('r23Penalty');
 
  if(l23race.state==='ready'){
    l23race.start=performance.now();
@@ -780,81 +825,55 @@ function r23Action(){
  if(l23race.state==='run'){
    if(l23race.shoot<3){
      l23race.state='shoot';
-     l23race.shots=0;
      l23race.hits=0;
-     l23race.misses=0;
+     l23race.shootStart=performance.now();
 
      shootPanel.classList.remove('hidden');
-     penalty.classList.add('hidden');
      action.classList.add('hidden');
      status.textContent=`Pas de tir ${l23race.shoot+1}`;
 
      r23Stats();
      renderR23Dots();
+     renderR23History();
    }else{
      finishL23Race();
    }
-   return;
  }
+}
 
- if(l23race.state==='readyToRun'){
+function r23Touch(){
+ if(!l23race || l23race.state!=='shoot' || l23race.hits>=5)return;
+
+ l23race.hits++;
+ r23Stats();
+ renderR23Dots();
+
+ if(l23race.hits===5){
+   const duration=performance.now()-l23race.shootStart;
+   l23race.series.push({hits:5,duration:Math.round(duration)});
+
+   l23race.shoot++;
    l23race.lap++;
    l23race.state='run';
 
-   shootPanel.classList.add('hidden');
-   penalty.classList.add('hidden');
+   document.getElementById('r23ShootPanel').classList.add('hidden');
+   document.getElementById('r23Status').textContent='TIR VALIDÉ';
+
+   renderR23History();
+
+   const action=document.getElementById('r23Action');
    action.classList.remove('hidden');
+   action.disabled=false;
    action.textContent=l23race.shoot<3
      ? `ARRIVÉE AU PAS DE TIR ${l23race.shoot+1}`
      : 'ARRIVÉE';
 
-   status.textContent=`Boucle ${l23race.lap}`;
    r23Stats();
- }
-}
 
-function r23Shot(hit){
- if(!l23race || l23race.state!=='shoot' || l23race.shots>=5)return;
-
- l23race.shots++;
-
- if(hit){
-   l23race.hits++;
- }else{
-   l23race.misses++;
-   l23race.totalMisses++;
- }
-
- r23Stats();
- renderR23Dots();
-
- if(l23race.hits===5 || l23race.shots===5){
-   l23race.shoot++;
-   l23race.state='readyToRun';
-
-   const shootPanel=document.getElementById('r23ShootPanel');
-   const penalty=document.getElementById('r23Penalty');
-   const action=document.getElementById('r23Action');
-   const status=document.getElementById('r23Status');
-
-   shootPanel.classList.add('hidden');
-   penalty.classList.remove('hidden');
-
-   if(currentLesson===3 && l23race.misses>0){
-     penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b><br>${l23race.misses} tour(s) de pénalité de 20 m avant de repartir.`;
-     status.textContent='PÉNALITÉ';
-   }else if(currentLesson===2 && l23race.misses>0){
-     penalty.innerHTML=`<b>${l23race.misses} cible(s) manquée(s)</b> sur ce passage.`;
-     status.textContent='TIR TERMINÉ';
-   }else{
-     penalty.innerHTML='<b>TIR VALIDÉ</b> · 5/5';
-     status.textContent='TIR VALIDÉ';
-   }
-
-   action.classList.remove('hidden');
-   action.textContent=l23race.shoot<3
-     ? 'REPARTIR POUR LA BOUCLE SUIVANTE'
-     : 'REPARTIR POUR LA DERNIÈRE BOUCLE';
+   setTimeout(()=>{
+     if(!l23race || l23race.state!=='run')return;
+     document.getElementById('r23Status').textContent=`Boucle ${l23race.lap}`;
+   },900);
  }
 }
 
@@ -869,7 +888,8 @@ function finishL23Race(){
  r.date=day();
  r.nation=studentNationAt(l23active.i)||null;
  r.time=Math.round(l23race.elapsed);
- r.misses=l23race.totalMisses;
+ r.shotSeries=l23race.series.map(x=>({hits:5,duration:x.duration}));
+ r.pairSlot=currentL23Slot(l23active.i);
  l23Save(r);
 
  document.getElementById('r23Status').textContent='Terminé';
@@ -891,147 +911,77 @@ function leaveL23Race(){
  show('lesson23');
 }
 
-
-const FLAG_EMOJI={France:'🇫🇷','Norvège':'🇳🇴','Suède':'🇸🇪','Allemagne':'🇩🇪',Italie:'🇮🇹',Espagne:'🇪🇸',Suisse:'🇨🇭',Finlande:'🇫🇮'};
-
-function getPursuitStarts(mode=pursuitMode){
- const c=pc();
- const results=(c.results||[]).filter(r=>(r.lesson||1)===2 && r.time!=null && Number(r.pairSlot)===Number(mode));
- const byNation={};
- results.forEach(r=>{
-   if(!r.nation)return;
-   if(!byNation[r.nation] || r.time<byNation[r.nation].time)byNation[r.nation]=r;
- });
- const arr=Object.values(byNation).sort((a,b)=>a.time-b.time);
- if(!arr.length)return [];
- const best=arr[0].time;
- return arr.map((r,i)=>({nation:r.nation,name:r.name,time:r.time,gap:r.time-best,rank:i+1}));
-}
-
-function openPursuitMaster(){
- pursuitMode=1;pmRunning=false;pmElapsed=0;pmLastSignal=-1;
- clearInterval(pmTick);
- document.getElementById('pmClass').textContent=pc().name;
- setPursuitMode(1);
- show('pursuitMaster');
-}
-
-function setPursuitMode(mode){
- pursuitMode=Number(mode);
- resetPursuitMaster();
- document.getElementById('pmMode1').className=pursuitMode===1?'btn orange':'btn ghost';
- document.getElementById('pmMode2').className=pursuitMode===2?'btn orange':'btn ghost';
- renderPursuitStarts();
-}
-
-function renderPursuitStarts(){
- const starts=getPursuitStarts();
- const box=document.getElementById('pmStarts');
- if(!starts.length){
-   box.innerHTML='<div class="warn">Aucun temps L2 avec position Biathlète '+pursuitMode+' n’a encore été récupéré. Scanne d’abord les résultats de la L2.</div>';
-   document.getElementById('pmNextNation').textContent='—';
-   document.getElementById('pmCountdown').textContent='Aucun départ';
-   return;
- }
- box.innerHTML=starts.map((x,i)=>`<div id="pmRow${i}" class="startRow">
-   <div class="startFlag">${FLAG_EMOJI[x.nation]||'🏳️'}</div>
-   <div><div class="big">${esc(x.nation)}</div><div class="muted">${esc(x.name)} · Sprint ${fmt(x.time)}</div></div>
-   <div style="text-align:right"><b>${x.gap===0?'0 s':'+'+(x.gap/1000).toFixed(1)+' s'}</b></div>
- </div>`).join('');
- updatePursuitDisplay();
-}
-
-function pursuitNow(){
- return pmRunning ? pmElapsed + (performance.now()-pmStartPerf) : pmElapsed;
-}
-
-function formatCountdown(ms){
- if(ms<=0)return 'PARTEZ !';
- if(ms<10000)return (ms/1000).toFixed(1)+' s';
- return Math.ceil(ms/1000)+' s';
-}
-
-function updatePursuitDisplay(){
- const starts=getPursuitStarts();
- const now=pursuitNow();
- document.getElementById('pmTimer').textContent=fmt(now);
-
- starts.forEach((x,i)=>{
-   const row=document.getElementById('pmRow'+i);
-   if(!row)return;
-   row.classList.toggle('started',now>=x.gap+1500);
-   row.classList.toggle('current',now>=x.gap-1000 && now<x.gap+1500);
- });
-
- let nextIndex=starts.findIndex(x=>now < x.gap+1200);
- if(nextIndex<0){
-   document.getElementById('pmNextNation').textContent='Tous partis';
-   document.getElementById('pmCountdown').textContent='Bonne poursuite !';
-   return;
- }
-
- const next=starts[nextIndex];
- const remain=next.gap-now;
- document.getElementById('pmNextNation').textContent=`${FLAG_EMOJI[next.nation]||''} ${next.nation}`;
- document.getElementById('pmCountdown').textContent=formatCountdown(remain);
-
- if(pmRunning){
-   const sec=Math.ceil(remain/1000);
-   const signalKey=remain<=200 && remain>=-200 ? nextIndex*100+99 :
-     (sec>=1 && sec<=3 && remain>0 ? nextIndex*100+sec : -1);
-   if(signalKey>=0 && signalKey!==pmLastSignal){
-     pmLastSignal=signalKey;
-     beepPursuit(remain<=200 ? 0.65 : 0.16, remain<=200 ? 880 : 660);
-     if(remain<=200 && navigator.vibrate)navigator.vibrate([180,80,180]);
-   }
- }
-}
-
-function beepPursuit(duration=0.15,freq=700){
- try{
-   const ctx=new (window.AudioContext||window.webkitAudioContext)();
-   const osc=ctx.createOscillator(),gain=ctx.createGain();
-   osc.frequency.value=freq;osc.type='sine';
-   gain.gain.setValueAtTime(0.001,ctx.currentTime);
-   gain.gain.exponentialRampToValueAtTime(0.35,ctx.currentTime+0.01);
-   gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+duration);
-   osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+duration+0.02);
- }catch(e){}
-}
-
-function startPursuitMaster(){
- if(!getPursuitStarts().length)return alert('Aucun départ disponible pour ce groupe.');
- if(pmRunning)return;
- pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;
- document.getElementById('pmStartBtn').textContent='EN COURS';
- beepPursuit(0.65,880);
- if(navigator.vibrate)navigator.vibrate([180,80,180]);
- clearInterval(pmTick);
- pmTick=setInterval(updatePursuitDisplay,50);
- updatePursuitDisplay();
-}
-
-function pausePursuitMaster(){
- if(!pmRunning)return;
- pmElapsed += performance.now()-pmStartPerf;
- pmRunning=false;clearInterval(pmTick);
- document.getElementById('pmStartBtn').textContent='REPRENDRE';
- updatePursuitDisplay();
-}
-
-function resetPursuitMaster(){
- clearInterval(pmTick);
- pmRunning=false;pmElapsed=0;pmStartPerf=0;pmLastSignal=-1;
- const timer=document.getElementById('pmTimer');if(timer)timer.textContent='00:00.0';
- const btn=document.getElementById('pmStartBtn');if(btn)btn.textContent='DÉMARRER';
- if(document.getElementById('pmStarts'))renderPursuitStarts();
-}
 function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove('hidden');scanTitle.textContent=mode==='config'?'Installer les classes':'Scanner les résultats';scanMsg.textContent=mode==='config'?'Scanne les QR de configuration dans l’ordre.':'Scanne les QR de chaque tablette élève.';scanProgress.textContent='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanMsg.textContent+=' Caméra non disponible dans ce navigateur : utilise « Ouvrir une photo ».';return}navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(async s=>{stream=s;video.srcObject=s;await video.play();scanFrame()}).catch(()=>{scanMsg.textContent+=' Caméra inaccessible : utilise « Ouvrir une photo ».'})}
 function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
 function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
 scanFile.addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let img=new Image();img.onload=()=>{canvas.width=img.width;canvas.height=img.height;let ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);if(typeof jsQR==='undefined'){scanMsg.textContent='Lecteur QR non chargé. Ouvre l’application une fois avec Internet.';return}let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height);if(code)consume(code.data);else scanMsg.textContent='QR non reconnu sur cette image.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value=''});
 let lastScan=''; function consume(txt){if(txt===lastScan)return;lastScan=txt;setTimeout(()=>lastScan='',1200);let p;try{p=JSON.parse(txt)}catch(e){return}if(!p.a||!p.id||!p.p||!p.t)return;if((scanMode==='config'&&p.a!=='LR10C')||(scanMode==='results'&&!['LR10R','LR11R'].includes(p.a))){scanMsg.textContent='Ce QR ne correspond pas à cette opération.';return}scanBuffer[p.id]=scanBuffer[p.id]||{t:p.t,parts:{}};scanBuffer[p.id].parts[p.p]=p.d;let b=scanBuffer[p.id],n=Object.keys(b.parts).length;scanProgress.textContent=`QR ${n} / ${b.t} reçu(s)`;scanMsg.textContent=`✅ Partie ${p.p}/${p.t} reçue.`;if(n===b.t){let raw='';for(let i=1;i<=b.t;i++)raw+=b.parts[i];let obj;try{obj=JSON.parse(raw)}catch(e){scanMsg.textContent='Erreur de reconstruction.';return}if(scanMode==='config'){installed=obj;write(INST,installed);normalizeInstalled();scanMsg.textContent=`✅ ${obj.classes.length} classe(s) installée(s).`;scanProgress.textContent='Configuration terminée';setTimeout(stopScanner,900)}else{mergeResults(obj);delete scanBuffer[p.id]}}}
-function mergeResults(obj){let added=0,updated=0;(obj.r||[]).forEach(a=>{let [cn,n,nation,s1v,stars,tim,key]=a;let c=db.classes.find(x=>x.name===cn);if(!c)return;c.results=c.results||[];c.nations=c.nations||{};if(nation)c.nations[n]=nation;let ex=c.results.find(x=>x.key===key);let item={key,name:n,nation:nation||null,s1:s1v,stars:stars,time:tim,date:obj.d};if(ex){Object.assign(ex,item);updated++}else{c.results.push(item);added++}});write(DB,db);scanMsg.textContent=`✅ ${added} nouveau(x), ${updated} mis à jour.`;scanProgress.textContent='Tu peux scanner la tablette suivante.'}
+function mergeResults(obj){
+ let added=0,updated=0,ignored=0;
+
+ (obj.r||[]).forEach(raw=>{
+   let item;
+
+   // Legacy L1/L10 QR payload
+   if(Array.isArray(raw)){
+     const [cn,n,nation,s1v,stars,tim,key]=raw;
+     item={
+       key:key||`${cn}|${n}|${obj.d||day()}|L1`,
+       className:cn,
+       name:n,
+       nation:nation||null,
+       s1:s1v,
+       stars:stars,
+       time:tim,
+       date:obj.d||day(),
+       lesson:1
+     };
+   }else{
+     // V11+ payload: keep every field (lesson, challenge, pairSlot, misses, shotSeries...)
+     item={...raw};
+     item.lesson=Number(item.lesson||1);
+     item.date=item.date||obj.d||day();
+   }
+
+   if(!item.className || !item.name){
+     ignored++;
+     return;
+   }
+
+   const c=db.classes.find(x=>x.name===item.className);
+   if(!c){
+     ignored++;
+     return;
+   }
+
+   c.results=c.results||[];
+   c.nations=c.nations||{};
+   if(item.nation)c.nations[item.name]=item.nation;
+
+   // Robust key for older/newer records.
+   if(!item.key)item.key=`${item.className}|${item.name}|L${item.lesson}`;
+
+   const ex=c.results.find(x=>x.key===item.key);
+   if(ex){
+     Object.assign(ex,item);
+     updated++;
+   }else{
+     c.results.push(item);
+     added++;
+   }
+ });
+
+ write(DB,db);
+
+ // Refresh class view immediately if it is the open class.
+ if(typeof currentProf==='number' && db.classes[currentProf]){
+   try{renderProfClass()}catch(e){}
+ }
+
+ document.getElementById('scanMsg').textContent=
+   `✅ ${added} nouveau(x), ${updated} mis à jour${ignored?`, ${ignored} ignoré(s)`:''}.`;
+ document.getElementById('scanProgress').textContent='Résultats enregistrés. Tu peux scanner la tablette suivante.';
+}
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}
 </script>
