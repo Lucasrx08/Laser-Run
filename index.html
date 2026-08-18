@@ -110,6 +110,24 @@
  .kpiGrid{grid-template-columns:1fr 1fr}
 }
 
+
+/* V15 dashboard professeur */
+.teacherDash{max-width:1500px;margin:auto}
+.teacherHead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:28px}
+.teacherKicker{font-size:12px;font-weight:900;letter-spacing:.14em;color:#7a8380;margin-top:22px}
+.teacherHead .title{font-size:clamp(46px,5vw,70px);line-height:.95;margin:10px 0 12px}
+.teacherActions{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:16px;margin:28px 0 14px}
+.teacherAction{border:1px solid #dedbd6;background:#fff;border-radius:24px;padding:22px;min-height:112px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;text-align:left;color:#323c3a;cursor:pointer;box-shadow:0 8px 24px rgba(50,60,58,.05)}
+.teacherActionMain{background:#c7dbdf}.taIcon{font-size:30px}.teacherAction b{display:block;font-size:21px}.teacherAction small{display:block;margin-top:5px;color:#707875;font-weight:600}.teacherAction>strong{font-size:24px}
+.teacherTools{background:rgba(255,255,255,.65);padding:14px 18px;border-radius:20px;margin:12px 0 24px}
+.teacherSectionHead{display:flex;justify-content:space-between;align-items:flex-end;margin:34px 0 16px}.teacherSectionHead .section{margin:5px 0 0;font-size:34px}
+.teacherClassGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.teacherClassCard{border:1px solid #e2dfda;background:#fff;border-radius:26px;padding:24px;text-align:left;color:#323c3a;cursor:pointer;box-shadow:0 8px 24px rgba(50,60,58,.05)}
+.tccTop{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.tccName{font-size:38px;font-weight:1000}.tccArrow{width:44px;height:44px;border-radius:50%;background:#ebe5df;display:grid;place-items:center;font-size:22px;font-weight:900}
+.tccStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid #ece9e5;margin-top:22px;padding-top:17px}.tccStats small{display:block;color:#7b8381;font-weight:700;margin-bottom:4px}.tccStats b{font-size:17px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1050px){.teacherActions{grid-template-columns:1fr 1fr}.teacherActionMain{grid-column:1/-1}.teacherClassGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.teacherHead{display:block}.teacherHead .pill{display:inline-block;margin-top:16px}.teacherActions,.teacherClassGrid{grid-template-columns:1fr}.teacherActionMain{grid-column:auto}}
+
 </style>
 </head>
 <body>
@@ -123,12 +141,20 @@
  </div>
 </section>
 
-<section id="prof" class="hidden">
- <button class="back" onclick="lockTeacher()">← Accueil et verrouiller</button>
- <div class="top"><div><div class="title">Espace professeur</div><div class="sub">Administration du cycle</div></div><span class="pill">🔒 Professeur</span></div>
- <div class="toolbar"><button class="btn orange" onclick="toggleCreate()">+ Nouvelle classe</button><button class="btn light" onclick="openConfigQR()">▦ Diffuser les classes</button><button class="btn light" onclick="startScanner('results')">📷 Scanner les résultats</button><button class="btn ghost" onclick="changePin()">Changer le code</button></div>
+<section id="prof" class="hidden teacherDash">
+ <div class="teacherHead">
+  <div><button class="back" onclick="lockTeacher()">← Accueil et verrouiller</button><div class="teacherKicker">LASER RUN 6ÈME</div><div class="title">Espace professeur</div><div class="sub">Pilotez vos classes et suivez la conquête du Globe de cristal.</div></div>
+  <span class="pill">🔒 Professeur</span>
+ </div>
+ <div class="teacherActions">
+  <button class="teacherAction teacherActionMain" onclick="startScanner('results')"><span class="taIcon">📷</span><span><b>Scanner les résultats</b><small>Récupérer les résultats des tablettes</small></span><strong>→</strong></button>
+  <button class="teacherAction" onclick="openConfigQR()"><span class="taIcon">▦</span><span><b>Diffuser les classes</b><small>Envoyer les listes vers les tablettes</small></span><strong>→</strong></button>
+  <button class="teacherAction" onclick="toggleTeacherTools()"><span class="taIcon">⚙️</span><span><b>Gestion</b><small>Créer une classe ou modifier le code</small></span><strong>⌄</strong></button>
+ </div>
+ <div id="teacherTools" class="teacherTools hidden"><button class="btn orange" onclick="toggleCreate()">+ Nouvelle classe</button><button class="btn ghost" onclick="changePin()">Changer le code professeur</button></div>
  <div id="createBox" class="card hidden"><div class="section">Nouvelle classe</div><div class="field"><label>Nom de la classe</label><input id="newClass" placeholder="Ex. 6ème Avignon"></div><div class="toolbar"><button class="btn orange" onclick="createClass()">Enregistrer</button><button class="btn ghost" onclick="toggleCreate()">Annuler</button></div></div>
- <div class="section">Mes classes</div><div id="profClasses" class="list"></div>
+ <div class="teacherSectionHead"><div><div class="teacherKicker">TABLEAU DE BORD</div><div class="section">Mes classes</div></div><div id="teacherClassCount" class="muted"></div></div>
+ <div id="profClasses" class="teacherClassGrid"></div>
 </section>
 
 <section id="profClass" class="hidden">
@@ -144,7 +170,6 @@
  <div class="dashboardTabs">
   <button id="pcTabBtnOverview" class="dashboardTab active" onclick="showPcTab('overview')">Vue générale</button>
   <button id="pcTabBtnStudents" class="dashboardTab" onclick="showPcTab('students')">Élèves</button>
-  <button id="pcTabBtnResults" class="dashboardTab" onclick="showPcTab('results')">Résultats</button>
   <button id="pcTabBtnRankings" class="dashboardTab" onclick="showPcTab('rankings')">Classements</button>
   <button id="pcTabBtnPursuit" class="dashboardTab" onclick="showPcTab('pursuit')">Poursuite</button>
   <button id="pcTabBtnExport" class="dashboardTab" onclick="showPcTab('export')">Export</button>
@@ -462,7 +487,20 @@ async function validatePin(){
 }
 function changePin(){pendingTeacherAction='prof';pinMode='change';pinTitle.textContent='Changer le code';pinNote.classList.add('hidden');pin2Wrap.classList.remove('hidden');pin1.value='';pin2.value='';pin.classList.remove('hidden')}
 function lockTeacher(){teacher=false;pendingTeacherAction='prof';show('home')}
-function openProf(){renderProf();show('prof')} function renderProf(){profClasses.innerHTML=db.classes.length?db.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="openProfClass(${i})"><div><div class="big">${esc(c.name)}</div><div class="muted">${c.students.length} élèves · ${(c.results||[]).length} résultat(s)</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe enregistrée.</div>'}
+function openProf(){renderProf();show('prof')}
+function toggleTeacherTools(){document.getElementById('teacherTools').classList.toggle('hidden')}
+function renderProf(){
+ const el=document.getElementById('teacherClassCount'); if(el)el.textContent=db.classes.length+' classe'+(db.classes.length>1?'s':'');
+ profClasses.innerHTML=db.classes.length?db.classes.map((c,i)=>{
+  const nations=[...new Set(Object.values(c.nations||{}).filter(Boolean))];
+  const lessons=[...new Set((c.results||[]).map(r=>Number(r.lesson)).filter(Boolean))];
+  const globe=globeStandings(c), leader=globe[0];
+  return `<button class="teacherClassCard" onclick="openProfClass(${i})">
+   <div class="tccTop"><div><div class="tccName">${esc(c.name)}</div><div class="muted">${c.students.length} élève${c.students.length>1?'s':''} · ${nations.length} nation${nations.length>1?'s':''}</div></div><span class="tccArrow">→</span></div>
+   <div class="tccStats"><div><small>Leçons</small><b>${lessons.length}/7</b></div><div><small>Leader Globe</small><b>${leader?esc(leader.nation):'—'}</b></div><div><small>Cristaux</small><b>${leader?'💎 '+leader.total:'—'}</b></div></div>
+  </button>`;
+ }).join(''):'<div class="card muted">Aucune classe enregistrée. Ouvrez « Gestion » pour créer votre première classe.</div>';
+}
 function toggleCreate(){createBox.classList.toggle('hidden')} function createClass(){let n=newClass.value.trim();if(!n)return alert('Entre un nom de classe.');db.classes.push({name:n,students:[],results:[]});write(DB,db);newClass.value='';toggleCreate();renderProf()}
 function openProfClass(i){
  currentProf=i;
@@ -520,15 +558,32 @@ function lessonIndividualRanking(c,lesson){
 }
 function globeStandings(c){
  const nations={};
+
+ // Les cristaux récompensent la NATION, jamais chaque élève individuellement.
+ // Pour chaque leçon, on classe d'abord les nations à partir du total des
+ // performances individuelles de leurs élèves, puis on attribue UNE seule
+ // quantité de cristaux à chaque nation selon sa place.
  for(let lesson=1;lesson<=7;lesson++){
-   const ranking=lessonIndividualRanking(c,lesson);
-   ranking.forEach((r,index)=>{
+   const individual=lessonIndividualRanking(c,lesson);
+   const byNation={};
+
+   individual.forEach(r=>{
      const nation=r.nation||(c.nations&&c.nations[r.name]);
      if(!nation)return;
-     if(!nations[nation])nations[nation]={nation,total:0,lessons:{}};
+     if(!byNation[nation])byNation[nation]={nation,time:0,count:0};
+     byNation[nation].time+=Number(r.time);
+     byNation[nation].count++;
+   });
+
+   const nationRanking=Object.values(byNation)
+     .filter(x=>x.count>0)
+     .sort((a,b)=>a.time-b.time||a.nation.localeCompare(b.nation,'fr'));
+
+   nationRanking.forEach((x,index)=>{
+     if(!nations[x.nation])nations[x.nation]={nation:x.nation,total:0,lessons:{}};
      const pts=crystalsForPlace(index+1,lesson);
-     nations[nation].total+=pts;
-     nations[nation].lessons[lesson]=(nations[nation].lessons[lesson]||0)+pts;
+     nations[x.nation].total+=pts;
+     nations[x.nation].lessons[lesson]=pts;
    });
  }
  return Object.values(nations).sort((a,b)=>b.total-a.total||a.nation.localeCompare(b.nation,'fr'));
@@ -541,7 +596,7 @@ function renderGlobe(targetId,compact=false){
    box.innerHTML=rows.slice(0,4).map((x,i)=>`<div class="rankItem"><div class="place">${i+1}</div><div><div class="big">${esc(x.nation)}</div><div class="muted">${Object.entries(x.lessons).map(([l,p])=>`L${l} +${p}`).join(' · ')}</div></div><div class="value">💎 ${x.total}</div></div>`).join('');
    return;
  }
- box.innerHTML=`<div class="globeHeader"><div><div class="globeTitle">💎 Conquête du Globe de cristal</div><div style="opacity:.75">Cristaux cumulés de L1 à L7</div></div><div class="crystal">${rows[0]?esc(rows[0].nation)+' · '+rows[0].total+' 💎':''}</div></div><div class="notice"><b>L1 à L6 :</b> places 1–4 = 4 💎 · 5–8 = 3 💎 · 9 et + = 2 💎. <b>L7 JO :</b> 12 💎 · 9 💎 · 6 💎. Chaque élève rapporte ses cristaux à sa nation.</div>`+
+ box.innerHTML=`<div class="globeHeader"><div><div class="globeTitle">💎 Conquête du Globe de cristal</div><div style="opacity:.75">Cristaux cumulés de L1 à L7</div></div><div class="crystal">${rows[0]?esc(rows[0].nation)+' · '+rows[0].total+' 💎':''}</div></div><div class="notice"><b>L1 à L6 :</b> places 1–4 = 4 💎 · 5–8 = 3 💎 · 9 et + = 2 💎. <b>L7 JO :</b> 12 💎 · 9 💎 · 6 💎. Les cristaux sont attribués une seule fois à chaque nation selon son classement dans la leçon.</div>`+
  rows.map((x,i)=>`<div class="rankItem"><div class="place">${i+1}</div><div><div class="big">${esc(x.nation)}</div><div class="crystalDetail">${Array.from({length:7},(_,j)=>`<div class="crystalLesson">L${j+1}<br><b>${x.lessons[j+1]||0} 💎</b></div>`).join('')}</div></div><div class="value">${x.total} 💎</div></div>`).join('');
 }
 function renderChallengeRanking(type){
