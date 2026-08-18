@@ -151,6 +151,81 @@
 @media(max-width:900px){.profileGrid{grid-template-columns:1fr}.pursuitGrid{grid-template-columns:minmax(0,1.8fr) minmax(220px,.55fr)}#pcPanelPursuit .pursuitTimer{font-size:clamp(100px,17vw,170px)}}
 @media(max-width:700px){.pursuitGrid{grid-template-columns:1fr}.profileStats{grid-template-columns:1fr 1fr}.skillRow{grid-template-columns:92px 1fr 52px}}
 
+
+/* V16.1 — Fiabilisation tactile iPad / Safari */
+button,.btn,.dashboardTab,.subTab,.quickAction,.teacherAction,.teacherClassCard,
+.lesson,.nationBtn,.criterion,.target,.shoot,.mainAction,.pair-run,.mode-card,
+.class-card,.lesson-card,.compact,.big,.ghost,.back {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transform: none !important;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+}
+button *, .btn *, .dashboardTab *, .subTab *, .quickAction *, .teacherAction *,
+.teacherClassCard *, .lesson *, .nationBtn *, .criterion *, .target *,
+.shoot *, .mainAction *, .pair-run *, .mode-card *, .class-card *, .lesson-card * {
+  pointer-events: none;
+}
+button,.btn,.dashboardTab,.subTab,.criterion,.nationBtn,.target,.shoot,.mainAction{
+  min-height: 48px;
+}
+html,body,.app{overscroll-behavior-y:none}
+
+
+/* V16.1 — Poursuite grand écran */
+.pursuitGrid{
+  grid-template-columns:minmax(0,3fr) minmax(260px,1fr) !important;
+  gap:18px;
+}
+#pcPanelPursuit .card:first-child{
+  min-height:70vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.pursuitTimer{
+  font-size:clamp(110px,18vw,230px) !important;
+  line-height:.88;
+  letter-spacing:-7px;
+  margin:18px 0 24px;
+}
+.pursuitNext{
+  padding:28px 24px !important;
+  margin:18px 0 !important;
+}
+.pursuitNextNation{
+  font-size:clamp(54px,8vw,110px) !important;
+  line-height:.95;
+}
+.pursuitCountdown{
+  font-size:clamp(44px,7vw,88px) !important;
+  margin-top:8px;
+}
+#pursuitStarts{
+  max-height:72vh;
+  overflow:auto;
+}
+.pursuitRow{
+  grid-template-columns:48px 1fr 90px !important;
+  padding:10px !important;
+  font-size:14px;
+}
+.pursuitRow .big{font-size:18px}
+@media(max-width:900px){
+ .pursuitGrid{grid-template-columns:minmax(0,2.8fr) minmax(220px,.9fr) !important}
+}
+@media(max-width:700px){
+ .pursuitGrid{grid-template-columns:1fr !important}
+ #pcPanelPursuit .card:first-child{min-height:auto}
+ .pursuitTimer{font-size:clamp(82px,24vw,150px) !important}
+ .pursuitNextNation{font-size:clamp(42px,13vw,78px) !important}
+ .pursuitCountdown{font-size:clamp(36px,11vw,64px) !important}
+}
+
 </style>
 </head>
 <body>
@@ -257,6 +332,7 @@
     <div class="toolbar">
      <button id="pursuitStartBtn" class="btn orange" onclick="startPursuitClock()">DÉMARRER</button>
      <button class="btn ghost" onclick="pausePursuitClock()">PAUSE</button>
+     <button id="pursuitVoiceBtn" class="btn light" onclick="togglePursuitVoice()">🔊 Voix activée</button>
      <button class="btn red" onclick="resetPursuitClock()">RÉINITIALISER</button>
     </div>
    </div>
@@ -463,7 +539,7 @@
 <script>
 const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
 let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof',currentLesson=1,l23pair=[],l23active=null,l23race=null,l23tick=null;
-let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1,currentPcTab='overview',currentRankingTab='precision';
+let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1,currentPcTab='overview',currentRankingTab='precision',pursuitSpeechEnabled=true,pursuitLastSpoken='';
 const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Espagne','Suisse','Finlande'];
 const CHALLENGE_LESSONS={
  precision:[1,4],
@@ -1378,16 +1454,20 @@ function pursuitStartsForMode(mode=pursuitMode){
    if(!r)r=arr[Number(mode)-1]||null;
    if(r)chosen.push(r);
  });
- chosen.sort((a,b)=>Number(b.time)-Number(a.time));
  if(!chosen.length)return [];
- const slowest=Number(chosen[0].time);
- return chosen.map((r,i)=>({
-   rank:i+1,
-   nation:r.nation,
-   name:r.name,
-   time:Number(r.time),
-   gap:slowest-Number(r.time)
- }));
+
+ // Poursuite inversée : le plus lent du Sprint part à 0,
+ // puis les meilleurs partent progressivement plus tard.
+ const slowest=Math.max(...chosen.map(r=>Number(r.time)));
+ return chosen
+   .map(r=>({
+     nation:r.nation,
+     name:r.name,
+     time:Number(r.time),
+     gap:slowest-Number(r.time)
+   }))
+   .sort((a,b)=>a.gap-b.gap || b.time-a.time)
+   .map((r,i)=>({...r,rank:i+1}));
 }
 function setPursuitMode(mode){
  pursuitMode=Number(mode);
@@ -1415,6 +1495,33 @@ function renderPursuitStarts(){
 }
 function pursuitClockNow(){
  return pmRunning ? pmElapsed+(performance.now()-pmStartPerf) : pmElapsed;
+}
+
+function pursuitSpeak(text){
+ if(!pursuitSpeechEnabled || !('speechSynthesis' in window) || !text)return;
+ try{
+   window.speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance(text);
+   u.lang='fr-FR';
+   u.rate=1.02;
+   u.pitch=1;
+   u.volume=1;
+   const voices=window.speechSynthesis.getVoices();
+   const fr=voices.find(v=>/^fr/i.test(v.lang));
+   if(fr)u.voice=fr;
+   window.speechSynthesis.speak(u);
+ }catch(e){}
+}
+function pursuitSpeakOnce(key,text){
+ if(pursuitLastSpoken===key)return;
+ pursuitLastSpoken=key;
+ pursuitSpeak(text);
+}
+function togglePursuitVoice(){
+ pursuitSpeechEnabled=!pursuitSpeechEnabled;
+ const b=document.getElementById('pursuitVoiceBtn');
+ if(b)b.textContent=pursuitSpeechEnabled?'🔊 Voix activée':'🔇 Voix coupée';
+ if(!pursuitSpeechEnabled && 'speechSynthesis' in window)window.speechSynthesis.cancel();
 }
 function pursuitBeep(duration=.14,freq=700){
  try{
@@ -1451,18 +1558,31 @@ function updatePursuitClock(){
 
  const x=starts[idx],remain=x.gap-now;
  document.getElementById('pursuitNextNation').textContent=`${PURSUIT_FLAGS[x.nation]||''} ${x.nation}`;
- document.getElementById('pursuitCountdown').textContent=remain<=0?'PARTEZ !':remain<10000?(remain/1000).toFixed(1)+' s':Math.ceil(remain/1000)+' s';
+ document.getElementById('pursuitCountdown').textContent=
+   remain<=0?'PARTEZ !':remain<10000?(remain/1000).toFixed(1)+' s':Math.ceil(remain/1000)+' s';
 
  if(pmRunning){
-   let key=-1;
+   // Préparation du prochain concurrent ~8 secondes avant.
+   if(remain<=8000 && remain>5000){
+     pursuitSpeakOnce(`prep-${idx}`,`${x.nation} se prépare`);
+   }
+
    const sec=Math.ceil(remain/1000);
-   if(remain<=80&&remain>=-160)key=idx*10+9;
-   else if(remain>0&&sec>=1&&sec<=3)key=idx*10+sec;
-   if(key>=0&&key!==pmLastSignal){
-     pmLastSignal=key;
-     const depart=(key%10===9);
-     pursuitBeep(depart?.55:.13,depart?900:650);
-     if(depart&&navigator.vibrate)navigator.vibrate([160,70,160]);
+
+   // Annonce vocale : "France dans 3, 2, 1, Top."
+   if(sec===3 && remain>2000){
+     pursuitSpeakOnce(`3-${idx}`,`${x.nation} dans 3`);
+     pursuitBeep(.12,650);
+   }else if(sec===2 && remain>1000){
+     pursuitSpeakOnce(`2-${idx}`,'2');
+     pursuitBeep(.12,650);
+   }else if(sec===1 && remain>100){
+     pursuitSpeakOnce(`1-${idx}`,'1');
+     pursuitBeep(.12,650);
+   }else if(remain<=100 && remain>=-220){
+     pursuitSpeakOnce(`go-${idx}`,'Top');
+     pursuitBeep(.55,900);
+     if(navigator.vibrate)navigator.vibrate([160,70,160]);
    }
  }
 }
@@ -1470,7 +1590,7 @@ function startPursuitClock(){
  const starts=pursuitStartsForMode();
  if(!starts.length)return alert('Aucun départ disponible. Il faut d’abord récupérer les résultats du Sprint L2.');
  if(pmRunning)return;
- pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;
+ pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;pursuitLastSpoken='';
  document.getElementById('pursuitStartBtn').textContent='EN COURS';
  // La nation la plus lente du Sprint part à 0 ; les meilleures partent ensuite selon leur avance au Sprint.
  if(pmElapsed===0){pursuitBeep(.55,900);if(navigator.vibrate)navigator.vibrate([160,70,160])}
@@ -1488,7 +1608,7 @@ function pausePursuitClock(){
 }
 function resetPursuitClock(){
  clearInterval(pmTick);pmTick=null;
- pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;
+ pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;pursuitLastSpoken='';
  const timer=document.getElementById('pursuitTimerDisplay');if(timer)timer.textContent='00:00.0';
  const btn=document.getElementById('pursuitStartBtn');if(btn)btn.textContent='DÉMARRER';
  const next=document.getElementById('pursuitNextNation'),count=document.getElementById('pursuitCountdown');
