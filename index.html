@@ -388,6 +388,9 @@ html,body,.app{overscroll-behavior-y:none}
   }
 }
 
+
+.racePadBlock{margin:18px 0 28px}.raceTop{width:100%;font-size:24px;min-height:68px}.racePadGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 20px}.raceTile{min-height:112px;border:2px solid #d8d6d1;background:#fff;border-radius:18px;padding:14px;text-align:left;color:#323c3a}.raceTile b,.raceTile small,.raceTile strong{display:block}.raceTile b{font-size:18px}.raceTile small{margin:5px 0;color:#68716f}.raceTile strong{font-size:20px}.raceTile.finished{background:#dcebdc;border-color:#94b894}@media(max-width:800px){.racePadGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -432,7 +435,7 @@ html,body,.app{overscroll-behavior-y:none}
   <button id="pcTabBtnStudents" class="dashboardTab" onclick="showPcTab('students')">Élèves</button>
   <button id="pcTabBtnResults" class="dashboardTab" onclick="showPcTab('results')">Profils</button>
    <button id="pcTabBtnRankings" class="dashboardTab" onclick="showPcTab('rankings')">Classements</button>
-  <button id="pcTabBtnPursuit" class="dashboardTab" onclick="showPcTab('pursuit')">Poursuite</button>
+  <button id="pcTabBtnPursuit" class="dashboardTab" onclick="showPcTab('pursuit')">Poursuite</button><button id="pcTabBtnMass" class="dashboardTab" onclick="showPcTab('mass')">Mass-start</button><button id="pcTabBtnRelay" class="dashboardTab" onclick="showPcTab('relay')">Relais</button>
   <button id="pcTabBtnExport" class="dashboardTab" onclick="showPcTab('export')">Export</button>
  </div>
 
@@ -505,7 +508,17 @@ html,body,.app{overscroll-behavior-y:none}
   </div>
  </div>
 
- <div id="pcPanelExport" class="dashboardPanel hidden">
+ <div id="pcPanelMass" class="dashboardPanel hidden">
+ <div class="section">Mass-start · Pad de course</div>
+ <div class="notice">Le professeur déclenche chaque vague. À l’arrivée, l’élève touche son propre carré pour figer son temps.</div>
+ <div id="massPad"></div>
+</div>
+<div id="pcPanelRelay" class="dashboardPanel hidden">
+ <div class="section">Relais des nations · Pad de course</div>
+ <div class="notice">Un départ collectif. À l’arrivée du relais, la nation touche son pays pour figer son temps.</div>
+ <div id="relayPad"></div>
+</div>
+<div id="pcPanelExport" class="dashboardPanel hidden">
   <div class="card">
    <div class="section" style="margin-top:0">Export iDoceo</div>
    <div class="notice">Les élèves sont triés par ordre alphabétique. Les colonnes reprennent les Défis Étoile et les situations principales disponibles.</div>
@@ -702,7 +715,7 @@ html,body,.app{overscroll-behavior-y:none}
 const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
 let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof',currentLesson=1,l23pair=[],l23active=null,l23race=null,l23tick=null;
 let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1,currentPcTab='overview',currentRankingTab='precision',pursuitSpeechEnabled=true,pursuitLastSpoken='';
-const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Espagne','Suisse','Finlande'];
+const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Suisse','Finlande','Autriche','Tchéquie','Slovénie','Pologne','Estonie','Lettonie','Lituanie','Ukraine'];
 const CHALLENGE_LESSONS={
  precision:[1,4],
  rapidity:[2,5],
@@ -883,7 +896,7 @@ function showRankingTab(type){
 }
 function showPcTab(tab){
  currentPcTab=tab;
- ['overview','students','results','rankings','pursuit','export'].forEach(t=>{
+ ['overview','students','results','rankings','pursuit','mass','relay','export'].forEach(t=>{
    const panel=document.getElementById('pcPanel'+t.charAt(0).toUpperCase()+t.slice(1));
    const btn=document.getElementById('pcTabBtn'+t.charAt(0).toUpperCase()+t.slice(1));
    if(panel)panel.classList.toggle('hidden',t!==tab);
@@ -891,6 +904,47 @@ function showPcTab(tab){
  });
  if(tab==='rankings')showRankingTab(currentRankingTab);
  if(tab==='pursuit'){resetPursuitClock();renderPursuitStarts()}
+ if(tab==='mass')renderMassPad();
+ if(tab==='relay')renderRelayPad();
+}
+
+let massStarts={1:null,2:null},massTimes={},relayStart=null,relayTimes={};
+function athleteSlots(c){
+ const by={};
+ c.students.forEach(n=>{const nation=(c.nations||{})[n]||'Sans nation';(by[nation]||(by[nation]=[])).push(n)});
+ const a1=[],a2=[];
+ Object.entries(by).forEach(([nation,names])=>{names.sort((a,b)=>a.localeCompare(b,'fr'));if(names[0])a1.push([names[0],nation]);if(names[1])a2.push([names[1],nation])});
+ return [a1,a2];
+}
+function liveMs(t){return t==null?null:performance.now()-t}
+function massTop(slot){massStarts[slot]=performance.now();renderMassPad()}
+function massFinish(name,slot){if(!massStarts[slot]||massTimes[name]!=null)return;massTimes[name]=performance.now()-massStarts[slot];renderMassPad()}
+function renderMassPad(){
+ const box=document.getElementById('massPad');if(!box)return;const c=pc(),slots=athleteSlots(c);
+ box.innerHTML=[1,2].map(slot=>`<div class="racePadBlock"><button class="btn orange raceTop" onclick="massTop(${slot})">▶ TOP DÉPART BIATHLÈTES ${slot}</button><div class="racePadGrid">${slots[slot-1].map(([n,nation])=>`<button class="raceTile ${massTimes[n]!=null?'finished':''}" onclick="massFinish('${esc(n).replace(/'/g,"\\'")}',${slot})"><b>${esc(n)}</b><small>${esc(nation)}</small><strong>${massTimes[n]!=null?fmt(massTimes[n]):massStarts[slot]?'EN COURSE':'PRÊT'}</strong></button>`).join('')||'<div class="muted">Aucun biathlète</div>'}</div></div>`).join('')+`<button class="btn light" onclick="editMassShots()">🎯 Compléter les tirs</button>`;
+}
+function relayTop(){relayStart=performance.now();renderRelayPad()}
+function relayFinish(nation){if(!relayStart||relayTimes[nation]!=null)return;relayTimes[nation]=performance.now()-relayStart;renderRelayPad()}
+function renderRelayPad(){
+ const box=document.getElementById('relayPad');if(!box)return;const c=pc();const nations=[...new Set(c.students.map(n=>(c.nations||{})[n]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+ box.innerHTML=`<button class="btn orange raceTop" onclick="relayTop()">▶ TOP DÉPART · RELAIS DES NATIONS</button><div class="racePadGrid">${nations.map(n=>`<button class="raceTile ${relayTimes[n]!=null?'finished':''}" onclick="relayFinish('${esc(n).replace(/'/g,"\\'")}')"><b>${esc(n)}</b><small>${c.students.filter(x=>(c.nations||{})[x]===n).length} biathlète(s)</small><strong>${relayTimes[n]!=null?fmt(relayTimes[n]):relayStart?'EN COURSE':'PRÊT'}</strong></button>`).join('')}</div><button class="btn light" onclick="editRelayShots()">🎯 Compléter les profils de tir</button>`;
+}
+function shotEntry(title){
+ let h=prompt(title+' — nombre total de cibles touchées sur les 3 passages :','15');if(h===null)return null;
+ let m=prompt(title+' — nombre total de cibles ratées :','0');if(m===null)return null;
+ h=Math.max(0,Number(h)||0);m=Math.max(0,Number(m)||0);return {hits:h,misses:m,shots:h+m,rate:h+m?Math.round(h/(h+m)*100):0};
+}
+function saveShotProfile(c,name,lesson,data,time){
+ c.results=c.results||[];let r=c.results.find(x=>x.name===name&&Number(x.lesson)===lesson);
+ if(!r){r={name,className:c.name,lesson,date:day()};c.results.push(r)}
+ r.hits=data.hits;r.misses=data.misses;r.shots=data.shots;r.hitRate=data.rate;if(time!=null)r.time=time;
+ saveDB();renderProfClass();
+}
+function editMassShots(){
+ const c=pc();for(const [name,time] of Object.entries(massTimes)){const d=shotEntry(name);if(d)saveShotProfile(c,name,4,d,time)}renderMassPad()
+}
+function editRelayShots(){
+ const c=pc();for(const nation of Object.keys(relayTimes)){const names=c.students.filter(x=>(c.nations||{})[x]===nation);for(const name of names){const d=shotEntry(nation+' · '+name);if(d)saveShotProfile(c,name,5,d,relayTimes[nation])}}renderRelayPad()
 }
 function resultDetail(r){
  const lesson=Number(r.lesson||1);
@@ -1090,7 +1144,8 @@ function updatePairNation(){
  assignBox.classList.remove('hidden');
 }
 function validatePair(){
- if(pa.value===''||pb.value===''||pa.value===pb.value)return alert('Choisis deux élèves différents.');
+ if(pa.value===''&&pb.value==='')return alert('Choisis au moins un élève.');
+ if(pa.value!==''&&pb.value!==''&&pa.value===pb.value)return alert('Choisis deux élèves différents.');
 
  const a=+pa.value,b=+pb.value;
  const na=studentNationAt(a),nb=studentNationAt(b);
@@ -1284,8 +1339,12 @@ function openLesson23(n){
  l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
 }
 function validateL23Pair(){
- if(l23a.value===''||l23b.value===''||l23a.value===l23b.value)return alert('Choisis deux élèves différents.');
- l23pair=[{i:+l23a.value,name:studentNameAt(+l23a.value)},{i:+l23b.value,name:studentNameAt(+l23b.value)}];renderL23Pair()
+ if(l23a.value===''&&l23b.value==='')return alert('Choisis au moins un élève.');
+ if(l23a.value!==''&&l23b.value!==''&&l23a.value===l23b.value)return alert('Choisis deux élèves différents.');
+ l23pair=[];
+ if(l23a.value!=='')l23pair.push({i:+l23a.value,name:studentNameAt(+l23a.value)});
+ if(l23b.value!=='')l23pair.push({i:+l23b.value,name:studentNameAt(+l23b.value)});
+ renderL23Pair()
 }
 function renderL23Pair(){
  l23Work.classList.remove('hidden');
