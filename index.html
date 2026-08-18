@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#173038">
+<meta name="theme-color" content="#062f2e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V25</title>
+<title>Laser Run 6ème · V26</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -473,47 +473,54 @@ html,body,.app{overscroll-behavior-y:none}
 #r23Action[disabled],.shoot[disabled]{pointer-events:none!important}
 
 
-/* V25 — modern facelift */
-:root{--c1:#d7f1f2;--c2:#173038;--c3:#f5f7fb;--c4:#ffbe3b;--green:#16a34a;--red:#e23a32;--white:#fff;--shadow:0 18px 42px rgba(23,48,56,.10);--r:24px}
-html,body{background:radial-gradient(circle at top right, rgba(215,241,242,.85), transparent 28%),linear-gradient(180deg,#f7f8fb 0%,#eff5f6 100%)}
-.app{width:min(1280px,100%);padding:clamp(18px,2.6vw,34px)}
-.top{margin-bottom:26px}
-.brand,.title{letter-spacing:-2px}
-.pill{background:linear-gradient(135deg,#e8f7f7,#d7f1f2);box-shadow:0 8px 22px rgba(23,48,56,.08);padding:10px 14px;font-size:12px;letter-spacing:.02em}
-.card,.row,.lesson,.kpi,.rankItem,.profileCard,.teacherClassCard,.teacherAction,.quickAction,.role,.nationBtn,.criterion,.stat,.shotHistoryCard,.profileStat{border-radius:24px!important;border:1px solid rgba(23,48,56,.08)!important;box-shadow:0 14px 34px rgba(23,48,56,.07)!important}
-.card{background:rgba(255,255,255,.92)!important;backdrop-filter:blur(10px)}
-.notice{background:linear-gradient(135deg,rgba(215,241,242,.96),rgba(232,250,250,.92));border:1px solid rgba(23,48,56,.06)}
-.warn{background:linear-gradient(135deg,#fff0cf,#ffe4b8);border:1px solid rgba(255,190,59,.34)}
-.btn,.mainAction,.dashboardTab,.subTab{transition:transform .12s ease, box-shadow .12s ease, background .12s ease}
-.btn:hover,.mainAction:hover,.dashboardTab:hover,.subTab:hover{transform:translateY(-1px)!important;box-shadow:0 10px 24px rgba(23,48,56,.12)}
-.btn{border-radius:16px;padding:14px 18px;box-shadow:0 8px 18px rgba(23,48,56,.08)}
-.btn.orange,.mainAction{background:linear-gradient(135deg,#ffc94d,#ffb52b)!important;color:#173038!important}
-.btn.light{background:linear-gradient(135deg,#edf8f8,#d7f1f2)!important}
-.btn.ghost{background:rgba(255,255,255,.65)!important;border:1.5px solid rgba(23,48,56,.14)!important}
-.btn.red{background:linear-gradient(135deg,#ef5a50,#dc3028)!important}.btn.green{background:linear-gradient(135deg,#2dbe62,#149548)!important}
-.dashboardTab.active,.profrole{background:linear-gradient(135deg,#173038,#21464f)!important;color:#fff!important;border-color:transparent!important}
-.subTab.active{background:linear-gradient(135deg,#ffc94d,#ffb52b)!important}
-.lesson.active,.nationBtn.selected,.criterion.active,.pursuitRow.now,.rankRow.current,.startRow.current{outline:0!important;box-shadow:0 0 0 3px rgba(255,190,59,.55),0 14px 34px rgba(23,48,56,.07)!important}
-.field input,.field select{padding:14px 15px;border-radius:15px;border:1px solid rgba(23,48,56,.14);background:rgba(255,255,255,.95);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
-.field label{font-weight:800;letter-spacing:.01em}
-.section{font-size:clamp(22px,2.3vw,28px);letter-spacing:-.4px}
-.timer,.score,.masterTimer,.pursuitTimer{letter-spacing:-4px;text-shadow:0 6px 18px rgba(23,48,56,.08)}
-.role{min-height:225px;border-radius:28px!important}
-.studentrole{background:linear-gradient(135deg,#edf9f9,#d7f1f2)!important;color:#173038!important}
-.quickAction,.teacherAction,.teacherClassCard,.lesson,.row,.kpi,.rankItem,.profileCard{background:linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)!important}
-.globeHeader{background:linear-gradient(135deg,#173038,#24515c)!important;box-shadow:0 16px 40px rgba(23,48,56,.16)}
-.profileBadge{background:linear-gradient(135deg,#173038,#24515c)!important}
-#lesson23 .card:first-of-type{position:relative;overflow:hidden}
-#lesson23 .card:first-of-type:before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,#ffbe3b,#20b8c8,#173038)}
-#l23MainButtons .role{min-height:190px}
-.lockedAttempt{display:flex;gap:16px;align-items:center}
-.lockedAttempt .btn{align-self:flex-end}
-@media(max-width:650px){.card,.row,.lesson,.kpi,.rankItem,.profileCard,.teacherClassCard,.teacherAction,.quickAction,.role,.nationBtn,.criterion,.stat,.shotHistoryCard,.profileStat{border-radius:20px!important}.lockedAttempt{flex-direction:column;align-items:flex-start}}
+/* V26 — STRUCTURAL REDESIGN, inspired by the validated young/sport dashboard */
+:root{--ink:#062f2e;--ink2:#0b4140;--teal:#0aa5a5;--sky:#d8f0f2;--paper:#f7f4ee;--panel:#ffffff;--orange:#ffb31f;--line:#dfe8e8;--muted2:#6b7b7b;--shadow2:0 16px 36px rgba(6,47,46,.09)}
+html,body{background:var(--paper)!important;color:var(--ink)!important}
+body{padding-top:0}
+.app{width:min(1500px,100%)!important;padding:0 22px 34px!important}
+.sportShell{height:68px;background:linear-gradient(100deg,#052b2b 0%,#073d3b 70%,#0a5550 100%);color:#fff;margin:0 -22px 24px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:3000;box-shadow:0 8px 22px rgba(6,47,46,.18)}
+.sportLogo{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:950;letter-spacing:-1px;font-style:italic}.sportLogo b{color:#8fe7e5}.sportLogo em{color:var(--orange);font-size:16px}.sportContext{font-size:13px;font-weight:950;letter-spacing:.15em;color:#c8eeee}.sportRight{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800}.sportDot{width:9px;height:9px;background:var(--orange);border-radius:50%;box-shadow:0 0 0 5px rgba(255,179,31,.13)}
+.targetMark{width:36px;height:36px;border:3px solid white;border-radius:50%;position:relative;display:inline-grid;place-items:center}.targetMark:before,.targetMark:after{content:"";position:absolute;background:white}.targetMark:before{width:46px;height:3px}.targetMark:after{height:46px;width:3px}.targetMark i{width:10px;height:10px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 5px #0b4140,0 0 0 8px white}
+#home{padding-top:34px}.brand{font-size:clamp(44px,6vw,76px)!important;color:var(--ink);letter-spacing:-3px!important}.rolegrid{gap:22px}.role{border-radius:28px!important;border:1px solid rgba(6,47,46,.08)!important;box-shadow:var(--shadow2)!important;overflow:hidden;position:relative}.profrole{background:linear-gradient(135deg,#073c3b,#0b5550)!important}.studentrole{background:linear-gradient(135deg,#eaf8f8,#cdebed)!important}.role:after{content:"";position:absolute;width:180px;height:180px;border:30px solid rgba(255,255,255,.08);border-radius:50%;right:-60px;top:-60px}.roletitle{font-size:clamp(30px,4vw,48px)!important}.roleicon{font-size:58px!important}
+.card,.lesson,.row,.kpi,.rankItem,.profileCard,.teacherClassCard,.teacherAction,.quickAction,.stat,.shotHistoryCard{background:#fff!important;border:1px solid var(--line)!important;border-radius:20px!important;box-shadow:0 8px 22px rgba(6,47,46,.055)!important}
+.btn{border-radius:12px!important;box-shadow:none!important}.btn.orange,.mainAction{background:linear-gradient(135deg,#ffc038,#ffad10)!important;color:var(--ink)!important}.btn.light{background:#e7f5f5!important}.btn.ghost{background:#fff!important;border:1px solid #ccd9d9!important}.btn.red{background:#e53a31!important}.btn.green{background:#15a34a!important}
+.pill{background:#daf1f2!important;color:var(--ink)!important;border-radius:999px!important;font-weight:950!important;text-transform:uppercase;letter-spacing:.06em}
+.notice{background:#e9f7f7!important;border:1px solid #cfe8e9!important;border-radius:14px!important}.warn{border-radius:14px!important}
+.section{font-size:clamp(22px,2.4vw,30px)!important;color:var(--ink);letter-spacing:-.8px}.title{font-size:clamp(38px,5vw,64px)!important;color:var(--ink);letter-spacing:-2.4px!important}.muted,.sub{color:var(--muted2)!important;opacity:1!important}
+/* Professor class becomes a real app dashboard with a left navigation rail */
+#profClass{display:grid;grid-template-columns:210px minmax(0,1fr);column-gap:24px;align-items:start}
+#profClass.hidden{display:none!important}#profClass>.back{grid-column:2}#profClass>.top{grid-column:2}
+#profClass>.dashboardTabs{grid-column:1;grid-row:1 / span 12;display:flex!important;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;position:sticky;top:92px;box-shadow:var(--shadow2);margin:0}
+#profClass>.dashboardPanel{grid-column:2;width:100%}
+.dashboardTab{width:100%;text-align:left;border:0!important;background:transparent!important;padding:13px 14px!important;border-radius:11px!important;color:#234744!important;box-shadow:none!important}
+.dashboardTab.active{background:linear-gradient(90deg,#ffbe2e,#ffa800)!important;color:#142f2d!important;box-shadow:0 7px 16px rgba(255,179,31,.22)!important}
+.dashboardTab:before{display:inline-block;width:24px;opacity:.8}.dashboardTab:nth-child(1):before{content:"▦"}.dashboardTab:nth-child(2):before{content:"♟"}.dashboardTab:nth-child(3):before{content:"◉"}.dashboardTab:nth-child(4):before{content:"▥"}.dashboardTab:nth-child(5):before{content:"◷"}.dashboardTab:nth-child(6):before{content:"⚡"}.dashboardTab:nth-child(7):before{content:"⇄"}.dashboardTab:nth-child(8):before{content:"◎"}.dashboardTab:nth-child(9):before{content:"↗"}
+.kpiGrid{gap:14px}.kpi{padding:20px!important;border-top:4px solid var(--teal)!important}.kpi .num{font-size:38px!important}.globeHeader{background:linear-gradient(110deg,#062f2e,#0b5550)!important;border-radius:18px!important}
+.teacherHead .title{color:var(--ink)!important}.teacherActionMain{background:linear-gradient(135deg,#dff4f4,#cbe9eb)!important}.teacherAction{min-height:120px!important}.taIcon{width:54px;height:54px;border-radius:15px;background:#eef8f8;display:grid;place-items:center}.teacherClassCard{border-top:5px solid var(--orange)!important}.tccName{color:var(--ink)!important}
+/* Student lesson selection: game tiles */
+.lessonGrid{gap:16px!important}.lesson{min-height:150px!important;position:relative;overflow:hidden;padding:22px!important;border-top:5px solid #d4e8e8!important}.lesson:before{content:"";position:absolute;width:90px;height:90px;border:18px solid rgba(10,165,165,.06);border-radius:50%;right:-26px;bottom:-25px}.lesson.active{outline:none!important;border-top-color:var(--orange)!important;box-shadow:0 0 0 2px rgba(255,179,31,.22),var(--shadow2)!important}.lessonnum{font-size:12px!important;letter-spacing:.1em!important;color:var(--teal)!important;opacity:1!important}
+/* L7 = final event, no challenge tile */
+#lesson23{position:relative}#lesson23>.top{background:linear-gradient(105deg,#062f2e,#0b5550);color:#fff;border-radius:22px;padding:24px 26px;box-shadow:var(--shadow2)}#lesson23>.top .title,#lesson23>.top .sub{color:#fff!important}#lesson23>.top .pill{background:var(--orange)!important;color:var(--ink)!important}
+#lesson23>.card{border-top:5px solid var(--orange)!important;padding:26px!important}#lesson23 .field label{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#597574}#lesson23 select{border:1px solid #cbdada!important;border-radius:12px!important;padding:14px!important}
+#l23MainTitle{margin-top:26px!important;background:linear-gradient(90deg,#062f2e,#0b5550);color:#fff;border-radius:14px;padding:14px 18px!important;font-size:22px!important}
+#l23MainButtons{gap:16px!important}#l23MainButtons .role{min-height:170px!important;border-radius:20px!important;padding:22px!important}#l23MainButtons .profrole{background:linear-gradient(130deg,#0a4442,#062f2e)!important}.launchLabel{font-size:14px;font-weight:950;letter-spacing:.08em;color:#ffcb59}.joDone{font-weight:950;color:#98edc1}
+/* Race/evaluation screens */
+#l23race .top,#race .top{background:linear-gradient(105deg,#062f2e,#0b5550);color:#fff;border-radius:22px;padding:22px 26px}#l23race .top .title,#l23race .top .sub,#race .top .title,#race .top .sub{color:#fff!important}.timer{color:var(--ink)!important}.stat{background:#f4f9f9!important}.shoot{box-shadow:0 8px 18px rgba(6,47,46,.12)!important}.shoot.hit{background:#16a34a!important}.shoot.miss{background:#e53a31!important}
+/* Pursuit retains large gym visibility */
+.pursuitNext{background:#dff2f3!important}.pursuitRow.now{outline:none!important;border:3px solid var(--orange)!important}
+@media(max-width:900px){#profClass{grid-template-columns:1fr}#profClass>.dashboardTabs{grid-column:1;grid-row:auto;position:static;flex-direction:row;overflow:auto;white-space:nowrap;margin:8px 0 18px}#profClass>.dashboardTab{width:auto}#profClass>.back,#profClass>.top,#profClass>.dashboardPanel{grid-column:1}.sportRight{display:none}}
+@media(max-width:650px){.app{padding:0 12px 24px!important}.sportShell{margin:0 -12px 18px;padding:0 14px;height:60px}.sportLogo{font-size:19px}.sportContext{display:none}.role{min-height:180px!important}.lesson{min-height:120px!important}.title{font-size:38px!important}}
 
 </style>
 </head>
 <body>
 <div class="app">
+<div id="sportShell" class="sportShell hidden">
+ <div class="sportLogo"><span class="targetMark"><i></i></span><span>LASER <b>RUN</b> <em>6e</em></span></div>
+ <div id="sportContext" class="sportContext">ESPACE EPS</div>
+ <div class="sportRight"><span class="sportDot"></span><span>Le Bon Sauveur</span></div>
+</div>
+
 <section id="home">
  <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS - Le Bon Sauveur - Créé par L. RIGAUX</div></div></div>
  <div class="statusbar"><span id="netdot" class="okdot"></span><span id="nettext" class="muted"></span><span class="muted">· Les données de séance restent enregistrées sur l’appareil.</span></div>
@@ -873,7 +880,13 @@ const LESSON_MAIN_NAMES={
 
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');scrollTo(0,0)}
+function show(id){
+ document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+ const shell=document.getElementById('sportShell'),ctx=document.getElementById('sportContext');
+ if(shell){shell.classList.toggle('hidden',id==='home');ctx.textContent=(id==='prof'||id==='profClass')?'PROFESSEUR':(id==='lesson23'||id==='l23race'||id==='l23challenge')?'JEUX OLYMPIQU’EPS':'ESPACE ÉLÈVES'}
+ document.body.dataset.screen=id;scrollTo(0,0)
+}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))} function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)} function day(){return new Date().toISOString().slice(0,10)}
 function fmt(ms){ms=Math.max(0,ms||0);let m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`}
 function updateNet(){let on=navigator.onLine;document.getElementById('netdot').className=on?'okdot':'baddot';document.getElementById('nettext').textContent=on?'Internet disponible':'Mode hors connexion'} addEventListener('online',updateNet);addEventListener('offline',updateNet);updateNet();
@@ -1665,7 +1678,7 @@ function l23Cfg(){
   4:{title:'Leçon 4',sub:'Mass-start',theme:'Précision',s1:'Précis dans la zone rouge',main:'La Mass-start'},
   5:{title:'Leçon 5',sub:'Relais des nations',theme:'Rapidité',s1:"L’escalier de vitesse",main:'Le Relais des nations'},
   6:{title:'Leçon 6',sub:'Qualification aux JO',theme:'Respiration',s1:"L’escalier de vitesse",main:'La Qualification aux JO'},
-  7:{title:'Leçon 7',sub:'Jeux Olympiques',theme:'Respiration',s1:"L’escalier de vitesse",main:'Les Jeux Olympiques'}
+  7:{title:'Leçon 7',sub:'Jeux Olympiques',theme:'ÉPREUVE JO',s1:'',main:"Jeux Olympiqu’EPS"}
  };
  return cfg[currentLesson]||cfg[2];
 }
@@ -1679,10 +1692,10 @@ function l23Ensure(name){
 }
 function openLesson23(n){
  currentLesson=n;l23pair=[];
- const c=l23Cfg();
- const joOnly=(currentLesson===7);
+ const c=l23Cfg(),joOnly=(currentLesson===7);
  l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=c.theme;
- l23S1Title.textContent=`Situation 1 · ${c.s1}`;l23MainTitle.textContent=`Situation principale · ${c.main}`;
+ l23S1Title.textContent=joOnly?'':`Situation 1 · ${c.s1}`;
+ l23MainTitle.textContent=joOnly?`🏅 ${c.main}`:`Situation principale · ${c.main}`;
  l23S1Title.classList.toggle('hidden',joOnly);
  l23S1Buttons.classList.toggle('hidden',joOnly);
  l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
@@ -1703,11 +1716,11 @@ function renderL23Pair(){
  l23MainButtons.innerHTML=l23pair.map(p=>{
   let r=l23Record(p.name);
   if(currentLesson===7){
-    const st=joAttemptState(p.name);
-    if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>✅ Épreuve terminée 🔒</div></div>`;
-    if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\'")}')">Déverrouillage enseignant</button></div>`;
+   const st=joAttemptState(p.name);
+   if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div class="joDone">✓ ÉPREUVE TERMINÉE</div></div>`;
+   if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\'")}')">Déverrouillage enseignant</button></div>`;
   }
-  return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`;
+  return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div class="launchLabel">${r&&r.time!=null?'✓ '+fmt(r.time):(currentLesson===7?'LANCER L’ÉPREUVE →':'Commencer')}</div></button>`;
  }).join('');
 }
 let chxp1=null,chxp2=null,chLed=0,chBreath=[0,0,0,0,0];
