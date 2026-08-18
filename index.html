@@ -153,6 +153,10 @@
  <div class="card">
   <div id="timer" class="timer">00:00.0</div>
   <div class="stats"><div class="stat">Boucle<b id="lap">0 / 4</b></div><div class="stat">Passage tir<b id="shootNo">0 / 3</b></div><div class="stat">Touches du passage<b id="touchCount">0 / 5</b></div></div>
+  <div id="l1HistoryWrap" class="hidden" style="margin-top:18px">
+   <div class="section" style="margin-bottom:10px">Tirs précédents</div>
+   <div id="l1History" class="grid3"></div>
+  </div>
   <div id="shootPanel" class="hidden"><div class="section" style="text-align:center">Valider 5 touches avant de repartir</div><div id="dots" class="fivehits"></div><div style="max-width:520px;margin:20px auto"><button class="shoot hit" style="width:100%" onclick="validateTouch()">◎ CIBLE TOUCHÉE</button></div><div class="muted" style="text-align:center">Rechargements illimités et non comptabilisés. Le chronomètre continue pendant le tir.</div></div>
   <button id="raceAction" class="mainAction" onclick="raceAction()">DÉMARRER</button>
  </div>
@@ -193,7 +197,6 @@
   <div class="section" style="margin-top:0">⭐ Défi Étoile · Évaluation</div>
   <div id="chStarNotice" class="notice"></div>
   <div id="chSpeedStar" class="hidden">
-   <div class="timer" id="chSpeedTimer">00:50.0</div>
    <div class="section" style="text-align:center">LED maximale atteinte</div>
    <div class="targetset" id="chLedButtons"></div>
    <div id="chStarDisplay" class="starline">☆☆☆☆</div><div id="chStarText" class="muted" style="text-align:center"></div>
@@ -336,7 +339,7 @@ roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;
 function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=2)])}}
 function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
 function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject());qrIndex=0;qrReturn='prof';qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
-function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:11,d:day(),r:arr};qrPages=makeChunks('LR11R',compact,850);qrIndex=0;qrReturn=(!document.getElementById('pair').classList.contains('hidden')?'pair':(!document.getElementById('lesson23').classList.contains('hidden')?'lesson23':'studentHome'));qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
+function resultRecords(){return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))} function openResultsQR(){let arr=resultRecords();if(!arr.length)return alert('Aucun résultat du jour sur cette tablette.');let compact={v:11,d:day(),r:arr};qrPages=makeChunks('LR13R',compact,850);qrIndex=0;qrReturn=(!document.getElementById('pair').classList.contains('hidden')?'pair':(!document.getElementById('lesson23').classList.contains('hidden')?'lesson23':'studentHome'));qrTitle.textContent='Résultats de la tablette';qrSub.textContent='Le professeur scanne les QR dans l’ordre';qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR.`;qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');renderQR();show('qr')}
 function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(5,2)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='pair')show('pair');else if(qrReturn==='lesson23')show('lesson23');else openStudentHome()}
 
 function normalizeInstalled(){installed=read(INST,{version:0,classes:[]});installed.classes=(installed.classes||[]).map(c=>[c[0],(c[1]||[]).map(x=>Array.isArray(x)?[x[0],x[1]||null]:[x,null])]);write(INST,installed)}
@@ -483,7 +486,7 @@ function saveS1(){if(s1.includes(0)&&!confirm('Certaines cibles sont neutres. Va
 function startRace(i){
  active={i,name:studentNameAt(i)};
  const nation=studentNationAt(i)||'Nation non attribuée';
- race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,hits:0};
+ race={start:0,elapsed:0,state:'ready',lap:0,shoot:0,hits:0,shootStart:0,series:[]};
  clearInterval(tick);
  document.getElementById('raceName').textContent=`${active.name} · ${nation}`;
  resetRace();
@@ -496,11 +499,14 @@ function resetRace(){
  document.getElementById('touchCount').textContent='0 / 5';
  document.getElementById('raceStatus').textContent='Prêt';
  document.getElementById('shootPanel').classList.add('hidden');
+ document.getElementById('l1HistoryWrap').classList.add('hidden');
+ document.getElementById('l1History').innerHTML='';
  const action=document.getElementById('raceAction');
  action.classList.remove('hidden');
  action.textContent='DÉMARRER';
  action.disabled=false;
  renderDots();
+ renderL1History();
 }
 function clock(){
  race.elapsed=performance.now()-race.start;
@@ -515,84 +521,62 @@ function renderDots(){
  const box=document.getElementById('dots');
  box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('');
 }
+function renderL1History(){
+ const wrap=document.getElementById('l1HistoryWrap'),box=document.getElementById('l1History');
+ if(!wrap||!box||!race)return;
+ if(!race.series.length){wrap.classList.add('hidden');box.innerHTML='';return}
+ wrap.classList.remove('hidden');
+ box.innerHTML=race.series.map((serie,i)=>{
+   const dots=Array.from({length:5},()=>'<span class="shotHistoryDot hit"></span>').join('');
+   return `<div class="shotHistoryCard"><b>Tir ${i+1}</b><div class="shotHistoryDots">${dots}</div><div class="shotTime">${fmt(serie.duration)}</div><div class="muted">temps passé au tir</div></div>`;
+ }).join('');
+}
 function raceAction(){
  const action=document.getElementById('raceAction');
  const status=document.getElementById('raceStatus');
  const shootPanel=document.getElementById('shootPanel');
 
  if(race.state==='ready'){
-  race.start=performance.now();
-  race.state='run';
-  race.lap=1;
-  tick=setInterval(clock,100);
-  action.textContent='ARRIVÉE AU PAS DE TIR 1';
-  status.textContent='Boucle 1';
-  updateStats();
-  return;
+  race.start=performance.now();race.state='run';race.lap=1;tick=setInterval(clock,100);
+  action.textContent='ARRIVÉE AU PAS DE TIR 1';status.textContent='Boucle 1';updateStats();return;
  }
-
  if(race.state==='run'){
   if(race.shoot<3){
-   race.state='shoot';
-   race.hits=0;
-   shootPanel.classList.remove('hidden');
-   action.classList.add('hidden');
-   status.textContent=`Pas de tir ${race.shoot+1}`;
-   updateStats();
-   renderDots();
-  }else{
-   finishRace();
-  }
-  return;
- }
-
- if(race.state==='readyToRun'){
-  race.lap++;
-  race.state='run';
-  shootPanel.classList.add('hidden');
-  action.classList.remove('hidden');
-  action.textContent=race.shoot<3?`ARRIVÉE AU PAS DE TIR ${race.shoot+1}`:'ARRIVÉE';
-  status.textContent=`Boucle ${race.lap}`;
-  updateStats();
-  return;
+   race.state='shoot';race.hits=0;race.shootStart=performance.now();
+   shootPanel.classList.remove('hidden');action.classList.add('hidden');
+   status.textContent=`Pas de tir ${race.shoot+1}`;updateStats();renderDots();renderL1History();
+  }else finishRace();
  }
 }
 function validateTouch(){
- if(!race || race.state!=='shoot' || race.hits>=5)return;
-
- race.hits++;
- updateStats();
- renderDots();
-
+ if(!race||race.state!=='shoot'||race.hits>=5)return;
+ race.hits++;updateStats();renderDots();
  if(race.hits===5){
-  race.shoot++;
-  race.state='readyToRun';
-  document.getElementById('raceStatus').textContent='TIR VALIDÉ';
-  const action=document.getElementById('raceAction');
-  action.classList.remove('hidden');
-  action.textContent=race.shoot<3?'REPARTIR POUR LA BOUCLE SUIVANTE':'REPARTIR POUR LA DERNIÈRE BOUCLE';
+   race.series.push({hits:5,duration:Math.round(performance.now()-race.shootStart)});
+   race.shoot++;race.lap++;race.state='run';
+   document.getElementById('shootPanel').classList.add('hidden');
+   document.getElementById('raceStatus').textContent='TIR VALIDÉ';
+   renderL1History();
+   const action=document.getElementById('raceAction');
+   action.classList.remove('hidden');action.disabled=false;
+   action.textContent=race.shoot<3?`ARRIVÉE AU PAS DE TIR ${race.shoot+1}`:'ARRIVÉE';
+   updateStats();
+   setTimeout(()=>{if(race&&race.state==='run')document.getElementById('raceStatus').textContent=`Boucle ${race.lap}`},900);
  }
 }
 function finishRace(){
- clearInterval(tick);
- clock();
- race.state='done';
- let r=ensure(active.name);
- r.nation=studentNationAt(active.i)||null;
- r.time=Math.round(race.elapsed);
+ clearInterval(tick);clock();race.state='done';
+ let r=ensure(active.name);r.nation=studentNationAt(active.i)||null;r.time=Math.round(race.elapsed);
+ r.shotSeries=race.series.map(x=>({hits:5,duration:x.duration}));
  saveRecord(r);
  document.getElementById('raceStatus').textContent='Terminé';
- const action=document.getElementById('raceAction');
- action.textContent='RÉSULTAT ENREGISTRÉ';
- action.disabled=true;
+ const action=document.getElementById('raceAction');action.textContent='RÉSULTAT ENREGISTRÉ';action.disabled=true;
  setTimeout(openPair,700);
 }
 function leaveRace(){
  if(race&&race.state!=='ready'&&race.state!=='done'&&!confirm('Abandonner cette performance ?'))return;
- clearInterval(tick);
- openPair();
+ clearInterval(tick);openPair();
 }
-
 
 function l23Cfg(){
  return currentLesson===2?
@@ -915,72 +899,140 @@ function startScanner(mode){scanMode=mode;scanBuffer={};scanner.classList.remove
 function stopScanner(){if(scanLoop)cancelAnimationFrame(scanLoop);scanLoop=null;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;scanner.classList.add('hidden');if(scanMode==='config')openStudentHome();else if(teacher)openProf()}
 function scanFrame(){if(video.readyState>=2&&typeof jsQR!=='undefined'){canvas.width=video.videoWidth;canvas.height=video.videoHeight;let ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(code)consume(code.data)}scanLoop=requestAnimationFrame(scanFrame)}
 scanFile.addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let img=new Image();img.onload=()=>{canvas.width=img.width;canvas.height=img.height;let ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);if(typeof jsQR==='undefined'){scanMsg.textContent='Lecteur QR non chargé. Ouvre l’application une fois avec Internet.';return}let im=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(im.data,im.width,im.height);if(code)consume(code.data);else scanMsg.textContent='QR non reconnu sur cette image.';URL.revokeObjectURL(img.src)};img.src=URL.createObjectURL(f);e.target.value=''});
-let lastScan=''; function consume(txt){if(txt===lastScan)return;lastScan=txt;setTimeout(()=>lastScan='',1200);let p;try{p=JSON.parse(txt)}catch(e){return}if(!p.a||!p.id||!p.p||!p.t)return;if((scanMode==='config'&&p.a!=='LR10C')||(scanMode==='results'&&!['LR10R','LR11R'].includes(p.a))){scanMsg.textContent='Ce QR ne correspond pas à cette opération.';return}scanBuffer[p.id]=scanBuffer[p.id]||{t:p.t,parts:{}};scanBuffer[p.id].parts[p.p]=p.d;let b=scanBuffer[p.id],n=Object.keys(b.parts).length;scanProgress.textContent=`QR ${n} / ${b.t} reçu(s)`;scanMsg.textContent=`✅ Partie ${p.p}/${p.t} reçue.`;if(n===b.t){let raw='';for(let i=1;i<=b.t;i++)raw+=b.parts[i];let obj;try{obj=JSON.parse(raw)}catch(e){scanMsg.textContent='Erreur de reconstruction.';return}if(scanMode==='config'){installed=obj;write(INST,installed);normalizeInstalled();scanMsg.textContent=`✅ ${obj.classes.length} classe(s) installée(s).`;scanProgress.textContent='Configuration terminée';setTimeout(stopScanner,900)}else{mergeResults(obj);delete scanBuffer[p.id]}}}
-function mergeResults(obj){
- let added=0,updated=0,ignored=0;
+let lastScan=''; function consume(txt){
+ if(txt===lastScan)return;
+ lastScan=txt;setTimeout(()=>lastScan='',1200);
 
- (obj.r||[]).forEach(raw=>{
-   let item;
+ let packet;
+ try{packet=JSON.parse(txt)}
+ catch(e){document.getElementById('scanMsg').textContent='QR illisible.';return}
 
-   // Legacy L1/L10 QR payload
-   if(Array.isArray(raw)){
-     const [cn,n,nation,s1v,stars,tim,key]=raw;
-     item={
-       key:key||`${cn}|${n}|${obj.d||day()}|L1`,
-       className:cn,
-       name:n,
-       nation:nation||null,
-       s1:s1v,
-       stars:stars,
-       time:tim,
-       date:obj.d||day(),
-       lesson:1
-     };
-   }else{
-     // V11+ payload: keep every field (lesson, challenge, pairSlot, misses, shotSeries...)
-     item={...raw};
-     item.lesson=Number(item.lesson||1);
-     item.date=item.date||obj.d||day();
-   }
+ if(!packet.a||!packet.id||!packet.p||!packet.t)return;
 
-   if(!item.className || !item.name){
-     ignored++;
-     return;
-   }
-
-   const c=db.classes.find(x=>x.name===item.className);
-   if(!c){
-     ignored++;
-     return;
-   }
-
-   c.results=c.results||[];
-   c.nations=c.nations||{};
-   if(item.nation)c.nations[item.name]=item.nation;
-
-   // Robust key for older/newer records.
-   if(!item.key)item.key=`${item.className}|${item.name}|L${item.lesson}`;
-
-   const ex=c.results.find(x=>x.key===item.key);
-   if(ex){
-     Object.assign(ex,item);
-     updated++;
-   }else{
-     c.results.push(item);
-     added++;
-   }
- });
-
- write(DB,db);
-
- // Refresh class view immediately if it is the open class.
- if(typeof currentProf==='number' && db.classes[currentProf]){
-   try{renderProfClass()}catch(e){}
+ const configTypes=['LR10C','LR11C','LR12C','LR13C'];
+ const resultTypes=['LR10R','LR11R','LR12R','LR13R'];
+ if((scanMode==='config'&&!configTypes.includes(packet.a))||(scanMode==='results'&&!resultTypes.includes(packet.a))){
+   document.getElementById('scanMsg').textContent='Ce QR ne correspond pas à cette opération.';
+   return;
  }
 
- document.getElementById('scanMsg').textContent=
-   `✅ ${added} nouveau(x), ${updated} mis à jour${ignored?`, ${ignored} ignoré(s)`:''}.`;
- document.getElementById('scanProgress').textContent='Résultats enregistrés. Tu peux scanner la tablette suivante.';
+ scanBuffer[packet.id]=scanBuffer[packet.id]||{t:Number(packet.t),parts:{}};
+ scanBuffer[packet.id].parts[Number(packet.p)]=packet.d;
+
+ const buffer=scanBuffer[packet.id];
+ const received=Object.keys(buffer.parts).length;
+ document.getElementById('scanProgress').textContent=`QR ${received} / ${buffer.t} reçu(s)`;
+ document.getElementById('scanMsg').textContent=`✅ Partie ${packet.p}/${packet.t} reçue.`;
+
+ if(received!==buffer.t)return;
+
+ let raw='';
+ for(let i=1;i<=buffer.t;i++){
+   if(typeof buffer.parts[i]!=='string'){
+     document.getElementById('scanMsg').textContent=`Il manque la partie ${i}/${buffer.t}.`;
+     return;
+   }
+   raw+=buffer.parts[i];
+ }
+
+ let obj;
+ try{obj=JSON.parse(raw)}
+ catch(e){
+   document.getElementById('scanMsg').textContent='Erreur de reconstruction des données.';
+   document.getElementById('scanProgress').textContent='Rescanne les QR de cette tablette.';
+   delete scanBuffer[packet.id];
+   return;
+ }
+
+ if(scanMode==='config'){
+   installed=obj;write(INST,installed);normalizeInstalled();
+   document.getElementById('scanMsg').textContent=`✅ ${obj.classes?.length||0} classe(s) installée(s).`;
+   document.getElementById('scanProgress').textContent='Configuration terminée.';
+   delete scanBuffer[packet.id];
+   setTimeout(stopScanner,900);
+ }else{
+   mergeResults(obj);
+   delete scanBuffer[packet.id];
+ }
+}
+function normalizeClassName(v){
+ return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+function findImportClass(className){
+ const exact=db.classes.find(c=>c.name===className);
+ if(exact)return exact;
+ const norm=normalizeClassName(className);
+ const fuzzy=db.classes.find(c=>normalizeClassName(c.name)===norm);
+ if(fuzzy)return fuzzy;
+ // If professor is currently inside a class, allow that class as a safe fallback.
+ if(typeof currentProf==='number'&&db.classes[currentProf])return db.classes[currentProf];
+ return null;
+}
+function mergeResults(obj){
+ try{
+   let added=0,updated=0,ignored=0;
+   let rows=Array.isArray(obj?.r)?obj.r:
+            Array.isArray(obj?.results)?obj.results:
+            Array.isArray(obj)?obj:[];
+
+   if(!rows.length){
+     document.getElementById('scanMsg').textContent='⚠️ QR lu, mais aucun résultat n’a été trouvé dans ce QR.';
+     document.getElementById('scanProgress').textContent='Aucune donnée importée.';
+     return {added:0,updated:0,ignored:0};
+   }
+
+   rows.forEach(raw=>{
+     let item;
+     if(Array.isArray(raw)){
+       const [cn,n,nation,s1v,stars,tim,key]=raw;
+       item={key:key||`${cn}|${n}|L1`,className:cn,name:n,nation:nation||null,s1:s1v,stars,time:tim,date:obj.d||day(),lesson:1};
+     }else if(raw&&typeof raw==='object'){
+       item={...raw};
+       item.className=item.className||item.class||item.classe||obj.className||obj.class||obj.classe;
+       item.name=item.name||item.student||item.eleve||item['Nom Prénom'];
+       item.lesson=Number(item.lesson||item.lecon||1);
+       item.date=item.date||obj.d||day();
+     }else{
+       ignored++;return;
+     }
+
+     if(!item.name){ignored++;return}
+
+     const c=findImportClass(item.className);
+     if(!c){ignored++;return}
+
+     item.className=c.name;
+     c.results=c.results||[];
+     c.nations=c.nations||{};
+     if(item.nation)c.nations[item.name]=item.nation;
+
+     if(!item.key)item.key=`${c.name}|${item.name}|L${item.lesson}`;
+
+     // For V11/V12 records, update by key. If the old key included a date,
+     // also update the same pupil/lesson instead of duplicating.
+     let ex=c.results.find(x=>x.key===item.key);
+     if(!ex)ex=c.results.find(x=>x.name===item.name&&Number(x.lesson||1)===Number(item.lesson||1));
+
+     if(ex){Object.assign(ex,item);updated++}
+     else{c.results.push(item);added++}
+   });
+
+   write(DB,db);
+
+   if(typeof currentProf==='number'&&db.classes[currentProf]){
+     try{renderProfClass()}catch(e){console.error('renderProfClass',e)}
+   }
+
+   const msg=`✅ Résultats enregistrés : ${added} nouveau(x), ${updated} mis à jour${ignored?`, ${ignored} ignoré(s)`:''}.`;
+   document.getElementById('scanMsg').textContent=msg;
+   document.getElementById('scanProgress').textContent='Import terminé. Tu peux scanner la tablette suivante.';
+   return {added,updated,ignored};
+ }catch(err){
+   console.error('Import résultats',err);
+   document.getElementById('scanMsg').textContent='❌ QR lu mais erreur pendant l’enregistrement des résultats.';
+   document.getElementById('scanProgress').textContent=String(err&&err.message?err.message:err);
+   return {added:0,updated:0,ignored:0,error:true};
+ }
 }
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}

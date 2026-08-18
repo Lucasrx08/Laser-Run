@@ -1,74 +1,46 @@
-LASER RUN 6ème — V12 FINALE
+LASER RUN 6ème — V13 FINALE CONSOLIDÉE
 
-Base consolidée de l'application.
+Cette version consolide toutes les corrections demandées après la V12.
 
-ACCUEIL / PROFESSEUR / ÉLÈVES
-- Application EPS - Le Bon Sauveur - Créé par L. RIGAUX.
-- Pas de numéro de version visible.
-- Installation / mise à jour des classes protégée par le code enseignant.
-- Import CSV / Excel.
-- Diffusion des classes aux tablettes par QR.
-- Nations mémorisées par élève sur tout le cycle.
-- Deux élèves de nations différentes peuvent former un binôme temporaire.
-
-LEÇON 1
-- Défi Précision : Défi XP 1 -> Défi XP 2 -> Défi Étoile.
-- Situation principale : Centre national de recrutement.
+RÈGLES GLOBALES DES SITUATIONS PRINCIPALES
 - 5 touches obligatoires à chaque passage au tir.
 - Rechargements illimités.
-- Chronomètre continu.
-- Classement des nations.
+- Aucun bouton « cible ratée ».
+- Aucun tour de pénalité.
+- Aucun écran ou badge « pénalité ».
+- Le chronomètre continue pendant tout le passage au tir.
+- La pénalisation vient uniquement du temps réellement passé au tir.
+- Dès la 5e touche, l’élève repart automatiquement en course.
+- Aucun bouton « Repartir pour la boucle suivante » ou « Repartir pour la dernière boucle ».
+- Le prochain bouton utile devient directement « Arrivée au pas de tir 2 », « Arrivée au pas de tir 3 », puis « Arrivée ».
+
+HISTORIQUE DES TIRS
+- L1, L2 et L3 conservent visuellement les passages au tir précédents.
+- L’historique est en lecture seule.
+- Chaque passage validé affiche 5 cibles vertes.
+- Le temps passé sur chaque passage au tir est conservé et affiché.
+- L’historique reste visible pendant les passages suivants.
+
+DÉFI ÉTOILE L2
+- Suppression complète de l’affichage 00:50.0.
+- La référence de 50 secondes reste dans la consigne.
+- L’écran affiche uniquement la LED maximale atteinte et les étoiles de rapidité calculées.
+
+SCAN DES RÉSULTATS
+- QR résultats générés en format LR13R.
+- Compatibilité conservée avec les anciens QR LR10R/LR11R/LR12R.
+- Après reconstruction du QR, les résultats sont réellement enregistrés dans la classe professeur.
+- Recherche robuste de la classe : nom exact, nom normalisé, puis classe ouverte en secours.
+- Mise à jour d’un résultat existant au lieu de créer un doublon.
+- Confirmation explicite :
+  « Résultats enregistrés : X nouveaux, Y mis à jour ».
+- Les erreurs d’import ne sont plus silencieuses.
+
+AUTRES FONCTIONS CONSERVÉES
+- Nations permanentes par élève.
+- Binômes temporaires possibles entre nations différentes.
+- Défis XP homogènes L1/L2/L3.
 - Export iDoceo.
-
-LEÇON 2
-- Défi Rapidité : La chasse aux temps morts.
-- Même ergonomie que L1 : XP1 -> XP2 -> Défi Étoile.
-- Situation principale : Sprint individuel.
-- 4 boucles de 150 m.
-- 3 passages au tir.
-- 5 touches obligatoires.
-- Rechargements illimités.
-- Aucun tour de pénalité.
-- Aucun bouton "raté".
-- Le temps passé au tir constitue naturellement la pénalisation.
-- Historique visuel des tirs précédents avec le temps passé sur chaque tir.
-
-LEÇON 3
-- Défi Respiration : Le sas de décompression.
-- Même ergonomie que L1 : XP1 -> XP2 -> Défi Étoile.
-- Situation principale : Poursuite.
-- Départ basé sur les écarts du Sprint L2.
-- 4 boucles de 150 m.
-- 3 passages au tir.
-- 5 touches obligatoires.
-- Rechargements illimités.
-- Aucun tour de pénalité.
-- Aucun bouton "raté".
-- Le temps passé au tir pénalise directement la performance.
-- Historique visuel des tirs précédents avec le temps passé sur chaque tir.
-
-POURSUITE
-- Espace professeur : Départs Poursuite.
-- Séparation Biathlètes 1 / Biathlètes 2.
-- Chronomètre général.
-- Départs calculés selon les écarts de L2.
-- Compte à rebours visuel.
-- Bips 3, 2, 1 + signal de départ.
-- Vibration sur appareils compatibles.
-
-RÉSULTATS
-- Scan QR corrigé pour L1, L2 et L3.
-- Résultats conservés dans l'espace professeur.
-- Export iDoceo :
-  Nom Prénom
-  Défi Précision
-  Centre national de recrutement
-  Défi Rapidité
-  Sprint individuel
-  Défi Respiration
-  Poursuite
-
-COMPATIBILITÉ
-- Smartphone
-- Tablette
-- Ordinateur
+- Départs Poursuite avec chronomètre maître, écarts L2, compte à rebours et signal sonore.
+- QR de configuration des classes.
+- Fonctionnement smartphone, tablette et ordinateur.
