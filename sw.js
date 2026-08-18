@@ -1,4 +1,4 @@
-const CACHE='laser-run-v22-1-jo-correctifs-20260818';
+const CACHE='laser-run-v22-jo-dossards-20260818';
 const LOCAL=['./','./index.html','./styles.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png'];
 const XLSX_URL='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
 self.addEventListener('install',e=>e.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(LOCAL);try{const r=await fetch(XLSX_URL,{mode:'cors'});await cache.put(XLSX_URL,r);}catch(_){}await self.skipWaiting();})()));
