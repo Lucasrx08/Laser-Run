@@ -462,6 +462,16 @@ html,body,.app{overscroll-behavior-y:none}
 .lockedAttempt{opacity:.82;border:2px solid #c7dbdf}
 @media(max-width:800px){.joControlGrid{grid-template-columns:1fr}.joBigCode{font-size:58px}}
 
+
+/* V22.1 — fiabilité tactile L7 */
+#l23race button,#l23challenge button,#lesson23 button,#lessons button{
+ touch-action:manipulation!important;
+ -webkit-tap-highlight-color:transparent!important;
+ user-select:none;
+}
+#r23Action,.shoot,.criterion,.target,.role{position:relative;z-index:2;pointer-events:auto!important}
+#r23Action[disabled],.shoot[disabled]{pointer-events:none!important}
+
 </style>
 </head>
 <body>
@@ -1433,38 +1443,149 @@ function bibMarkup(r,index,c){
   </div>
  </article>`;
 }
+function pdfLatin(s){
+ return String(s??'').normalize('NFC').replace(/[^\x20-\x7EÀ-ÿŒœ€’]/g,' ');
+}
+function pdfEsc(s){return pdfLatin(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+function pdfNum(n){return Number(n).toFixed(2).replace(/\.?0+$/,'')}
+function pdfText(x,y,size,text,bold=false,align='left'){
+ const font=bold?'F2':'F1',safe=pdfEsc(text);
+ let tx=x;
+ if(align!=='left'){
+   const approx=String(text).length*size*0.48;
+   tx=align==='center'?x-approx/2:x-approx;
+ }
+ return `BT /${font} ${pdfNum(size)} Tf ${pdfNum(tx)} ${pdfNum(y)} Td (${safe}) Tj ET\n`;
+}
+function pdfRgb(hex){
+ const h=hex.replace('#','');return [parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4,6),16)/255].map(pdfNum).join(' ');
+}
+function pdfRect(x,y,w,h,fill){return `${pdfRgb(fill)} rg ${pdfNum(x)} ${pdfNum(y)} ${pdfNum(w)} ${pdfNum(h)} re f\n`}
+function pdfLine(x1,y1,x2,y2,width=1,dash=''){
+ return `${pdfRgb('#323c3a')} RG ${pdfNum(width)} w ${dash?`[${dash}] 0 d `:''}${pdfNum(x1)} ${pdfNum(y1)} m ${pdfNum(x2)} ${pdfNum(y2)} l S ${dash?'[] 0 d ':''}\n`;
+}
+function pdfCircle(cx,cy,r,stroke='#323c3a',width=1){
+ const k=.5522847498*r;
+ return `${pdfRgb(stroke)} RG ${pdfNum(width)} w ${pdfNum(cx+r)} ${pdfNum(cy)} m ${pdfNum(cx+r)} ${pdfNum(cy+k)} ${pdfNum(cx+k)} ${pdfNum(cy+r)} ${pdfNum(cx)} ${pdfNum(cy+r)} c ${pdfNum(cx-k)} ${pdfNum(cy+r)} ${pdfNum(cx-r)} ${pdfNum(cy+k)} ${pdfNum(cx-r)} ${pdfNum(cy)} c ${pdfNum(cx-r)} ${pdfNum(cy-k)} ${pdfNum(cx-k)} ${pdfNum(cy-r)} ${pdfNum(cx)} ${pdfNum(cy-r)} c ${pdfNum(cx+k)} ${pdfNum(cy-r)} ${pdfNum(cx+r)} ${pdfNum(cy-k)} ${pdfNum(cx+r)} ${pdfNum(cy)} c S\n`;
+}
+function pdfFlag(x,y,w,h,nation){
+ const n=String(nation||'').toLowerCase();
+ let o='';
+ if(n.includes('france')){o+=pdfRect(x,y,w/3,h,'#244aa5')+pdfRect(x+w/3,y,w/3,h,'#ffffff')+pdfRect(x+2*w/3,y,w/3,h,'#e33b36')}
+ else if(n.includes('ital')){o+=pdfRect(x,y,w/3,h,'#159447')+pdfRect(x+w/3,y,w/3,h,'#ffffff')+pdfRect(x+2*w/3,y,w/3,h,'#d83b3b')}
+ else if(n.includes('allem')){o+=pdfRect(x,y+2*h/3,w,h/3,'#202020')+pdfRect(x,y+h/3,w,h/3,'#d73a32')+pdfRect(x,y,w,h/3,'#f0c53a')}
+ else if(n.includes('suède')||n.includes('suede')){o+=pdfRect(x,y,w,h,'#3e78a8')+pdfRect(x+w*.31,y,w*.11,h,'#f7c843')+pdfRect(x,y+h*.43,w,h*.14,'#f7c843')}
+ else if(n.includes('norv')){o+=pdfRect(x,y,w,h,'#c73a3a')+pdfRect(x+w*.28,y,w*.15,h,'#ffffff')+pdfRect(x,y+h*.39,w,h*.22,'#ffffff')+pdfRect(x+w*.32,y,w*.07,h,'#244a72')+pdfRect(x,y+h*.45,w,h*.10,'#244a72')}
+ else if(n.includes('suisse')){o+=pdfRect(x,y,w,h,'#d83b3b')+pdfRect(x+w*.42,y+h*.2,w*.16,h*.6,'#ffffff')+pdfRect(x+w*.25,y+h*.42,w*.5,h*.16,'#ffffff')}
+ else if(n.includes('finlande')){o+=pdfRect(x,y,w,h,'#ffffff')+pdfRect(x+w*.28,y,w*.15,h,'#3869a0')+pdfRect(x,y+h*.42,w,h*.16,'#3869a0')}
+ else{o+=pdfRect(x,y,w,h,'#c7dbdf')}
+ o+=pdfLine(x,y,x+w,y,.7)+pdfLine(x+w,y,x+w,y+h,.7)+pdfLine(x+w,y+h,x,y+h,.7)+pdfLine(x,y+h,x,y,.7);
+ return o;
+}
+function bibPdfContent(r,index,c,topHalf){
+ const W=595.28,H=841.89,half=H/2;
+ const y0=topHalf?half:0, y=(v)=>y0+v;
+ const nation=r.nation||(c.nations&&c.nations[r.name])||'Nation';
+ const num=String(index+1).padStart(2,'0');
+ let q='';
+ q+=pdfRect(0,y(0),W,half,'#ebe5df');
+ // Geometric decoration
+ q+=pdfRect(430,y(380),165,18,'#323c3a');
+ q+=pdfRect(390,y(360),205,18,'#c7dbdf');
+ q+=pdfRect(350,y(340),245,18,'#f7b738');
+ q+=pdfRect(0,y(0),150,14,'#323c3a');
+ q+=pdfRect(120,y(14),120,12,'#c7dbdf');
+ q+=pdfRect(220,y(26),100,10,'#f7b738');
+
+ // Laser Run mark
+ q+=pdfCircle(62,y(347),29,'#323c3a',4);
+ q+=pdfLine(26,y(347),98,y(347),3);
+ q+=pdfLine(62,y(311),62,y(383),3);
+ q+=pdfCircle(62,y(347),6,'#f7b738',3);
+ q+=pdfText(108,y(360),27,'LASER',true);
+ q+=`${pdfRgb('#4aaeb3')} rg `+pdfText(108,y(327),27,'RUN',true);
+ q+=pdfRect(108,y(300),96,15,'#323c3a');
+ q+=`${pdfRgb('#ffffff')} rg `+pdfText(118,y(304),8,'PISTOLET LASER',true);
+
+ // Games title + stylised rings
+ const ringY=y(367), ringXs=[370,392,414,436,458], ringCols=['#323c3a','#4aaeb3','#f7b738','#323c3a','#4aaeb3'];
+ ringXs.forEach((x,i)=>q+=pdfCircle(x,ringY,13,ringCols[i],2.3));
+ q+=pdfText(415,y(315),36,'JEUX',true,'center');
+ q+=`${pdfRgb('#4aaeb3')} rg `+pdfText(415,y(282),21,"OLYMPIQU'EPS",true,'center');
+ q+=pdfRect(365,y(247),102,23,'#f7b738');
+ q+=pdfText(416,y(253),12,schoolYear(),true,'center');
+
+ // Nation block
+ q+=`${pdfRgb('#4aaeb3')} rg `+pdfText(50,y(212),8,'NATION',true);
+ const nationW=Math.max(112,Math.min(190,55+nation.length*8));
+ q+=pdfRect(50,y(173),nationW,34,'#323c3a');
+ q+=`${pdfRgb('#ffffff')} rg `+pdfText(65,y(183),18,String(nation).toUpperCase(),true);
+ q+=pdfFlag(52,y(112),62,38,nation);
+
+ // Bib number
+ q+=`${pdfRgb('#c7dbdf')} rg `+pdfText(525,y(116),118,num,true,'right');
+ q+=`${pdfRgb('#323c3a')} rg `+pdfText(515,y(126),118,num,true,'right');
+
+ // Information band
+ q+=pdfRect(28,y(26),539,67,'#f7f4ef');
+ q+=pdfRect(28,y(26),12,67,'#c7dbdf');
+ q+=pdfRect(555,y(26),12,67,'#f7b738');
+ q+=pdfLine(28,y(93),567,y(93),2);
+ q+=pdfLine(285,y(38),285,y(80),.8);
+ q+=pdfLine(410,y(38),410,y(80),.8);
+ q+=`${pdfRgb('#4aaeb3')} rg `+pdfText(54,y(70),7,'NOM & PRENOM',true);
+ q+=`${pdfRgb('#323c3a')} rg `+pdfText(54,y(47),14,r.name,true);
+ q+=`${pdfRgb('#4aaeb3')} rg `+pdfText(305,y(70),7,'CLASSE',true);
+ q+=`${pdfRgb('#323c3a')} rg `+pdfText(305,y(47),14,c.name,true);
+ q+=`${pdfRgb('#4aaeb3')} rg `+pdfText(430,y(70),7,'NATION',true);
+ q+=`${pdfRgb('#323c3a')} rg `+pdfText(430,y(47),12,nation,true);
+ return q;
+}
+function makePdfBlob(pageStreams){
+ const enc=new TextEncoder(),objects=[null];
+ const add=(body)=>{objects.push(body);return objects.length-1};
+ const f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+ const f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+ const pagesId=add('PAGES_PLACEHOLDER');
+ const pageIds=[];
+ pageStreams.forEach(stream=>{
+   const bytes=enc.encode(stream);
+   const contentId=add(`<< /Length ${bytes.length} >>\nstream\n${stream}endstream`);
+   const pageId=add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contentId} 0 R >>`);
+   pageIds.push(pageId);
+ });
+ objects[pagesId]=`<< /Type /Pages /Count ${pageIds.length} /Kids [${pageIds.map(id=>`${id} 0 R`).join(' ')}] >>`;
+ const catalog=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+ let chunks=['%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'],offsets=[0],pos=enc.encode(chunks[0]).length;
+ for(let i=1;i<objects.length;i++){
+   offsets[i]=pos;
+   const part=`${i} 0 obj\n${objects[i]}\nendobj\n`;
+   chunks.push(part);pos+=enc.encode(part).length;
+ }
+ const xref=pos;
+ let tail=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+ for(let i=1;i<objects.length;i++)tail+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+ tail+=`trailer\n<< /Size ${objects.length} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+ chunks.push(tail);
+ return new Blob(chunks,{type:'application/pdf'});
+}
 function generateJOBibs(){
  const c=pc(),rank=lessonIndividualRanking(c,6);
  if(!rank.length)return alert('Aucun résultat L6 : impossible de générer les dossards.');
- const pages=[];
+ const streams=[];
  for(let i=0;i<rank.length;i+=2){
-   pages.push(`<section class="sheet">${bibMarkup(rank[i],i,c)}${rank[i+1]?`<div class="cutline"></div>${bibMarkup(rank[i+1],i+1,c)}`:''}</section>`);
+   let q=bibPdfContent(rank[i],i,c,true);
+   // Une seule ligne pointillée entre les deux A5.
+   q+=pdfLine(0,420.945,595.28,420.945,1.2,'4 4');
+   if(rank[i+1])q+=bibPdfContent(rank[i+1],i+1,c,false);
+   streams.push(q);
  }
- const w=window.open('','_blank');
- if(!w)return alert('Autorise les fenêtres surgissantes pour générer les dossards.');
- w.document.open();
- w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Dossards JO ${esc(c.name)} ${schoolYear()}</title>
- <style>
- @page{size:A4 portrait;margin:0}
- *{box-sizing:border-box}html,body{margin:0;padding:0;background:white;font-family:Arial,Helvetica,sans-serif;color:#323c3a}
- .sheet{width:210mm;height:297mm;page-break-after:always;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#ebe5df}
- .sheet:last-child{page-break-after:auto}
- .bib{width:210mm;height:148.5mm;position:relative;overflow:hidden;background:#ebe5df;padding:8mm 10mm 7mm}
- .cutline{height:0;border-top:1.2mm dotted #323c3a;width:100%;position:absolute;left:0;top:148.5mm;z-index:20}
- .bib-deco{position:absolute;transform:skewX(-28deg);opacity:.95}.bib-deco-a{right:-18mm;top:-7mm;width:70mm;height:15mm;background:#c7dbdf;box-shadow:-18mm 8mm 0 #323c3a,-35mm 16mm 0 #f7b738}.bib-deco-b{left:-18mm;bottom:-8mm;width:90mm;height:15mm;background:#323c3a;box-shadow:25mm -7mm 0 #c7dbdf,50mm -14mm 0 #f7b738}
- .bib:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#323c3a 1px,transparent 1.4px);background-size:5mm 5mm;opacity:.05;pointer-events:none}
- .bib-top{display:grid;grid-template-columns:1fr 1.2fr;align-items:start;gap:8mm;position:relative;z-index:2}
- .bib-brand{display:flex;align-items:center;gap:4mm}.bib-target{width:24mm;height:24mm;border:2mm solid #323c3a;border-radius:50%;position:relative;box-shadow:inset 0 0 0 4mm #c7dbdf,inset 0 0 0 7mm #ebe5df}.bib-target:before,.bib-target:after{content:"";position:absolute;background:#323c3a}.bib-target:before{width:2mm;height:30mm;left:9mm;top:-5mm}.bib-target:after{height:2mm;width:30mm;left:-5mm;top:9mm}.bib-target span{position:absolute;width:5mm;height:5mm;border-radius:50%;background:#f7b738;left:7.5mm;top:7.5mm}
- .bib-laser b,.bib-laser strong{display:block;font-style:italic;letter-spacing:-1px;line-height:.85}.bib-laser b{font-size:15mm}.bib-laser strong{font-size:15mm;color:#4aaeb3}.bib-laser small{display:inline-block;margin-top:2mm;background:#323c3a;color:white;padding:1mm 3mm;font-size:3.5mm;transform:rotate(-3deg)}
- .bib-games{text-align:center}.bib-rings{height:13mm;display:flex;justify-content:center;gap:-1mm}.bib-rings i{width:10mm;height:10mm;border:1.3mm solid #323c3a;border-radius:50%;margin-left:-2mm}.bib-rings i:nth-child(2){border-color:#4aaeb3}.bib-rings i:nth-child(3){border-color:#f7b738}.bib-rings i:nth-child(4){border-color:#323c3a}.bib-rings i:nth-child(5){border-color:#4aaeb3}
- .bib-games>b{display:block;font-size:18mm;line-height:.85;font-style:italic;letter-spacing:-1.5px}.bib-games>strong{display:block;font-size:10mm;color:#4aaeb3;font-style:italic;line-height:1}.bib-games>span{display:inline-block;margin-top:2mm;background:#f7b738;color:#323c3a;font-weight:900;font-size:6mm;padding:1mm 5mm;transform:rotate(-2deg)}
- .bib-mid{display:grid;grid-template-columns:42% 58%;align-items:center;height:72mm;position:relative;z-index:2}.bib-nation{padding-left:8mm}.bib-nation small{display:block;font-weight:900;font-size:4mm;color:#4aaeb3;margin-top:1mm}.bib-nation>b{display:inline-block;background:#323c3a;color:white;padding:2mm 7mm;font-size:8mm;transform:rotate(-1deg);text-transform:uppercase}.bib-flag{font-size:20mm;line-height:1;margin-top:2mm}.bib-pistol{font-size:12mm;color:#323c3a;font-weight:900;letter-spacing:-2mm;transform:rotate(-3deg);transform-origin:left center}
- .bib-number{text-align:right;padding-right:5mm;font-size:77mm;line-height:.72;font-weight:1000;letter-spacing:-6mm;color:#323c3a;text-shadow:2mm 1mm 0 #c7dbdf}
- .bib-info{position:absolute;left:10mm;right:10mm;bottom:8mm;height:24mm;background:#f7f4ef;border-top:1mm solid #323c3a;display:grid;grid-template-columns:1.6fr .75fr 1fr;align-items:center;z-index:3;box-shadow:-5mm 0 0 #c7dbdf,5mm 0 0 #f7b738}
- .bib-info>div{padding:0 6mm;border-right:.5mm solid #9aa39f}.bib-info>div:last-child{border-right:0}.bib-info small{display:block;color:#4aaeb3;font-size:3.3mm;font-weight:900}.bib-info b{display:block;font-size:6mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
- </style></head><body>${pages.join('')}<script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
- w.document.close();
+ const blob=makePdfBlob(streams);
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download=`Dossards JO ${c.name} ${schoolYear()}.pdf`;
+ document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(a.href),1500);
 }
 function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
 function selectClass(i){currentClass=i;pair=[];selectedNation=null;openLessons()}
@@ -1761,7 +1882,7 @@ const L23_CRITERIA={
  7:[
   ['slow','RALENTISSEMENT','Préparer l’arrivée au tir','Ralentis avant le pas de tir et pose tes pieds avant de prendre le pistolet.'],
   ['breathe','RESPIRATION','Deux respirations lentes','Inspire puis souffle lentement deux fois avant de viser.'],
-  ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de mon expiration.']
+  ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de l’expiration.']
  ]
 };
 function startL23Challenge(i){
@@ -1987,8 +2108,10 @@ function renderR23History(){
  }).join('');
 }
 
+let r23ActionGuard=0,r23ShotGuard=0;
 function r23Action(){
  if(!l23race)return;
+ const now=performance.now();if(now-r23ActionGuard<220)return;r23ActionGuard=now;
 
  const action=document.getElementById('r23Action');
  const status=document.getElementById('r23Status');
@@ -2073,6 +2196,7 @@ function finishL6Shoot(timedOut=false){
 
 function r23Shot(hit){
  if(!l23race || l23race.state!=='shoot')return;
+ const now=performance.now();if(now-r23ShotGuard<120)return;r23ShotGuard=now;
 
  // L6 · Mode 3 : on ne saisit jamais une cible ratée.
  // L'élève ne valide que les cibles touchées. À 50 s, les cibles restantes passent en rouge.
