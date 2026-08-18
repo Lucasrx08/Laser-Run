@@ -414,6 +414,16 @@ html,body,.app{overscroll-behavior-y:none}
  .hitNumber{min-height:68px;font-size:25px}
 }
 
+
+/* V21 — zones tactiles L4/L5 stables */
+.raceTop,.tileMain,.tileShots,.hitNumber{
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+.raceTile{contain:layout paint}
+.tileMain,.tileShots{pointer-events:auto!important}
+.tileMain *,.tileShots *{pointer-events:none!important}
+
 </style>
 </head>
 <body>
@@ -992,38 +1002,60 @@ function saveHitPad(hits){
  saveShotProfile(c,name,lesson,hits,time);
  document.getElementById('hitPadModal').classList.add('hidden');
  hitPadContext=null;
- if(lesson===4)renderMassPad();
- else{
-   renderRelayPad();
+ if(lesson===4){
+   const btn=document.getElementById(`mass-shots-${safeId(name)}`);
+   if(btn)btn.textContent=shootingSummary(c,name,4);
+ }else{
    if(returnNation)relayNationEditor(returnNation);
  }
 }
 function startTicker(which){
  if(which==='mass'){
    clearInterval(massTicker);
-   massTicker=setInterval(()=>{if(!document.getElementById('pcPanelMass').classList.contains('hidden'))renderMassPad(false)},100);
+   massTicker=setInterval(()=>{
+     const panel=document.getElementById('pcPanelMass');
+     if(panel&&!panel.classList.contains('hidden'))updateMassTimers();
+   },100);
  }else{
    clearInterval(relayTicker);
-   relayTicker=setInterval(()=>{if(!document.getElementById('pcPanelRelay').classList.contains('hidden'))renderRelayPad(false)},100);
+   relayTicker=setInterval(()=>{
+     const panel=document.getElementById('pcPanelRelay');
+     if(panel&&!panel.classList.contains('hidden'))updateRelayTimers();
+   },100);
  }
 }
+function safeId(s){return String(s).replace(/[^a-zA-Z0-9_-]/g,'_')}
 function massTop(slot){
  if(massStarts[slot]&&!confirm(`Redémarrer le départ Athlètes ${slot} ? Les temps déjà arrêtés de ce groupe seront effacés.`))return;
  const c=pc(),slots=athleteSlots(c);
  slots[slot-1].forEach(([name])=>delete massTimes[name]);
  massStarts[slot]=performance.now();
- startTicker('mass');
  renderMassPad();
+ startTicker('mass');
 }
 function massFinish(name,slot){
  if(!massStarts[slot]||massTimes[name]!=null)return;
  massTimes[name]=performance.now()-massStarts[slot];
- renderMassPad();
+ const status=document.getElementById(`mass-status-${safeId(name)}`);
+ const tile=document.getElementById(`mass-tile-${safeId(name)}`);
+ if(status)status.textContent=`✅ ARRIVÉ · ${fmt(massTimes[name])}`;
+ if(tile)tile.classList.add('finished');
 }
 function massStatus(name,slot){
  if(massTimes[name]!=null)return `✅ ARRIVÉ · ${fmt(massTimes[name])}`;
  if(massStarts[slot])return `EN COURSE · ${fmt(performance.now()-massStarts[slot])}`;
  return 'PRÊT';
+}
+function updateMassTimers(){
+ const c=pc(),slots=athleteSlots(c);
+ [1,2].forEach(slot=>{
+   if(!massStarts[slot])return;
+   slots[slot-1].forEach(([name])=>{
+     if(massTimes[name]!=null)return;
+     const el=document.getElementById(`mass-status-${safeId(name)}`);
+     if(el)el.textContent=`EN COURSE · ${fmt(performance.now()-massStarts[slot])}`;
+   });
+ });
 }
 function renderMassPad(){
  const box=document.getElementById('massPad');if(!box)return;
@@ -1031,33 +1063,47 @@ function renderMassPad(){
  box.innerHTML=[1,2].map(slot=>`<div class="racePadBlock">
    <button class="btn orange raceTop" onclick="massTop(${slot})">▶ TOP DÉPART ATHLÈTES ${slot}</button>
    <div class="racePadGrid">${slots[slot-1].map(([n,nation])=>`
-     <div class="raceTile ${massTimes[n]!=null?'finished':''}">
+     <div id="mass-tile-${safeId(n)}" class="raceTile ${massTimes[n]!=null?'finished':''}">
        <button class="tileMain" onclick='massFinish(${JSON.stringify(n)},${slot})'>
          <b>${esc(n)}</b>
          <small>${esc(nation)}</small>
-         <strong>${massStatus(n,slot)}</strong>
+         <strong id="mass-status-${safeId(n)}">${massStatus(n,slot)}</strong>
        </button>
-       <button class="tileShots" onclick='openHitPad(${JSON.stringify(n)},4)'>${shootingSummary(c,n,4)}</button>
+       <button id="mass-shots-${safeId(n)}" class="tileShots" onclick='openHitPad(${JSON.stringify(n)},4)'>${shootingSummary(c,n,4)}</button>
      </div>`).join('')||'<div class="muted">Aucun athlète</div>'}
    </div>
  </div>`).join('');
+ updateMassTimers();
 }
 function relayTop(){
  if(relayStart&&!confirm('Redémarrer le Relais des nations ? Les temps déjà arrêtés seront effacés.'))return;
  relayTimes={};
  relayStart=performance.now();
- startTicker('relay');
  renderRelayPad();
+ startTicker('relay');
 }
 function relayFinish(nation){
  if(!relayStart||relayTimes[nation]!=null)return;
  relayTimes[nation]=performance.now()-relayStart;
- renderRelayPad();
+ const status=document.getElementById(`relay-status-${safeId(nation)}`);
+ const tile=document.getElementById(`relay-tile-${safeId(nation)}`);
+ if(status)status.textContent=`✅ ARRIVÉE · ${fmt(relayTimes[nation])}`;
+ if(tile)tile.classList.add('finished');
 }
 function relayStatus(nation){
  if(relayTimes[nation]!=null)return `✅ ARRIVÉE · ${fmt(relayTimes[nation])}`;
  if(relayStart)return `EN COURSE · ${fmt(performance.now()-relayStart)}`;
  return 'PRÊT';
+}
+function updateRelayTimers(){
+ if(!relayStart)return;
+ const c=pc();
+ const nations=[...new Set(c.students.map(n=>(c.nations||{})[n]).filter(Boolean))];
+ nations.forEach(nation=>{
+   if(relayTimes[nation]!=null)return;
+   const el=document.getElementById(`relay-status-${safeId(nation)}`);
+   if(el)el.textContent=`EN COURSE · ${fmt(performance.now()-relayStart)}`;
+ });
 }
 function relayNationEditor(nation){
  const c=pc();
@@ -1082,14 +1128,15 @@ function renderRelayPad(){
  const nations=[...new Set(c.students.map(n=>(c.nations||{})[n]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
  box.innerHTML=`<button class="btn orange raceTop" onclick="relayTop()">▶ TOP DÉPART · RELAIS DES NATIONS</button>
  <div class="racePadGrid">${nations.map(n=>`
-   <div class="raceTile ${relayTimes[n]!=null?'finished':''}">
+   <div id="relay-tile-${safeId(n)}" class="raceTile ${relayTimes[n]!=null?'finished':''}">
      <button class="tileMain" onclick='relayFinish(${JSON.stringify(n)})'>
        <b>${esc(n)}</b>
        <small>${c.students.filter(x=>(c.nations||{})[x]===n).length} athlète(s)</small>
-       <strong>${relayStatus(n)}</strong>
+       <strong id="relay-status-${safeId(n)}">${relayStatus(n)}</strong>
      </button>
      <button class="tileShots" onclick='relayNationEditor(${JSON.stringify(n)})'>🎯 Compléter les tirs</button>
    </div>`).join('')}</div>`;
+ updateRelayTimers();
 }
 function resultDetail(r){
  const lesson=Number(r.lesson||1);
@@ -1120,8 +1167,8 @@ function renderStudentProfiles(c){
  if(!names.length){box.innerHTML='<div class="muted">Aucun élève.</div>';return}
  box.innerHTML=names.map(name=>{
   const m=latestStudentResults(c,name),nation=(c.nations&&c.nations[name])||[...m.values()].find(r=>r.nation)?.nation||'Nation non attribuée';
-  const precision=avgChallengeFromMap(m,[1,4]),rapidity=avgChallengeFromMap(m,[2,5]),respiration=avgChallengeFromMap(m,[3,6]);
-  const series=[...m.values()].flatMap(r=>(r.shotSeries||[]).map(x=>({...x,lesson:Number(r.lesson||1)})));
+  const precision=avgChallengeFromMap(m,[1]),rapidity=avgChallengeFromMap(m,[2]),respiration=avgChallengeFromMap(m,[3,6]);
+  const series=[...m.values()].filter(r=>![4,5].includes(Number(r.lesson||1))).flatMap(r=>(r.shotSeries||[]).map(x=>({...x,lesson:Number(r.lesson||1)})));
   let attempts=0,hits=0,totalShootMs=0,timed=0;
   series.forEach(x=>{if(Array.isArray(x.shots)){attempts+=x.shots.length;hits+=x.shots.filter(Boolean).length}else if(x.hits!=null&&x.attempts!=null){attempts+=Number(x.attempts);hits+=Number(x.hits)};if(x.duration!=null){totalShootMs+=Number(x.duration);timed++}});
   const pct=attempts?Math.round(hits/attempts*100):null,avgShoot=timed?totalShootMs/timed:null;
@@ -1183,23 +1230,10 @@ function compactResult(r){
  };
 }
 function makeResultQRPackets(records){
- const packets=[];
- let batch=[];
- const flush=()=>{
-  if(!batch.length)return;
-  packets.push(JSON.stringify({a:'LR15R',v:15,d:day(),r:batch}));
-  batch=[];
- };
- records.map(compactResult).forEach(r=>{
-  const test=[...batch,r];
-  const txt=JSON.stringify({a:'LR15R',v:15,d:day(),r:test});
-  if(batch.length && txt.length>340)flush();
-  batch.push(r);
-  const current=JSON.stringify({a:'LR15R',v:15,d:day(),r:batch});
-  if(batch.length>=2 || current.length>340)flush();
- });
- flush();
- return packets;
+ // V21 : un seul QR par tablette.
+ // Les champs sont compactés au maximum pour éviter un QR par élève.
+ const compact=records.map(compactResult);
+ return [JSON.stringify({a:'LR21R',v:21,d:day(),r:compact})];
 }
 function openResultsQR(){
  const arr=resultRecords();
@@ -1214,8 +1248,8 @@ function openResultsQR(){
  else qrReturn='studentHome';
 
  qrTitle.textContent='Résultats de la tablette';
- qrSub.textContent='Chaque QR est indépendant : scanne-les dans n’importe quel ordre.';
- qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · ${qrPages.length} QR indépendant(s).`;
+ qrSub.textContent='Un seul QR regroupe tous les résultats de cette tablette.';
+ qrInfo.textContent=`${arr.length} résultat(s) aujourd’hui · 1 QR pour cette tablette.`;
  qrDetail.innerHTML=arr.map(x=>`<div class="row"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.className)} · L${x.lesson||1} · ${x.time==null?'—':fmt(x.time)}</div></div></div>`).join('');
  renderQR();show('qr');
 }
@@ -2049,7 +2083,7 @@ function consume(txt){
  catch(e){document.getElementById('scanMsg').textContent='QR illisible.';return}
 
  // V15.1 : chaque QR résultat est autonome et importé immédiatement.
- if(scanMode==='results' && packet.a==='LR15R' && Array.isArray(packet.r)){
+ if(scanMode==='results' && (packet.a==='LR15R'||packet.a==='LR21R') && Array.isArray(packet.r)){
   const obj={
    v:15,d:packet.d||day(),
    r:packet.r.map(x=>({
