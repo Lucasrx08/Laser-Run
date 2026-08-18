@@ -342,6 +342,52 @@ html,body,.app{overscroll-behavior-y:none}
   }
 }
 
+
+/* V16.3 — Ordre des départs plus lisible */
+#pcPanelPursuit .pursuitGrid{
+  grid-template-columns:minmax(0,3.35fr) minmax(320px,1.15fr) !important;
+}
+#pcPanelPursuit .card:last-child{
+  padding:18px 16px !important;
+}
+#pcPanelPursuit .card:last-child .section{
+  font-size:26px !important;
+  line-height:1.05;
+}
+.pursuitRow{
+  grid-template-columns:44px minmax(0,1fr) 82px !important;
+  gap:10px !important;
+  padding:12px 12px !important;
+}
+.pursuitRow .big{
+  font-size:18px !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  line-height:1.05;
+}
+.pursuitRow .muted{
+  font-size:13px !important;
+  line-height:1.2 !important;
+  white-space:normal !important;
+  overflow:visible !important;
+}
+.pursuitRow > div:last-child{
+  font-size:15px;
+  font-weight:900;
+  white-space:nowrap;
+}
+@media(max-width:1100px){
+  #pcPanelPursuit .pursuitGrid{
+    grid-template-columns:minmax(0,3fr) minmax(290px,1.1fr) !important;
+  }
+}
+@media(max-width:900px){
+  #pcPanelPursuit .pursuitGrid{
+    grid-template-columns:minmax(0,2.7fr) minmax(270px,1fr) !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1703,7 +1749,7 @@ function updatePursuitClock(){
 
  // "Top" juste avant zéro pour compenser le démarrage audio
  if(remain<=180 && remain>-180){
-   pursuitSpeakOnce(`go-${idx}`,'Top',1.15);
+   pursuitSpeakOnce(`go-${idx}`,'Partez !',1.08);
    pursuitBeep(.45,900);
    if(navigator.vibrate)navigator.vibrate([140,60,140]);
  }
