@@ -129,7 +129,7 @@
 @media(max-width:700px){.teacherHead{display:block}.teacherHead .pill{display:inline-block;margin-top:16px}.teacherActions,.teacherClassGrid{grid-template-columns:1fr}.teacherActionMain{grid-column:auto}}
 
 
-/* V16 — Profils biathlètes & affichage gymnase */
+/* V16 — Profils athlètes & affichage gymnase */
 :root{--lvl4:#c9dfba;--lvl3:#ffe2a3;--lvl2:#f7c184;--lvl1:#f77891}
 .pursuitGrid{grid-template-columns:minmax(0,1.65fr) minmax(250px,.65fr);align-items:stretch}
 #pcPanelPursuit .card:first-child{min-height:610px;display:flex;flex-direction:column;justify-content:flex-start}
@@ -391,6 +391,9 @@ html,body,.app{overscroll-behavior-y:none}
 
 .racePadBlock{margin:18px 0 28px}.raceTop{width:100%;font-size:24px;min-height:68px}.racePadGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 20px}.raceTile{min-height:112px;border:2px solid #d8d6d1;background:#fff;border-radius:18px;padding:14px;text-align:left;color:#323c3a}.raceTile b,.raceTile small,.raceTile strong{display:block}.raceTile b{font-size:18px}.raceTile small{margin:5px 0;color:#68716f}.raceTile strong{font-size:20px}.raceTile.finished{background:#dcebdc;border-color:#94b894}@media(max-width:800px){.racePadGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+.raceTile{padding:0;overflow:hidden}.tileMain,.tileShots{width:100%;border:0;background:transparent;color:inherit;text-align:left;padding:14px;cursor:pointer}.tileMain b,.tileMain small,.tileMain strong{display:block}.tileMain b{font-size:18px}.tileMain small{margin:5px 0;color:#68716f}.tileMain strong{font-size:20px}.tileShots{border-top:1px solid #d8d6d1;background:rgba(199,219,223,.32);font-weight:800}.shotModal{position:fixed;inset:0;background:rgba(50,60,58,.48);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}.shotModal.hidden{display:none}.shotModalCard{background:#fff;border-radius:24px;padding:22px;width:min(720px,94vw);max-height:84vh;overflow:auto}.shotModalHead{display:flex;justify-content:space-between;align-items:center;gap:12px}.shotPerson{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;border-top:1px solid #e6e3df}.shotPerson:first-child{border-top:0}
+
 </style>
 </head>
 <body>
@@ -444,7 +447,7 @@ html,body,.app{overscroll-behavior-y:none}
   <div class="quickActions">
    <button class="quickAction" onclick="showPcTab('rankings')"><b>🏆 Classements</b><span>Défis Étoile et Globe de cristal</span></button>
    <button class="quickAction" onclick="showPcTab('pursuit')"><b>⏱️ Départs Poursuite</b><span>Chronomètre général et départs décalés</span></button>
-   <button class="quickAction" onclick="showPcTab('results')"><b>🎮 Profils biathlètes</b><span>Consulter les jauges et statistiques de chaque élève</span></button>
+   <button class="quickAction" onclick="showPcTab('results')"><b>🎮 Profils athlètes</b><span>Consulter les jauges et statistiques de chaque élève</span></button>
   </div>
   <div class="card">
    <div class="section" style="margin-top:0">Globe de cristal · aperçu</div>
@@ -485,8 +488,8 @@ html,body,.app{overscroll-behavior-y:none}
    <div class="card">
     <div class="section" style="margin-top:0">Chronomètre Poursuite</div>
     <div class="subTabs">
-     <button id="pursuitMode1Btn" class="subTab active" onclick="setPursuitMode(1)">Biathlètes 1</button>
-     <button id="pursuitMode2Btn" class="subTab" onclick="setPursuitMode(2)">Biathlètes 2</button>
+     <button id="pursuitMode1Btn" class="subTab active" onclick="setPursuitMode(1)">Athlètes 1</button>
+     <button id="pursuitMode2Btn" class="subTab" onclick="setPursuitMode(2)">Athlètes 2</button>
     </div>
     <div id="pursuitTimerDisplay" class="pursuitTimer">00:00.0</div>
     <div class="pursuitNext">
@@ -677,8 +680,8 @@ html,body,.app{overscroll-behavior-y:none}
  <button class="back" onclick="show('profClass')">← Classe</button>
  <div class="top"><div><div class="title">Poursuite · Départs</div><div id="pmClass" class="sub"></div></div><span class="pill">Leçon 3</span></div>
  <div class="toolbar">
-  <button id="pmMode1" class="btn orange" onclick="setPursuitMode(1)">Biathlètes 1</button>
-  <button id="pmMode2" class="btn ghost" onclick="setPursuitMode(2)">Biathlètes 2</button>
+  <button id="pmMode1" class="btn orange" onclick="setPursuitMode(1)">Athlètes 1</button>
+  <button id="pmMode2" class="btn ghost" onclick="setPursuitMode(2)">Athlètes 2</button>
  </div>
  <div class="pursuitBoard">
   <div class="card">
@@ -908,6 +911,7 @@ function showPcTab(tab){
  if(tab==='relay')renderRelayPad();
 }
 
+
 let massStarts={1:null,2:null},massTimes={},relayStart=null,relayTimes={};
 function athleteSlots(c){
  const by={};
@@ -916,35 +920,80 @@ function athleteSlots(c){
  Object.entries(by).forEach(([nation,names])=>{names.sort((a,b)=>a.localeCompare(b,'fr'));if(names[0])a1.push([names[0],nation]);if(names[1])a2.push([names[1],nation])});
  return [a1,a2];
 }
-function liveMs(t){return t==null?null:performance.now()-t}
 function massTop(slot){massStarts[slot]=performance.now();renderMassPad()}
-function massFinish(name,slot){if(!massStarts[slot]||massTimes[name]!=null)return;massTimes[name]=performance.now()-massStarts[slot];renderMassPad()}
+function massFinish(name,slot){
+ if(!massStarts[slot])return;
+ if(massTimes[name]==null)massTimes[name]=performance.now()-massStarts[slot];
+ renderMassPad();
+}
+function latestLessonResult(c,name,lesson){
+ const a=(c.results||[]).filter(r=>r.name===name&&Number(r.lesson)===lesson);
+ return a.length?a[a.length-1]:null;
+}
+function shootingSummary(c,name,lesson){
+ const r=latestLessonResult(c,name,lesson);
+ if(!r||r.hits==null)return '🎯 Tirs à compléter';
+ return `🎯 ${r.hits}/15 touchées · ${15-r.hits} ratées`;
+}
+function askHits(name,lesson){
+ const c=pc(),old=latestLessonResult(c,name,lesson);
+ const v=prompt(`${name} — cibles touchées sur 15 :`,old&&old.hits!=null?old.hits:'');
+ if(v===null)return;
+ const hits=Number(v);
+ if(!Number.isInteger(hits)||hits<0||hits>15)return alert('Entre un nombre entier de 0 à 15.');
+ const data={hits,misses:15-hits,shots:15,rate:Math.round(hits/15*100)};
+ const time=lesson===4?massTimes[name]:null;
+ saveShotProfile(c,name,lesson,data,time);
+}
+function editMassAthlete(name){askHits(name,4);renderMassPad()}
 function renderMassPad(){
  const box=document.getElementById('massPad');if(!box)return;const c=pc(),slots=athleteSlots(c);
- box.innerHTML=[1,2].map(slot=>`<div class="racePadBlock"><button class="btn orange raceTop" onclick="massTop(${slot})">▶ TOP DÉPART BIATHLÈTES ${slot}</button><div class="racePadGrid">${slots[slot-1].map(([n,nation])=>`<button class="raceTile ${massTimes[n]!=null?'finished':''}" onclick="massFinish('${esc(n).replace(/'/g,"\\'")}',${slot})"><b>${esc(n)}</b><small>${esc(nation)}</small><strong>${massTimes[n]!=null?fmt(massTimes[n]):massStarts[slot]?'EN COURSE':'PRÊT'}</strong></button>`).join('')||'<div class="muted">Aucun biathlète</div>'}</div></div>`).join('')+`<button class="btn light" onclick="editMassShots()">🎯 Compléter les tirs</button>`;
+ box.innerHTML=[1,2].map(slot=>`<div class="racePadBlock">
+  <button class="btn orange raceTop" onclick="massTop(${slot})">▶ TOP DÉPART ATHLÈTES ${slot}</button>
+  <div class="racePadGrid">${slots[slot-1].map(([n,nation])=>`
+   <div class="raceTile ${massTimes[n]!=null?'finished':''}">
+    <button class="tileMain" onclick="massFinish(${JSON.stringify(n)},${slot})">
+     <b>${esc(n)}</b><small>${esc(nation)}</small><strong>${massTimes[n]!=null?fmt(massTimes[n]):massStarts[slot]?'EN COURSE':'PRÊT'}</strong>
+    </button>
+    <button class="tileShots" onclick="editMassAthlete(${JSON.stringify(n)})">${shootingSummary(c,n,4)}</button>
+   </div>`).join('')||'<div class="muted">Aucun athlète</div>'}</div></div>`).join('');
 }
 function relayTop(){relayStart=performance.now();renderRelayPad()}
-function relayFinish(nation){if(!relayStart||relayTimes[nation]!=null)return;relayTimes[nation]=performance.now()-relayStart;renderRelayPad()}
-function renderRelayPad(){
- const box=document.getElementById('relayPad');if(!box)return;const c=pc();const nations=[...new Set(c.students.map(n=>(c.nations||{})[n]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
- box.innerHTML=`<button class="btn orange raceTop" onclick="relayTop()">▶ TOP DÉPART · RELAIS DES NATIONS</button><div class="racePadGrid">${nations.map(n=>`<button class="raceTile ${relayTimes[n]!=null?'finished':''}" onclick="relayFinish('${esc(n).replace(/'/g,"\\'")}')"><b>${esc(n)}</b><small>${c.students.filter(x=>(c.nations||{})[x]===n).length} biathlète(s)</small><strong>${relayTimes[n]!=null?fmt(relayTimes[n]):relayStart?'EN COURSE':'PRÊT'}</strong></button>`).join('')}</div><button class="btn light" onclick="editRelayShots()">🎯 Compléter les profils de tir</button>`;
+function relayFinish(nation){
+ if(!relayStart)return;
+ if(relayTimes[nation]==null)relayTimes[nation]=performance.now()-relayStart;
+ renderRelayPad();
 }
-function shotEntry(title){
- let h=prompt(title+' — nombre total de cibles touchées sur les 3 passages :','15');if(h===null)return null;
- let m=prompt(title+' — nombre total de cibles ratées :','0');if(m===null)return null;
- h=Math.max(0,Number(h)||0);m=Math.max(0,Number(m)||0);return {hits:h,misses:m,shots:h+m,rate:h+m?Math.round(h/(h+m)*100):0};
+function relayNationEditor(nation){
+ const c=pc(),names=c.students.filter(x=>(c.nations||{})[x]===nation).sort((a,b)=>a.localeCompare(b,'fr'));
+ const modal=document.getElementById('shotModal');
+ if(!modal)return;
+ document.getElementById('shotModalTitle').textContent=`${nation} · Profils de tir`;
+ document.getElementById('shotModalBody').innerHTML=names.map((name,i)=>{
+   const r=latestLessonResult(c,name,5);
+   return `<div class="shotPerson"><div><b>Athlète ${i+1} · ${esc(name)}</b><div class="muted">${r&&r.hits!=null?`${r.hits}/15 touchées · ${15-r.hits} ratées`:'À compléter'}</div></div>
+   <button class="btn light" onclick='relayAthleteHits(${JSON.stringify(nation)},${JSON.stringify(name)})'>🎯 Saisir</button></div>`;
+ }).join('')||'<div class="muted">Aucun athlète dans cette nation.</div>';
+ modal.classList.remove('hidden');
+}
+function relayAthleteHits(nation,name){askHits(name,5);relayNationEditor(nation);renderRelayPad()}
+function closeShotModal(){document.getElementById('shotModal').classList.add('hidden')}
+function renderRelayPad(){
+ const box=document.getElementById('relayPad');if(!box)return;const c=pc();
+ const nations=[...new Set(c.students.map(n=>(c.nations||{})[n]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+ box.innerHTML=`<button class="btn orange raceTop" onclick="relayTop()">▶ TOP DÉPART · RELAIS DES NATIONS</button>
+ <div class="racePadGrid">${nations.map(n=>`
+  <div class="raceTile ${relayTimes[n]!=null?'finished':''}">
+   <button class="tileMain" onclick='relayFinish(${JSON.stringify(n)})'><b>${esc(n)}</b><small>${c.students.filter(x=>(c.nations||{})[x]===n).length} athlète(s)</small><strong>${relayTimes[n]!=null?fmt(relayTimes[n]):relayStart?'EN COURSE':'PRÊT'}</strong></button>
+   <button class="tileShots" onclick='relayNationEditor(${JSON.stringify(n)})'>🎯 Compléter les tirs</button>
+  </div>`).join('')}</div>`;
 }
 function saveShotProfile(c,name,lesson,data,time){
- c.results=c.results||[];let r=c.results.find(x=>x.name===name&&Number(x.lesson)===lesson);
+ c.results=c.results||[];let r=latestLessonResult(c,name,lesson);
  if(!r){r={name,className:c.name,lesson,date:day()};c.results.push(r)}
- r.hits=data.hits;r.misses=data.misses;r.shots=data.shots;r.hitRate=data.rate;if(time!=null)r.time=time;
+ r.hits=data.hits;r.misses=data.misses;r.shots=15;r.hitRate=data.rate;
+ if(time!=null)r.time=time;
  saveDB();renderProfClass();
-}
-function editMassShots(){
- const c=pc();for(const [name,time] of Object.entries(massTimes)){const d=shotEntry(name);if(d)saveShotProfile(c,name,4,d,time)}renderMassPad()
-}
-function editRelayShots(){
- const c=pc();for(const nation of Object.keys(relayTimes)){const names=c.students.filter(x=>(c.nations||{})[x]===nation);for(const name of names){const d=shotEntry(nation+' · '+name);if(d)saveShotProfile(c,name,5,d,relayTimes[nation])}}renderRelayPad()
 }
 function resultDetail(r){
  const lesson=Number(r.lesson||1);
@@ -1472,7 +1521,7 @@ function startL23Race(i){
  if(mainNotice){
    const notes={
     4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 2 · 5 rechargements à chaque passage.',
-    5:'Relais des nations · 4 boucles de 150 m par biathlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
+    5:'Relais des nations · 4 boucles de 150 m par athlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
     6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.'
    };
    if(notes[currentLesson])mainNotice.textContent=notes[currentLesson];
@@ -2073,4 +2122,12 @@ function mergeResults(obj){
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}
 </script>
+
+<div id="shotModal" class="shotModal hidden">
+ <div class="shotModalCard">
+  <div class="shotModalHead"><h2 id="shotModalTitle">Profils de tir</h2><button class="btn ghost" onclick="closeShotModal()">✕ Fermer</button></div>
+  <div id="shotModalBody"></div>
+ </div>
+</div>
+
 </body></html>
