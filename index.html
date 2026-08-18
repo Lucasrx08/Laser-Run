@@ -424,6 +424,25 @@ html,body,.app{overscroll-behavior-y:none}
 .tileMain,.tileShots{pointer-events:auto!important}
 .tileMain *,.tileShots *{pointer-events:none!important}
 
+
+/* V21.1 — pad tactile fiable */
+#hitPadModal{z-index:20000!important}
+#hitPadGrid{position:relative;z-index:20002}
+#hitPadGrid .hitNumber{
+  position:relative!important;
+  z-index:20003!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  min-height:86px!important;
+}
+#hitPadGrid .hitNumber.selected{
+  background:#f7b738!important;
+  border-color:#323c3a!important;
+  box-shadow:inset 0 0 0 2px #323c3a;
+}
+
 </style>
 </head>
 <body>
@@ -573,7 +592,7 @@ html,body,.app{overscroll-behavior-y:none}
   <button class="back" onclick="openStudentHome()">← Classes</button>
   <button class="btn ghost" onclick="openResultsQR()">▦ QR résultats</button>
  </div>
- <div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis directement ta leçon</div></div><span class="pill">Élèves</span></div>
+ <div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis ta leçon</div></div><span class="pill">Élèves</span></div>
  <div id="lessonGrid" class="lessonGrid"></div>
 </section>
 
@@ -980,7 +999,7 @@ function saveShotProfile(c,name,lesson,hits,time=null){
  r.shots=15;
  r.hitRate=Math.round(hits/15*100);
  if(time!=null)r.time=time;
- saveDB();
+ write(DB,db);
  renderProfClass();
 }
 function openHitPad(name,lesson,returnNation=null){
@@ -989,15 +1008,26 @@ function openHitPad(name,lesson,returnNation=null){
  document.getElementById('hitPadTitle').textContent=`${name} · Cibles touchées`;
  document.getElementById('hitPadSub').textContent='Choisis directement le nombre de cibles touchées sur 15.';
  document.getElementById('hitPadGrid').innerHTML=Array.from({length:16},(_,n)=>`
-   <button class="hitNumber ${old&&old.hits===n?'selected':''}" onclick="saveHitPad(${n})">${n}</button>
+   <button type="button" class="hitNumber ${old&&old.hits===n?'selected':''}" data-hit="${n}">${n}</button>
  `).join('');
+ const grid=document.getElementById('hitPadGrid');
+ grid.onclick=(ev)=>{
+   const b=ev.target.closest('.hitNumber');
+   if(!b)return;
+   ev.preventDefault();
+   ev.stopPropagation();
+   saveHitPad(Number(b.dataset.hit));
+ };
  document.getElementById('hitPadInfo').textContent=old&&old.hits!=null?`Valeur actuelle : ${old.hits} touchées · ${15-old.hits} ratées`:'Aucune valeur enregistrée.';
  document.getElementById('hitPadModal').classList.remove('hidden');
 }
 function closeHitPad(){document.getElementById('hitPadModal').classList.add('hidden');hitPadContext=null}
 function saveHitPad(hits){
  if(!hitPadContext)return;
+ if(!Number.isInteger(hits)||hits<0||hits>15)return;
  const {name,lesson,returnNation}=hitPadContext,c=pc();
+ document.querySelectorAll('#hitPadGrid .hitNumber').forEach(b=>b.classList.toggle('selected',Number(b.dataset.hit)===hits));
+ document.getElementById('hitPadInfo').textContent=`Enregistré : ${hits} touchées · ${15-hits} ratées · ${Math.round(hits/15*100)} %`;
  const time=lesson===4?(massTimes[name]??null):null;
  saveShotProfile(c,name,lesson,hits,time);
  document.getElementById('hitPadModal').classList.add('hidden');
@@ -1265,7 +1295,7 @@ function studentNationAt(i){const x=studentEntries()[i];return Array.isArray(x)?
 function setStudentNation(i,nation){if(!Array.isArray(sc()[1][i]))sc()[1][i]=[sc()[1][i],null];sc()[1][i][1]=nation;write(INST,installed)}
 function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){
  lessonClass.textContent=sc()[0];
- let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L4','Mass-start',1,'openLesson23(4)'],['L5','Relais des nations',1,'openLesson23(5)'],['L6','Qualification aux JO',1,'openLesson23(6)'],['L7','Jeux Olympiques',0,'']];
+ let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L6','Qualification aux JO',1,'openLesson23(6)'],['L7','Jeux Olympiques',0,'']];
  lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?`onclick="${x[3]}"`:'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
  show('lessons')
 }
