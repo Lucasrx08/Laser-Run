@@ -226,6 +226,122 @@ html,body,.app{overscroll-behavior-y:none}
  .pursuitCountdown{font-size:clamp(36px,11vw,64px) !important}
 }
 
+
+/* V16.2 — Poursuite : affichage plein écran propre */
+#pcPanelPursuit .pursuitGrid{
+  grid-template-columns:minmax(0,4fr) minmax(240px,1fr) !important;
+  align-items:stretch;
+  gap:14px;
+}
+#pcPanelPursuit .card:first-child{
+  min-width:0;
+  overflow:hidden;
+  min-height:72vh;
+  padding:22px 26px;
+}
+#pcPanelPursuit .card:last-child{
+  min-width:0;
+  padding:18px;
+}
+#pcPanelPursuit .section{
+  margin-bottom:10px;
+}
+#pcPanelPursuit .subTabs{
+  margin-bottom:6px;
+}
+.pursuitTimer{
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+  font-size:clamp(92px,15vw,190px) !important;
+  line-height:.9 !important;
+  letter-spacing:-.055em !important;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  margin:18px auto 28px !important;
+}
+.pursuitNext{
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+  padding:26px 18px !important;
+  margin:0 auto 18px !important;
+}
+.pursuitNext .muted{
+  font-size:16px;
+  letter-spacing:.08em;
+}
+.pursuitNextNation{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:clamp(46px,6vw,82px) !important;
+  line-height:1 !important;
+  margin-top:6px;
+}
+.pursuitCountdown{
+  max-width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+  font-size:clamp(38px,5.5vw,72px) !important;
+  line-height:1 !important;
+  margin-top:12px;
+}
+#pursuitStarts{
+  max-height:68vh !important;
+  overflow:auto;
+}
+.pursuitRow{
+  grid-template-columns:42px minmax(0,1fr) 74px !important;
+  gap:8px !important;
+  padding:9px 10px !important;
+  border-radius:12px !important;
+}
+.pursuitRow .big{
+  font-size:16px !important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pursuitRow .muted{
+  font-size:12px !important;
+  line-height:1.15;
+}
+#pcPanelPursuit .toolbar{
+  justify-content:center;
+  gap:8px;
+}
+#pcPanelPursuit .toolbar .btn{
+  padding:12px 14px;
+}
+@media (max-width:1100px){
+  #pcPanelPursuit .pursuitGrid{
+    grid-template-columns:minmax(0,3.3fr) minmax(210px,.9fr) !important;
+  }
+  .pursuitTimer{
+    font-size:clamp(82px,14vw,160px) !important;
+  }
+}
+@media (max-width:820px){
+  #pcPanelPursuit .pursuitGrid{
+    grid-template-columns:1fr !important;
+  }
+  #pcPanelPursuit .card:first-child{
+    min-height:auto;
+  }
+  .pursuitTimer{
+    font-size:clamp(72px,20vw,130px) !important;
+  }
+  .pursuitNextNation{
+    font-size:clamp(38px,11vw,62px) !important;
+  }
+  .pursuitCountdown{
+    font-size:clamp(34px,10vw,56px) !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1497,13 +1613,12 @@ function pursuitClockNow(){
  return pmRunning ? pmElapsed+(performance.now()-pmStartPerf) : pmElapsed;
 }
 
-function pursuitSpeak(text){
+function pursuitSpeak(text,rate=1.08){
  if(!pursuitSpeechEnabled || !('speechSynthesis' in window) || !text)return;
  try{
-   window.speechSynthesis.cancel();
    const u=new SpeechSynthesisUtterance(text);
    u.lang='fr-FR';
-   u.rate=1.02;
+   u.rate=rate;
    u.pitch=1;
    u.volume=1;
    const voices=window.speechSynthesis.getVoices();
@@ -1512,10 +1627,10 @@ function pursuitSpeak(text){
    window.speechSynthesis.speak(u);
  }catch(e){}
 }
-function pursuitSpeakOnce(key,text){
+function pursuitSpeakOnce(key,text,rate=1.08){
  if(pursuitLastSpoken===key)return;
  pursuitLastSpoken=key;
- pursuitSpeak(text);
+ pursuitSpeak(text,rate);
 }
 function togglePursuitVoice(){
  pursuitSpeechEnabled=!pursuitSpeechEnabled;
@@ -1545,11 +1660,11 @@ function updatePursuitClock(){
  starts.forEach((x,i)=>{
    const row=document.getElementById('pursuitRow'+i);
    if(!row)return;
-   row.classList.toggle('done',now>x.gap+1200);
-   row.classList.toggle('now',now>=Math.max(0,x.gap-1000)&&now<=x.gap+900);
+   row.classList.toggle('done',now>x.gap+1000);
+   row.classList.toggle('now',now>=Math.max(0,x.gap-1200)&&now<=x.gap+700);
  });
 
- let idx=starts.findIndex(x=>now<=x.gap+900);
+ let idx=starts.findIndex(x=>now<=x.gap+700);
  if(idx<0){
    document.getElementById('pursuitNextNation').textContent='Tous partis';
    document.getElementById('pursuitCountdown').textContent='Bonne poursuite !';
@@ -1557,40 +1672,47 @@ function updatePursuitClock(){
  }
 
  const x=starts[idx],remain=x.gap-now;
+
  document.getElementById('pursuitNextNation').textContent=`${PURSUIT_FLAGS[x.nation]||''} ${x.nation}`;
  document.getElementById('pursuitCountdown').textContent=
-   remain<=0?'PARTEZ !':remain<10000?(remain/1000).toFixed(1)+' s':Math.ceil(remain/1000)+' s';
+   remain<=0?'PARTEZ !':
+   remain<10000?(remain/1000).toFixed(1)+' s':
+   Math.ceil(remain/1000)+' s';
 
- if(pmRunning){
-   // Préparation du prochain concurrent ~8 secondes avant.
-   if(remain<=8000 && remain>5000){
-     pursuitSpeakOnce(`prep-${idx}`,`${x.nation} se prépare`);
-   }
+ if(!pmRunning)return;
 
-   const sec=Math.ceil(remain/1000);
+ // Préparation à 8 s
+ if(remain<=8000 && remain>7000){
+   pursuitSpeakOnce(`prep-${idx}`,`${x.nation} se prépare`);
+ }
 
-   // Annonce vocale : "France dans 3, 2, 1, Top."
-   if(sec===3 && remain>2000){
-     pursuitSpeakOnce(`3-${idx}`,`${x.nation} dans 3`);
-     pursuitBeep(.12,650);
-   }else if(sec===2 && remain>1000){
-     pursuitSpeakOnce(`2-${idx}`,'2');
-     pursuitBeep(.12,650);
-   }else if(sec===1 && remain>100){
-     pursuitSpeakOnce(`1-${idx}`,'1');
-     pursuitBeep(.12,650);
-   }else if(remain<=100 && remain>=-220){
-     pursuitSpeakOnce(`go-${idx}`,'Top');
-     pursuitBeep(.55,900);
-     if(navigator.vibrate)navigator.vibrate([160,70,160]);
-   }
+ // Nom + "dans 3" lancé légèrement AVANT 3 s pour absorber la latence de speechSynthesis
+ if(remain<=3400 && remain>3000){
+   pursuitSpeakOnce(`name3-${idx}`,`${x.nation} dans 3`,1.12);
+ }
+
+ // Les chiffres sont très courts : fenêtre étroite pour rester collés au chrono
+ if(remain<=2200 && remain>1800){
+   pursuitSpeakOnce(`two-${idx}`,'2',1.18);
+   pursuitBeep(.08,650);
+ }
+ if(remain<=1200 && remain>800){
+   pursuitSpeakOnce(`one-${idx}`,'1',1.18);
+   pursuitBeep(.08,650);
+ }
+
+ // "Top" juste avant zéro pour compenser le démarrage audio
+ if(remain<=180 && remain>-180){
+   pursuitSpeakOnce(`go-${idx}`,'Top',1.15);
+   pursuitBeep(.45,900);
+   if(navigator.vibrate)navigator.vibrate([140,60,140]);
  }
 }
 function startPursuitClock(){
  const starts=pursuitStartsForMode();
  if(!starts.length)return alert('Aucun départ disponible. Il faut d’abord récupérer les résultats du Sprint L2.');
  if(pmRunning)return;
- pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;pursuitLastSpoken='';
+ pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
  document.getElementById('pursuitStartBtn').textContent='EN COURS';
  // La nation la plus lente du Sprint part à 0 ; les meilleures partent ensuite selon leur avance au Sprint.
  if(pmElapsed===0){pursuitBeep(.55,900);if(navigator.vibrate)navigator.vibrate([160,70,160])}
@@ -1608,7 +1730,7 @@ function pausePursuitClock(){
 }
 function resetPursuitClock(){
  clearInterval(pmTick);pmTick=null;
- pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;pursuitLastSpoken='';
+ pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
  const timer=document.getElementById('pursuitTimerDisplay');if(timer)timer.textContent='00:00.0';
  const btn=document.getElementById('pursuitStartBtn');if(btn)btn.textContent='DÉMARRER';
  const next=document.getElementById('pursuitNextNation'),count=document.getElementById('pursuitCountdown');
