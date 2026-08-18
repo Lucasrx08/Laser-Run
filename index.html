@@ -453,6 +453,15 @@ html,body,.app{overscroll-behavior-y:none}
   width:100%!important;
 }
 
+
+/* V22 — Jeux Olympiqu'EPS */
+.joControlGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.joCodeCard{text-align:center}
+.joBigCode{font-size:72px;font-weight:1000;letter-spacing:12px;color:#323c3a;line-height:1.1;margin:16px 0 4px}
+.joYear{font-size:22px;font-weight:900;color:#68716f;margin-bottom:16px}
+.lockedAttempt{opacity:.82;border:2px solid #c7dbdf}
+@media(max-width:800px){.joControlGrid{grid-template-columns:1fr}.joBigCode{font-size:58px}}
+
 </style>
 </head>
 <body>
@@ -498,6 +507,7 @@ html,body,.app{overscroll-behavior-y:none}
   <button id="pcTabBtnResults" class="dashboardTab" onclick="showPcTab('results')">Profils</button>
    <button id="pcTabBtnRankings" class="dashboardTab" onclick="showPcTab('rankings')">Classements</button>
   <button id="pcTabBtnPursuit" class="dashboardTab" onclick="showPcTab('pursuit')">Poursuite</button><button id="pcTabBtnMass" class="dashboardTab" onclick="showPcTab('mass')">Mass-start</button><button id="pcTabBtnRelay" class="dashboardTab" onclick="showPcTab('relay')">Relais</button>
+  <button id="pcTabBtnJo" class="dashboardTab" onclick="showPcTab('jo')">JO</button>
   <button id="pcTabBtnExport" class="dashboardTab" onclick="showPcTab('export')">Export</button>
  </div>
 
@@ -575,6 +585,33 @@ html,body,.app{overscroll-behavior-y:none}
  <div class="section">Relais des nations · Pad de course</div>
  <div class="notice">Un départ collectif. À l’arrivée du relais, la nation touche son pays pour figer son temps.</div>
  <div id="relayPad"></div>
+</div>
+<div id="pcPanelJo" class="dashboardPanel hidden">
+ <div class="joControlGrid">
+  <div class="card joCodeCard">
+   <div class="section" style="margin-top:0">🏅 Jeux Olympiqu’EPS</div>
+   <div class="muted">Code d’accès L7 · propre à cette classe</div>
+   <div id="joClassCode" class="joBigCode">----</div>
+   <div id="joSchoolYear" class="joYear"></div>
+   <div class="notice">Écris simplement ce code au tableau. Tous les élèves de cette classe utilisent le même code pour ouvrir la L7. Il change automatiquement avec la classe et l’année scolaire.</div>
+  </div>
+  <div class="card">
+   <div class="section" style="margin-top:0">🎽 Dossards des JO</div>
+   <div class="muted">Numéros attribués automatiquement selon le classement individuel de la L6.</div>
+   <div class="toolbar" style="margin-top:18px">
+    <button class="btn orange" onclick="generateJOBibs()">Générer les dossards PDF</button>
+   </div>
+   <div class="notice">Format A4 portrait · 2 dossards A5 paysage par page · une seule ligne pointillée entre les deux dossards.</div>
+  </div>
+ </div>
+ <div class="card">
+  <div class="section" style="margin-top:0">Classement de qualification · L6</div>
+  <div id="joQualificationRanking"></div>
+ </div>
+ <div class="card">
+  <div class="section" style="margin-top:0">Barème L7 · Jeux Olympiques</div>
+  <div class="notice"><b>1er au 4e :</b> 12 💎 · <b>5e au 8e :</b> 9 💎 · <b>9e et suivants :</b> 6 💎. Les cristaux sont attribués une seule fois à la nation.</div>
+ </div>
 </div>
 <div id="pcPanelExport" class="dashboardPanel hidden">
   <div class="card">
@@ -954,7 +991,7 @@ function showRankingTab(type){
 }
 function showPcTab(tab){
  currentPcTab=tab;
- ['overview','students','results','rankings','pursuit','mass','relay','export'].forEach(t=>{
+ ['overview','students','results','rankings','pursuit','mass','relay','jo','export'].forEach(t=>{
    const panel=document.getElementById('pcPanel'+t.charAt(0).toUpperCase()+t.slice(1));
    const btn=document.getElementById('pcTabBtn'+t.charAt(0).toUpperCase()+t.slice(1));
    if(panel)panel.classList.toggle('hidden',t!==tab);
@@ -964,6 +1001,7 @@ function showPcTab(tab){
  if(tab==='pursuit'){resetPursuitClock();renderPursuitStarts()}
  if(tab==='mass'){renderMassPad();startTicker('mass')}
  if(tab==='relay'){renderRelayPad();startTicker('relay')}
+ if(tab==='jo')renderJOPanel();
 }
 
 
@@ -1254,8 +1292,8 @@ function csvEscape(v){v=v==null?'':String(v);if(/[;"\n\r]/.test(v))v='"'+v.repla
 function exportIDoceo(){
  const c=pc(),rows=c.students.slice().sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));
  const by=(name,lesson)=>{let a=(c.results||[]).filter(r=>r.name===name&&(r.lesson||1)===lesson);return a[a.length-1]||{}};
- const lines=[['Nom Prénom','Défi Précision L1','Centre national de recrutement','Défi Rapidité L2','Sprint individuel','Défi Respiration L3','Poursuite','Défi Précision L4','Mass-start','Défi Rapidité L5','Relais des nations','Défi Respiration L6','Qualification aux JO']];
- rows.forEach(name=>{let l1=by(name,1),l2=by(name,2),l3=by(name,3),l4=by(name,4),l5=by(name,5),l6=by(name,6);lines.push([name,l1.stars??'',l1.time==null?'':fmt(l1.time),l2.stars??'',l2.time==null?'':fmt(l2.time),l3.stars??'',l3.time==null?'':fmt(l3.time),l4.stars??'',l4.time==null?'':fmt(l4.time),l5.stars??'',l5.time==null?'':fmt(l5.time),l6.stars??'',l6.time==null?'':fmt(l6.time)])});
+ const lines=[['Nom Prénom','Défi Précision L1','Centre national de recrutement','Défi Rapidité L2','Sprint individuel','Défi Respiration L3','Poursuite','Défi Précision L4','Mass-start','Défi Rapidité L5','Relais des nations','Défi Respiration L6','Qualification aux JO','Jeux Olympiques L7']];
+ rows.forEach(name=>{let l1=by(name,1),l2=by(name,2),l3=by(name,3),l4=by(name,4),l5=by(name,5),l6=by(name,6),l7=by(name,7);lines.push([name,l1.stars??'',l1.time==null?'':fmt(l1.time),l2.stars??'',l2.time==null?'':fmt(l2.time),l3.stars??'',l3.time==null?'':fmt(l3.time),l4.stars??'',l4.time==null?'':fmt(l4.time),l5.stars??'',l5.time==null?'':fmt(l5.time),l6.stars??'',l6.time==null?'':fmt(l6.time),l7.time==null?'':fmt(l7.time)])});
  const csv='\ufeff'+lines.map(row=>row.map(csvEscape).join(';')).join('\r\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download=`${c.name.replace(/[^a-z0-9]+/gi,'-')}-Laser-Run-iDoceo.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
 }
@@ -1303,6 +1341,131 @@ function openResultsQR(){
 function renderQR(){qrCount.textContent=`${qrIndex+1} / ${qrPages.length}`;qrBox.innerHTML='';if(typeof qrcode==='undefined'){qrBox.innerHTML='<div class="warn">La bibliothèque QR n’est pas encore chargée. Ouvre l’application une fois avec Internet puis recharge la page.</div>';return}try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']||qrcode.stringToBytes;let q=qrcode(0,'L');q.addData(qrPages[qrIndex],'Byte');q.make();qrBox.innerHTML=q.createSvgTag(7,4)}catch(e){qrBox.innerHTML='<div class="warn">Impossible de générer ce QR.</div>'}} function nextQR(){if(qrIndex<qrPages.length-1){qrIndex++;renderQR()}} function prevQR(){if(qrIndex>0){qrIndex--;renderQR()}} function qrBack(){if(qrReturn==='prof')openProf();else if(qrReturn==='profClass'){renderProfClass();show('profClass');showPcTab(currentPcTab||'overview')}else if(qrReturn==='pair')show('pair');else if(qrReturn==='lesson23')show('lesson23');else if(qrReturn==='lessons')show('lessons');else openStudentHome()}
 
 function normalizeInstalled(){installed=read(INST,{version:0,classes:[]});installed.classes=(installed.classes||[]).map(c=>[c[0],(c[1]||[]).map(x=>Array.isArray(x)?[x[0],x[1]||null]:[x,null])]);write(INST,installed)}
+
+function schoolYear(){
+ const d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
+ const start=m>=8?y:y-1;
+ return `${start}-${start+1}`;
+}
+function joHash(str){
+ let h=2166136261;
+ for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}
+ return h>>>0;
+}
+function joCodeForClass(className){
+ return String(1000+(joHash(`LRJO|${schoolYear()}|${String(className).trim().toUpperCase()}|BSAUV`) % 9000));
+}
+function openJOAccess(){
+ const className=sc()[0];
+ const entered=prompt(`🏅 Jeux Olympiqu’EPS ${schoolYear()}\n\nEntre le code JO de la classe ${className} :`);
+ if(entered===null)return;
+ if(String(entered).trim()!==joCodeForClass(className)){
+   alert('Code JO incorrect.');
+   return;
+ }
+ sessionStorage.setItem(`lr8_jo_access|${schoolYear()}|${className}`,'1');
+ openLesson23(7);
+}
+function joLockKey(name){
+ return `lr8_jo_attempt|${schoolYear()}|${sc()[0]}|${name}`;
+}
+function joAttemptState(name){return localStorage.getItem(joLockKey(name))||''}
+function lockJOAttempt(name){localStorage.setItem(joLockKey(name),'started')}
+function completeJOAttempt(name){localStorage.setItem(joLockKey(name),'done')}
+async function teacherResetJO(name){
+ const code=prompt(`Déverrouillage enseignant pour ${name}\nEntre le code professeur :`);
+ if(code===null)return false;
+ const stored=localStorage.getItem(PIN);
+ if(!stored){alert('Aucun code professeur n’est configuré sur cette tablette.');return false}
+ const ok=(await hashPin(String(code).trim()))===stored;
+ if(!ok){alert('Code professeur incorrect.');return false}
+ localStorage.removeItem(joLockKey(name));
+ alert(`Nouvelle tentative autorisée pour ${name}.`);
+ renderL23Pair();
+ return true;
+}
+function renderJOPanel(){
+ const c=pc();
+ const code=document.getElementById('joClassCode');
+ const yr=document.getElementById('joSchoolYear');
+ if(code)code.textContent=joCodeForClass(c.name);
+ if(yr)yr.textContent=`Année scolaire ${schoolYear()}`;
+ const box=document.getElementById('joQualificationRanking');
+ if(!box)return;
+ const rank=lessonIndividualRanking(c,6);
+ if(!rank.length){
+   box.innerHTML='<div class="muted">Aucun résultat de qualification L6 enregistré.</div>';
+   return;
+ }
+ box.innerHTML=rank.map((r,i)=>`<div class="rankItem"><div class="place">${i+1}</div><div><div class="big">${esc(r.name)}</div><div class="muted">${PURSUIT_FLAGS[r.nation||(c.nations||{})[r.name]]||'🏳️'} ${esc(r.nation||(c.nations||{})[r.name]||'Nation non attribuée')}</div></div><div class="value">${fmt(r.time)}</div></div>`).join('');
+}
+const BIB_FLAGS={
+ 'France':'🇫🇷','Norvège':'🇳🇴','Suède':'🇸🇪','Allemagne':'🇩🇪','Italie':'🇮🇹','Suisse':'🇨🇭',
+ 'Finlande':'🇫🇮','Autriche':'🇦🇹','Tchéquie':'🇨🇿','Slovénie':'🇸🇮','Pologne':'🇵🇱',
+ 'Estonie':'🇪🇪','Lettonie':'🇱🇻','Lituanie':'🇱🇹','Ukraine':'🇺🇦'
+};
+function bibMarkup(r,index,c){
+ const nation=r.nation||(c.nations&&c.nations[r.name])||'Nation';
+ const number=String(index+1).padStart(2,'0');
+ return `<article class="bib">
+  <div class="bib-deco bib-deco-a"></div><div class="bib-deco bib-deco-b"></div>
+  <div class="bib-top">
+   <div class="bib-brand">
+    <div class="bib-target"><span></span></div>
+    <div class="bib-laser"><b>LASER</b><strong>RUN</strong><small>PISTOLET LASER</small></div>
+   </div>
+   <div class="bib-games">
+    <div class="bib-rings"><i></i><i></i><i></i><i></i><i></i></div>
+    <b>JEUX</b><strong>OLYMPIQU’EPS</strong><span>${schoolYear()}</span>
+   </div>
+  </div>
+  <div class="bib-mid">
+   <div class="bib-nation">
+    <div class="bib-pistol">▰╾</div>
+    <small>NATION</small><b>${esc(nation)}</b><div class="bib-flag">${BIB_FLAGS[nation]||'🏳️'}</div>
+   </div>
+   <div class="bib-number">${number}</div>
+  </div>
+  <div class="bib-info">
+   <div><small>NOM & PRÉNOM</small><b>${esc(r.name)}</b></div>
+   <div><small>CLASSE</small><b>${esc(c.name)}</b></div>
+   <div><small>NATION</small><b>${esc(nation)}</b></div>
+  </div>
+ </article>`;
+}
+function generateJOBibs(){
+ const c=pc(),rank=lessonIndividualRanking(c,6);
+ if(!rank.length)return alert('Aucun résultat L6 : impossible de générer les dossards.');
+ const pages=[];
+ for(let i=0;i<rank.length;i+=2){
+   pages.push(`<section class="sheet">${bibMarkup(rank[i],i,c)}${rank[i+1]?`<div class="cutline"></div>${bibMarkup(rank[i+1],i+1,c)}`:''}</section>`);
+ }
+ const w=window.open('','_blank');
+ if(!w)return alert('Autorise les fenêtres surgissantes pour générer les dossards.');
+ w.document.open();
+ w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Dossards JO ${esc(c.name)} ${schoolYear()}</title>
+ <style>
+ @page{size:A4 portrait;margin:0}
+ *{box-sizing:border-box}html,body{margin:0;padding:0;background:white;font-family:Arial,Helvetica,sans-serif;color:#323c3a}
+ .sheet{width:210mm;height:297mm;page-break-after:always;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#ebe5df}
+ .sheet:last-child{page-break-after:auto}
+ .bib{width:210mm;height:148.5mm;position:relative;overflow:hidden;background:#ebe5df;padding:8mm 10mm 7mm}
+ .cutline{height:0;border-top:1.2mm dotted #323c3a;width:100%;position:absolute;left:0;top:148.5mm;z-index:20}
+ .bib-deco{position:absolute;transform:skewX(-28deg);opacity:.95}.bib-deco-a{right:-18mm;top:-7mm;width:70mm;height:15mm;background:#c7dbdf;box-shadow:-18mm 8mm 0 #323c3a,-35mm 16mm 0 #f7b738}.bib-deco-b{left:-18mm;bottom:-8mm;width:90mm;height:15mm;background:#323c3a;box-shadow:25mm -7mm 0 #c7dbdf,50mm -14mm 0 #f7b738}
+ .bib:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#323c3a 1px,transparent 1.4px);background-size:5mm 5mm;opacity:.05;pointer-events:none}
+ .bib-top{display:grid;grid-template-columns:1fr 1.2fr;align-items:start;gap:8mm;position:relative;z-index:2}
+ .bib-brand{display:flex;align-items:center;gap:4mm}.bib-target{width:24mm;height:24mm;border:2mm solid #323c3a;border-radius:50%;position:relative;box-shadow:inset 0 0 0 4mm #c7dbdf,inset 0 0 0 7mm #ebe5df}.bib-target:before,.bib-target:after{content:"";position:absolute;background:#323c3a}.bib-target:before{width:2mm;height:30mm;left:9mm;top:-5mm}.bib-target:after{height:2mm;width:30mm;left:-5mm;top:9mm}.bib-target span{position:absolute;width:5mm;height:5mm;border-radius:50%;background:#f7b738;left:7.5mm;top:7.5mm}
+ .bib-laser b,.bib-laser strong{display:block;font-style:italic;letter-spacing:-1px;line-height:.85}.bib-laser b{font-size:15mm}.bib-laser strong{font-size:15mm;color:#4aaeb3}.bib-laser small{display:inline-block;margin-top:2mm;background:#323c3a;color:white;padding:1mm 3mm;font-size:3.5mm;transform:rotate(-3deg)}
+ .bib-games{text-align:center}.bib-rings{height:13mm;display:flex;justify-content:center;gap:-1mm}.bib-rings i{width:10mm;height:10mm;border:1.3mm solid #323c3a;border-radius:50%;margin-left:-2mm}.bib-rings i:nth-child(2){border-color:#4aaeb3}.bib-rings i:nth-child(3){border-color:#f7b738}.bib-rings i:nth-child(4){border-color:#323c3a}.bib-rings i:nth-child(5){border-color:#4aaeb3}
+ .bib-games>b{display:block;font-size:18mm;line-height:.85;font-style:italic;letter-spacing:-1.5px}.bib-games>strong{display:block;font-size:10mm;color:#4aaeb3;font-style:italic;line-height:1}.bib-games>span{display:inline-block;margin-top:2mm;background:#f7b738;color:#323c3a;font-weight:900;font-size:6mm;padding:1mm 5mm;transform:rotate(-2deg)}
+ .bib-mid{display:grid;grid-template-columns:42% 58%;align-items:center;height:72mm;position:relative;z-index:2}.bib-nation{padding-left:8mm}.bib-nation small{display:block;font-weight:900;font-size:4mm;color:#4aaeb3;margin-top:1mm}.bib-nation>b{display:inline-block;background:#323c3a;color:white;padding:2mm 7mm;font-size:8mm;transform:rotate(-1deg);text-transform:uppercase}.bib-flag{font-size:20mm;line-height:1;margin-top:2mm}.bib-pistol{font-size:12mm;color:#323c3a;font-weight:900;letter-spacing:-2mm;transform:rotate(-3deg);transform-origin:left center}
+ .bib-number{text-align:right;padding-right:5mm;font-size:77mm;line-height:.72;font-weight:1000;letter-spacing:-6mm;color:#323c3a;text-shadow:2mm 1mm 0 #c7dbdf}
+ .bib-info{position:absolute;left:10mm;right:10mm;bottom:8mm;height:24mm;background:#f7f4ef;border-top:1mm solid #323c3a;display:grid;grid-template-columns:1.6fr .75fr 1fr;align-items:center;z-index:3;box-shadow:-5mm 0 0 #c7dbdf,5mm 0 0 #f7b738}
+ .bib-info>div{padding:0 6mm;border-right:.5mm solid #9aa39f}.bib-info>div:last-child{border-right:0}.bib-info small{display:block;color:#4aaeb3;font-size:3.3mm;font-weight:900}.bib-info b{display:block;font-size:6mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+ </style></head><body>${pages.join('')}<script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
+ w.document.close();
+}
 function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
 function selectClass(i){currentClass=i;pair=[];selectedNation=null;openLessons()}
 function sc(){return installed.classes[currentClass]}
@@ -1312,7 +1475,7 @@ function studentNationAt(i){const x=studentEntries()[i];return Array.isArray(x)?
 function setStudentNation(i,nation){if(!Array.isArray(sc()[1][i]))sc()[1][i]=[sc()[1][i],null];sc()[1][i][1]=nation;write(INST,installed)}
 function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){
  lessonClass.textContent=sc()[0];
- let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L6','Qualification aux JO',1,'openLesson23(6)'],['L7','Jeux Olympiques',0,'']];
+ let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L6','Qualification aux JO',1,'openLesson23(6)'],['L7','Jeux Olympiques',1,'openJOAccess()']];
  lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?`onclick="${x[3]}"`:'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
  show('lessons')
 }
@@ -1528,7 +1691,8 @@ function l23Cfg(){
   3:{title:'Leçon 3',sub:'Poursuite',theme:'Respiration',s1:'Le sas de décompression',main:'La Poursuite'},
   4:{title:'Leçon 4',sub:'Mass-start',theme:'Précision',s1:'Précis dans la zone rouge',main:'La Mass-start'},
   5:{title:'Leçon 5',sub:'Relais des nations',theme:'Rapidité',s1:"L’escalier de vitesse",main:'Le Relais des nations'},
-  6:{title:'Leçon 6',sub:'Qualification aux JO',theme:'Respiration',s1:"L’escalier de vitesse",main:'La Qualification aux JO'}
+  6:{title:'Leçon 6',sub:'Qualification aux JO',theme:'Respiration',s1:"L’escalier de vitesse",main:'La Qualification aux JO'},
+  7:{title:'Leçon 7',sub:'Jeux Olympiques',theme:'Respiration',s1:"L’escalier de vitesse",main:'Les Jeux Olympiques'}
  };
  return cfg[currentLesson]||cfg[2];
 }
@@ -1557,7 +1721,15 @@ function validateL23Pair(){
 function renderL23Pair(){
  l23Work.classList.remove('hidden');
  l23S1Buttons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
- l23MainButtons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name);return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')
+ l23MainButtons.innerHTML=l23pair.map(p=>{
+ let r=l23Record(p.name);
+ if(currentLesson===7){
+   const st=joAttemptState(p.name);
+   if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>✅ Épreuve terminée 🔒</div></div>`;
+   if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\\'")}')">Déverrouillage enseignant</button></div>`;
+ }
+ return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`
+}).join('')
 }
 let chxp1=null,chxp2=null,chLed=0,chBreath=[0,0,0,0,0];
 const L23_CRITERIA={
@@ -1585,6 +1757,11 @@ const L23_CRITERIA={
   ['slow','RALENTISSEMENT','Préparer l’arrivée au tir','Ralentis avant le pas de tir et pose tes pieds avant de prendre le pistolet.'],
   ['breathe','RESPIRATION','Deux respirations lentes','Inspire puis souffle lentement deux fois avant de viser.'],
   ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de l’expiration.']
+ ],
+ 7:[
+  ['slow','RALENTISSEMENT','Préparer l’arrivée au tir','Ralentis avant le pas de tir et pose tes pieds avant de prendre le pistolet.'],
+  ['breathe','RESPIRATION','Deux respirations lentes','Inspire puis souffle lentement deux fois avant de viser.'],
+  ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de mon expiration.']
  ]
 };
 function startL23Challenge(i){
@@ -1610,7 +1787,7 @@ function chGoXP2(){if(!chxp1)return alert('Choisis un critère à conseiller ava
 function chGoStar(){
  if(!chxp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');
  chXP2Card.classList.add('hidden');chStarCard.classList.remove('hidden');
- chSpeedStar.classList.toggle('hidden',!(currentLesson===2||currentLesson===5));chBreathStar.classList.toggle('hidden',!(currentLesson===3||currentLesson===4||currentLesson===6));
+ chSpeedStar.classList.toggle('hidden',!(currentLesson===2||currentLesson===5));chBreathStar.classList.toggle('hidden',!(currentLesson===3||currentLesson===4||currentLesson===6||currentLesson===7));
  if(currentLesson===2||currentLesson===5){chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur dispose de <b>5 rechargements maximum</b> pour atteindre la LED la plus élevée en <b>50 secondes</b>.';renderLedButtons()}
  else{
   chStarNotice.innerHTML=currentLesson===4
@@ -1663,6 +1840,11 @@ function currentL23Slot(i){
 function startL23Race(i){
  currentLesson=Number(currentLesson);
  l23active={i:Number(i),name:studentNameAt(Number(i))};
+ if(currentLesson===7){
+   const st=joAttemptState(l23active.name),existing=l23Record(l23active.name);
+   if((existing&&existing.time!=null)||st==='done')return alert('Épreuve JO déjà terminée pour cet athlète.');
+   if(st==='started')return alert('Cette tentative JO a déjà été commencée. Un déverrouillage enseignant est nécessaire.');
+ }
  const nation=studentNationAt(Number(i))||'Nation non attribuée';
 
  l23race={
@@ -1679,11 +1861,11 @@ function startL23Race(i){
  const reloadRule=document.getElementById('r23ReloadRule');
  const shotsLabel=document.getElementById('r23ShotsLabel');
  const missBtn=document.getElementById('r23MissBtn');
- if(reloadRule)reloadRule.textContent=currentLesson===6?'50 secondes à partir de la 1re cible touchée · valide les 5 cibles':'5 rechargements maximum';
- if(shotsLabel)shotsLabel.textContent=currentLesson===6?'Touches':'Rechargements';
- if(missBtn)missBtn.classList.toggle('hidden',currentLesson===6);
+ if(reloadRule)reloadRule.textContent=(currentLesson===6||currentLesson===7)?'50 secondes à partir de la 1re cible touchée · valide les 5 cibles':'5 rechargements maximum';
+ if(shotsLabel)shotsLabel.textContent=(currentLesson===6||currentLesson===7)?'Touches':'Rechargements';
+ if(missBtn)missBtn.classList.toggle('hidden',currentLesson===6||currentLesson===7);
  const shootHelp=document.getElementById('r23ShootHelp');
- if(shootHelp)shootHelp.textContent=currentLesson===6
+ if(shootHelp)shootHelp.textContent=(currentLesson===6||currentLesson===7)
    ? 'Le chrono de 50 secondes démarre au moment où la première cible est touchée.'
    : 'Le chronomètre continue pendant tout le passage au tir.';
  const mainNotice=document.querySelector('#l23race .notice');
@@ -1691,7 +1873,8 @@ function startL23Race(i){
    const notes={
     4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 2 · 5 rechargements à chaque passage.',
     5:'Relais des nations · 4 boucles de 150 m par athlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
-    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · les 50 secondes démarrent à la première cible touchée · rechargements illimités.'
+    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · les 50 secondes démarrent à la première cible touchée · rechargements illimités.',
+    7:'Jeux Olympiques · 4 boucles de 150 m · 3 passages au tir en mode 3 · les 50 secondes démarrent à la première cible touchée · rechargements illimités.'
    };
    if(notes[currentLesson])mainNotice.textContent=notes[currentLesson];
  }
@@ -1716,7 +1899,7 @@ function resetL23Race(){
  document.getElementById('r23Timer').textContent='00:00.0';
  document.getElementById('r23Lap').textContent='0 / 4';
  document.getElementById('r23Shoot').textContent='0 / 3';
- document.getElementById('r23Shots').textContent=currentLesson===6?'0 / 5':'0 / 5';
+ document.getElementById('r23Shots').textContent=(currentLesson===6||currentLesson===7)?'0 / 5':'0 / 5';
  document.getElementById('r23Status').textContent='Prêt';
  document.getElementById('r23ShootPanel').classList.add('hidden');
  document.getElementById('r23HistoryWrap').classList.add('hidden');
@@ -1737,7 +1920,7 @@ function r23Clock(){
  document.getElementById('r23Timer').textContent=fmt(l23race.elapsed);
 
  // L6 · Mode 3 : les 50 s commencent seulement à la première cible touchée.
- if(currentLesson===6 && l23race.state==='shoot' && l23race.shootStart!=null){
+ if((currentLesson===6||currentLesson===7) && l23race.state==='shoot' && l23race.shootStart!=null){
    const shotElapsed=performance.now()-l23race.shootStart;
    const left=Math.max(0,50000-shotElapsed);
    const status=document.getElementById('r23Status');
@@ -1752,7 +1935,7 @@ function r23Stats(){
  if(!l23race)return;
  document.getElementById('r23Lap').textContent=`${l23race.lap} / 4`;
  document.getElementById('r23Shoot').textContent=`${l23race.shoot} / 3`;
- if(currentLesson===6)document.getElementById('r23Shots').textContent=`${l23race.hits} / 5`;
+ if(currentLesson===6||currentLesson===7)document.getElementById('r23Shots').textContent=`${l23race.hits} / 5`;
  else if(currentLesson===5)document.getElementById('r23Shots').textContent=`${l23race.hits} touches · ${l23race.shots} tirs`;
  else document.getElementById('r23Shots').textContent=`${l23race.shots} / 5`;
 }
@@ -1761,7 +1944,7 @@ function renderR23Dots(){
  const box=document.getElementById('r23Dots');
  if(!box)return;
  const arr=l23race?.currentShots||[];
- if(currentLesson===6){
+ if(currentLesson===6||currentLesson===7){
    const hits=l23race?.hits||0;
    const timedOut=Boolean(l23race?.l6TimedOut);
    box.innerHTML=Array.from({length:5},(_,i)=>{
@@ -1799,7 +1982,7 @@ function renderR23History(){
      <b>Tir ${i+1}</b>
      <div class="shotHistoryDots">${dots}</div>
      <div class="shotTime">${hits}/5 · ${fmt(serie.duration)}</div>
-     <div class="muted">${currentLesson===6?'cibles validées · temps écoulé':'résultat · temps au tir'}</div>
+     <div class="muted">${(currentLesson===6||currentLesson===7)?'cibles validées · temps écoulé':'résultat · temps au tir'}</div>
    </div>`;
  }).join('');
 }
@@ -1812,6 +1995,7 @@ function r23Action(){
  const shootPanel=document.getElementById('r23ShootPanel');
 
  if(l23race.state==='ready'){
+   if(currentLesson===7)lockJOAttempt(l23active.name);
    l23race.start=performance.now();
    l23race.state='run';
    l23race.lap=1;
@@ -1830,11 +2014,11 @@ function r23Action(){
      l23race.currentShots=[];
      l23race.l6TimedOut=false;
      // En L6, le chrono de 50 s reste en attente jusqu'à la première cible touchée.
-     l23race.shootStart=currentLesson===6?null:performance.now();
+     l23race.shootStart=(currentLesson===6||currentLesson===7)?null:performance.now();
 
      shootPanel.classList.remove('hidden');
      action.classList.add('hidden');
-     status.textContent=currentLesson===6
+     status.textContent=(currentLesson===6||currentLesson===7)
        ? `Pas de tir ${l23race.shoot+1} · en attente de la 1re touche`
        : `Pas de tir ${l23race.shoot+1}`;
 
@@ -1848,7 +2032,7 @@ function r23Action(){
 }
 
 function finishL6Shoot(timedOut=false){
- if(!l23race || currentLesson!==6 || l23race.state!=='shoot')return;
+ if(!l23race || ![6,7].includes(currentLesson) || l23race.state!=='shoot')return;
  if(l23race.shootStart==null)return; // aucune cible encore touchée : les 50 s n'ont pas commencé.
 
  const duration=Math.min(50000,Math.round(performance.now()-l23race.shootStart));
@@ -1892,7 +2076,7 @@ function r23Shot(hit){
 
  // L6 · Mode 3 : on ne saisit jamais une cible ratée.
  // L'élève ne valide que les cibles touchées. À 50 s, les cibles restantes passent en rouge.
- if(currentLesson===6){
+ if(currentLesson===6||currentLesson===7){
    if(!hit || l23race.hits>=5)return;
 
    // PREMIÈRE cible touchée : départ du chrono de 50 secondes.
@@ -1976,6 +2160,7 @@ function finishL23Race(){
  }));
  r.pairSlot=currentL23Slot(l23active.i);
  l23Save(r);
+ if(currentLesson===7)completeJOAttempt(l23active.name);
 
  document.getElementById('r23Status').textContent='Terminé';
 
