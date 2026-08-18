@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#323c3a">
+<meta name="theme-color" content="#173038">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V24</title>
+<title>Laser Run 6ème · V25</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -471,6 +471,44 @@ html,body,.app{overscroll-behavior-y:none}
 }
 #r23Action,.shoot,.criterion,.target,.role{position:relative;z-index:2;pointer-events:auto!important}
 #r23Action[disabled],.shoot[disabled]{pointer-events:none!important}
+
+
+/* V25 — modern facelift */
+:root{--c1:#d7f1f2;--c2:#173038;--c3:#f5f7fb;--c4:#ffbe3b;--green:#16a34a;--red:#e23a32;--white:#fff;--shadow:0 18px 42px rgba(23,48,56,.10);--r:24px}
+html,body{background:radial-gradient(circle at top right, rgba(215,241,242,.85), transparent 28%),linear-gradient(180deg,#f7f8fb 0%,#eff5f6 100%)}
+.app{width:min(1280px,100%);padding:clamp(18px,2.6vw,34px)}
+.top{margin-bottom:26px}
+.brand,.title{letter-spacing:-2px}
+.pill{background:linear-gradient(135deg,#e8f7f7,#d7f1f2);box-shadow:0 8px 22px rgba(23,48,56,.08);padding:10px 14px;font-size:12px;letter-spacing:.02em}
+.card,.row,.lesson,.kpi,.rankItem,.profileCard,.teacherClassCard,.teacherAction,.quickAction,.role,.nationBtn,.criterion,.stat,.shotHistoryCard,.profileStat{border-radius:24px!important;border:1px solid rgba(23,48,56,.08)!important;box-shadow:0 14px 34px rgba(23,48,56,.07)!important}
+.card{background:rgba(255,255,255,.92)!important;backdrop-filter:blur(10px)}
+.notice{background:linear-gradient(135deg,rgba(215,241,242,.96),rgba(232,250,250,.92));border:1px solid rgba(23,48,56,.06)}
+.warn{background:linear-gradient(135deg,#fff0cf,#ffe4b8);border:1px solid rgba(255,190,59,.34)}
+.btn,.mainAction,.dashboardTab,.subTab{transition:transform .12s ease, box-shadow .12s ease, background .12s ease}
+.btn:hover,.mainAction:hover,.dashboardTab:hover,.subTab:hover{transform:translateY(-1px)!important;box-shadow:0 10px 24px rgba(23,48,56,.12)}
+.btn{border-radius:16px;padding:14px 18px;box-shadow:0 8px 18px rgba(23,48,56,.08)}
+.btn.orange,.mainAction{background:linear-gradient(135deg,#ffc94d,#ffb52b)!important;color:#173038!important}
+.btn.light{background:linear-gradient(135deg,#edf8f8,#d7f1f2)!important}
+.btn.ghost{background:rgba(255,255,255,.65)!important;border:1.5px solid rgba(23,48,56,.14)!important}
+.btn.red{background:linear-gradient(135deg,#ef5a50,#dc3028)!important}.btn.green{background:linear-gradient(135deg,#2dbe62,#149548)!important}
+.dashboardTab.active,.profrole{background:linear-gradient(135deg,#173038,#21464f)!important;color:#fff!important;border-color:transparent!important}
+.subTab.active{background:linear-gradient(135deg,#ffc94d,#ffb52b)!important}
+.lesson.active,.nationBtn.selected,.criterion.active,.pursuitRow.now,.rankRow.current,.startRow.current{outline:0!important;box-shadow:0 0 0 3px rgba(255,190,59,.55),0 14px 34px rgba(23,48,56,.07)!important}
+.field input,.field select{padding:14px 15px;border-radius:15px;border:1px solid rgba(23,48,56,.14);background:rgba(255,255,255,.95);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.field label{font-weight:800;letter-spacing:.01em}
+.section{font-size:clamp(22px,2.3vw,28px);letter-spacing:-.4px}
+.timer,.score,.masterTimer,.pursuitTimer{letter-spacing:-4px;text-shadow:0 6px 18px rgba(23,48,56,.08)}
+.role{min-height:225px;border-radius:28px!important}
+.studentrole{background:linear-gradient(135deg,#edf9f9,#d7f1f2)!important;color:#173038!important}
+.quickAction,.teacherAction,.teacherClassCard,.lesson,.row,.kpi,.rankItem,.profileCard{background:linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)!important}
+.globeHeader{background:linear-gradient(135deg,#173038,#24515c)!important;box-shadow:0 16px 40px rgba(23,48,56,.16)}
+.profileBadge{background:linear-gradient(135deg,#173038,#24515c)!important}
+#lesson23 .card:first-of-type{position:relative;overflow:hidden}
+#lesson23 .card:first-of-type:before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,#ffbe3b,#20b8c8,#173038)}
+#l23MainButtons .role{min-height:190px}
+.lockedAttempt{display:flex;gap:16px;align-items:center}
+.lockedAttempt .btn{align-self:flex-end}
+@media(max-width:650px){.card,.row,.lesson,.kpi,.rankItem,.profileCard,.teacherClassCard,.teacherAction,.quickAction,.role,.nationBtn,.criterion,.stat,.shotHistoryCard,.profileStat{border-radius:20px!important}.lockedAttempt{flex-direction:column;align-items:flex-start}}
 
 </style>
 </head>
@@ -1642,8 +1680,11 @@ function l23Ensure(name){
 function openLesson23(n){
  currentLesson=n;l23pair=[];
  const c=l23Cfg();
+ const joOnly=(currentLesson===7);
  l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=c.theme;
  l23S1Title.textContent=`Situation 1 · ${c.s1}`;l23MainTitle.textContent=`Situation principale · ${c.main}`;
+ l23S1Title.classList.toggle('hidden',joOnly);
+ l23S1Buttons.classList.toggle('hidden',joOnly);
  l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
 }
 function validateL23Pair(){
@@ -1655,16 +1696,19 @@ function validateL23Pair(){
 }
 function renderL23Pair(){
  l23Work.classList.remove('hidden');
- l23S1Buttons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
+ const joOnly=(currentLesson===7);
+ l23S1Title.classList.toggle('hidden',joOnly);
+ l23S1Buttons.classList.toggle('hidden',joOnly);
+ l23S1Buttons.innerHTML=joOnly?'':l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
  l23MainButtons.innerHTML=l23pair.map(p=>{
- let r=l23Record(p.name);
- if(currentLesson===7){
-   const st=joAttemptState(p.name);
-   if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>✅ Épreuve terminée 🔒</div></div>`;
-   if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\\'")}')">Déverrouillage enseignant</button></div>`;
- }
- return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`
-}).join('')
+  let r=l23Record(p.name);
+  if(currentLesson===7){
+    const st=joAttemptState(p.name);
+    if((r&&r.time!=null)||st==='done')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>✅ Épreuve terminée 🔒</div></div>`;
+    if(st==='started')return `<div class="role profrole lockedAttempt"><div><div class="big">${esc(p.name)}</div><div class="muted">Tentative déjà commencée</div></div><button class="btn ghost" onclick="teacherResetJO('${esc(p.name).replace(/'/g,"\'")}')">Déverrouillage enseignant</button></div>`;
+  }
+  return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`;
+ }).join('');
 }
 let chxp1=null,chxp2=null,chLed=0,chBreath=[0,0,0,0,0];
 const L23_CRITERIA={
