@@ -493,10 +493,7 @@ html,body,.app{overscroll-behavior-y:none}
 
  <div id="pcPanelOverview" class="dashboardPanel">
   <div id="pcKpis" class="kpiGrid"></div>
-  <div class="quickActions quickActionsTwo">
-   <button class="quickAction" onclick="showPcTab('rankings')"><b>🏆 Classements</b><span>Défis Étoile et Globe de cristal</span></button>
-   <button class="quickAction" onclick="showPcTab('pursuit')"><b>⏱️ Départs Poursuite</b><span>Chronomètre général et départs décalés</span></button>
-  </div>
+
   <div class="card">
    <div class="section" style="margin-top:0">Globe de cristal · aperçu</div>
    <div id="pcGlobePreview"></div>
@@ -712,7 +709,7 @@ html,body,.app{overscroll-behavior-y:none}
    <div id="r23History" class="grid3"></div>
   </div>
   <div id="r23ShootPanel" class="hidden">
-   <div class="section" style="text-align:center">5 rechargements maximum</div>
+   <div class="section" style="text-align:center"><span id="r23ReloadRule">5 rechargements maximum</span></div>
    <div id="r23Dots" class="fivehits"></div>
    <div class="grid2" style="max-width:850px;margin:20px auto">
     <button type="button" class="shoot hit" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
@@ -1198,9 +1195,19 @@ function renderStudentProfiles(c){
  box.innerHTML=names.map(name=>{
   const m=latestStudentResults(c,name),nation=(c.nations&&c.nations[name])||[...m.values()].find(r=>r.nation)?.nation||'Nation non attribuée';
   const precision=avgChallengeFromMap(m,[1]),rapidity=avgChallengeFromMap(m,[2]),respiration=avgChallengeFromMap(m,[3,6]);
-  const series=[...m.values()].filter(r=>![4,5].includes(Number(r.lesson||1))).flatMap(r=>(r.shotSeries||[]).map(x=>({...x,lesson:Number(r.lesson||1)})));
+  const series=[...m.values()].flatMap(r=>(r.shotSeries||[]).map(x=>({...x,lesson:Number(r.lesson||1)})));
   let attempts=0,hits=0,totalShootMs=0,timed=0;
   series.forEach(x=>{if(Array.isArray(x.shots)){attempts+=x.shots.length;hits+=x.shots.filter(Boolean).length}else if(x.hits!=null&&x.attempts!=null){attempts+=Number(x.attempts);hits+=Number(x.hits)};if(x.duration!=null){totalShootMs+=Number(x.duration);timed++}});
+  // L4 et L5 sont saisis depuis l'espace professeur : ils alimentent la réussite au tir
+  // mais pas le temps moyen au tir.
+  [4,5].forEach(l=>{
+    const r=m.get(l);
+    if(r&&r.hits!=null){
+      const a=r.shots!=null?Number(r.shots):15;
+      attempts+=a;
+      hits+=Number(r.hits);
+    }
+  });
   const pct=attempts?Math.round(hits/attempts*100):null,avgShoot=timed?totalShootMs/timed:null;
   const known=[precision,rapidity,respiration].filter(v=>v!=null),overall=known.length?known.reduce((a,b)=>a+b,0)/known.length:null,level=levelForStars(overall);
   const l2=m.get(2),sprint=l2&&l2.time!=null?fmt(l2.time):'—';
@@ -1659,12 +1666,14 @@ function startL23Race(i){
  const cfg=l23Cfg();
  document.getElementById('r23Title').textContent=cfg.main;
  document.getElementById('r23Name').textContent=`${l23active.name} · ${nation}`;
+ const reloadRule=document.getElementById('r23ReloadRule');
+ if(reloadRule)reloadRule.textContent=currentLesson===6?'50 secondes maximum · rechargements illimités':'5 rechargements maximum';
  const mainNotice=document.querySelector('#l23race .notice');
  if(mainNotice){
    const notes={
     4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 2 · 5 rechargements à chaque passage.',
     5:'Relais des nations · 4 boucles de 150 m par athlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
-    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.'
+    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · 50 secondes maximum par passage · rechargements illimités.'
    };
    if(notes[currentLesson])mainNotice.textContent=notes[currentLesson];
  }
@@ -1797,9 +1806,10 @@ function r23Action(){
 
 function r23Shot(hit){
  if(!l23race || l23race.state!=='shoot')return;
- const mustHitFive=(currentLesson===5||currentLesson===6);
- if(!mustHitFive && l23race.shots>=5)return;
- if(mustHitFive && l23race.hits>=5)return;
+ const unlimitedMode=(currentLesson===5||currentLesson===6);
+ if(!unlimitedMode && l23race.shots>=5)return;
+ if(unlimitedMode && l23race.hits>=5)return;
+ if(currentLesson===6 && l23race.shotStart!=null && performance.now()-l23race.shotStart>=50000)return;
 
  const isHit=Boolean(hit);
  l23race.currentShots.push(isHit);
@@ -1809,7 +1819,7 @@ function r23Shot(hit){
  r23Stats();
  renderR23Dots();
 
- if((currentLesson===5||currentLesson===6 ? l23race.hits===5 : l23race.shots===5)){
+ if((currentLesson===6 ? (l23race.hits===5 || (l23race.shotStart!=null && performance.now()-l23race.shotStart>=50000)) : (currentLesson===5 ? l23race.hits===5 : l23race.shots===5))){
    const duration=Math.round(performance.now()-l23race.shootStart);
    l23race.series.push({
      shots:[...l23race.currentShots],
