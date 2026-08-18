@@ -961,15 +961,15 @@ function csvEscape(v){v=v==null?'':String(v);if(/[;"\n\r]/.test(v))v='"'+v.repla
 function exportIDoceo(){
  const c=pc(),rows=c.students.slice().sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));
  const by=(name,lesson)=>{let a=(c.results||[]).filter(r=>r.name===name&&(r.lesson||1)===lesson);return a[a.length-1]||{}};
- const lines=[['Nom Prénom','Défi Précision','Centre national de recrutement','Défi Rapidité','Sprint individuel','Défi Respiration','Poursuite']];
- rows.forEach(name=>{let l1=by(name,1),l2=by(name,2),l3=by(name,3);lines.push([name,l1.stars??'',l1.time==null?'':fmt(l1.time),l2.stars??'',l2.time==null?'':fmt(l2.time),l3.stars??'',l3.time==null?'':fmt(l3.time)])});
+ const lines=[['Nom Prénom','Défi Précision L1','Centre national de recrutement','Défi Rapidité L2','Sprint individuel','Défi Respiration L3','Poursuite','Défi Précision L4','Mass-start','Défi Rapidité L5','Relais des nations','Défi Respiration L6','Qualification aux JO']];
+ rows.forEach(name=>{let l1=by(name,1),l2=by(name,2),l3=by(name,3),l4=by(name,4),l5=by(name,5),l6=by(name,6);lines.push([name,l1.stars??'',l1.time==null?'':fmt(l1.time),l2.stars??'',l2.time==null?'':fmt(l2.time),l3.stars??'',l3.time==null?'':fmt(l3.time),l4.stars??'',l4.time==null?'':fmt(l4.time),l5.stars??'',l5.time==null?'':fmt(l5.time),l6.stars??'',l6.time==null?'':fmt(l6.time)])});
  const csv='\ufeff'+lines.map(row=>row.map(csvEscape).join(';')).join('\r\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download=`${c.name.replace(/[^a-z0-9]+/gi,'-')}-Laser-Run-iDoceo.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
 }
 function deleteClass(){if(confirm(`Supprimer ${pc().name} ?`)){db.classes.splice(currentProf,1);write(DB,db);openProf()}} function manualStudent(){let n=prompt('Nom Prénom :');if(n){pc().students.push(n.trim());write(DB,db);renderProfClass()}} function removeStudent(i){pc().students.splice(i,1);write(DB,db);renderProfClass()}
 roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let names=[];if(f.name.toLowerCase().endsWith('.csv')){let t=await f.text();names=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&/nom|pr[eé]nom/i.test(p.join(' ')))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean)}else{if(typeof XLSX==='undefined')throw new Error('xlsx');let wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&/nom|pr[eé]nom/i.test(r.join(' ')))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])})}let seen=new Set(pc().students.map(x=>x.toLowerCase()));names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){pc().students.push(n);seen.add(n.toLowerCase())}});write(DB,db);renderProfClass();alert(`${names.length} élève(s) lu(s).`)}catch(err){alert('Lecture Excel indisponible. Vérifie que l’application a été ouverte au moins une fois avec Internet, ou utilise un CSV.')}e.target.value=''});
 
-function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=2)])}}
+function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=6)])}}
 function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
 function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject(),520);qrIndex=0;qrReturn=(!document.getElementById('profClass').classList.contains('hidden')?'profClass':'prof');qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
 function resultRecords(){
@@ -1032,7 +1032,7 @@ function studentNationAt(i){const x=studentEntries()[i];return Array.isArray(x)?
 function setStudentNation(i,nation){if(!Array.isArray(sc()[1][i]))sc()[1][i]=[sc()[1][i],null];sc()[1][i][1]=nation;write(INST,installed)}
 function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){
  lessonClass.textContent=sc()[0];
- let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L4','Mass-start',0,''],['L5','Relais des nations',0,''],['L6','Qualification aux JO',0,''],['L7','Jeux Olympiques',0,'']];
+ let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L4','Mass-start',1,'openLesson23(4)'],['L5','Relais des nations',1,'openLesson23(5)'],['L6','Qualification aux JO',1,'openLesson23(6)'],['L7','Jeux Olympiques',0,'']];
  lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?`onclick="${x[3]}"`:'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
  show('lessons')
 }
@@ -1259,9 +1259,14 @@ function leaveRace(){
 }
 
 function l23Cfg(){
- return currentLesson===2?
- {title:'Leçon 2',sub:'Sprint individuel',theme:'Rapidité',s1:'La chasse aux temps morts',main:'Le Sprint individuel'}:
- {title:'Leçon 3',sub:'Poursuite',theme:'Respiration',s1:'Le sas de décompression',main:'La Poursuite'};
+ const cfg={
+  2:{title:'Leçon 2',sub:'Sprint individuel',theme:'Rapidité',s1:'La chasse aux temps morts',main:'Le Sprint individuel'},
+  3:{title:'Leçon 3',sub:'Poursuite',theme:'Respiration',s1:'Le sas de décompression',main:'La Poursuite'},
+  4:{title:'Leçon 4',sub:'Mass-start',theme:'Précision',s1:'Précis dans la zone rouge',main:'La Mass-start'},
+  5:{title:'Leçon 5',sub:'Relais des nations',theme:'Rapidité',s1:"L’escalier de vitesse",main:'Le Relais des nations'},
+  6:{title:'Leçon 6',sub:'Qualification aux JO',theme:'Respiration',s1:"L’escalier de vitesse",main:'La Qualification aux JO'}
+ };
+ return cfg[currentLesson]||cfg[2];
 }
 function l23Key(name){return `${sc()[0]}|${name}|L${currentLesson}`}
 function l23Record(name){return read(RES,[]).find(r=>r.key===l23Key(name))||null}
@@ -1284,7 +1289,7 @@ function validateL23Pair(){
 }
 function renderL23Pair(){
  l23Work.classList.remove('hidden');
- l23S1Buttons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?(currentLesson===2?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
+ l23S1Buttons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
  l23MainButtons.innerHTML=l23pair.map(p=>{let r=l23Record(p.name);return `<button class="role profrole" onclick="startL23Race(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${r&&r.time!=null?'✅ '+fmt(r.time):'Commencer'}</div></button>`}).join('')
 }
 let chxp1=null,chxp2=null,chLed=0,chBreath=[0,0,0,0,0];
@@ -1298,6 +1303,21 @@ const L23_CRITERIA={
   ['slow','RALENTISSEMENT','Préparer l’arrivée au tir','Ralentis avant le pas de tir et pose tes pieds avant de prendre le pistolet.'],
   ['breathe','RESPIRATION','Deux respirations lentes','Inspire puis souffle lentement deux fois avant de viser.'],
   ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de l’expiration.']
+ ],
+ 4:[
+  ['feet','APPUIS','Position stable','Place un pied devant l’autre et garde tes appuis immobiles.'],
+  ['arms','BRAS','Pistolet stable','Tiens le pistolet à deux mains avec le bras légèrement fléchi.'],
+  ['reset','REPLACEMENT','Retrouver la même position','Ramène le pistolet à la ceinture puis replace tes bras de la même manière.']
+ ],
+ 5:[
+  ['reload','RECHARGEMENT','Retour rapide à la ceinture','Ramène immédiatement le pistolet à la ceinture après le tir.'],
+  ['raise','REMONTÉE','Retrouver vite la cible','Garde le regard devant toi et remonte le pistolet par le même chemin.'],
+  ['control','CONTRÔLE','Tirer sans se précipiter','Stabilise brièvement le pistolet avant d’appuyer sur la détente.']
+ ],
+ 6:[
+  ['slow','RALENTISSEMENT','Préparer l’arrivée au tir','Ralentis avant le pas de tir et pose tes pieds avant de prendre le pistolet.'],
+  ['breathe','RESPIRATION','Deux respirations lentes','Inspire puis souffle lentement deux fois avant de viser.'],
+  ['expire','EXPIRATION','Tirer en fin d’expiration','Souffle après le rechargement et déclenche ton tir à la fin de l’expiration.']
  ]
 };
 function startL23Challenge(i){
@@ -1305,8 +1325,8 @@ function startL23Challenge(i){
  const c=l23Cfg(),r=l23Record(l23active.name);
  chTitle.textContent=c.s1;chName.textContent=`${l23active.name} · ${studentNationAt(i)||'Nation non attribuée'}`;chTheme.textContent=c.theme;
  chXP1Card.classList.remove('hidden');chXP2Card.classList.add('hidden');chStarCard.classList.add('hidden');
- chXP1Notice.innerHTML=currentLesson===2?'Le coach observe où le tireur <b>perd du temps</b>. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.':'Le coach observe la <b>routine respiratoire</b>. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.';
- chXP2Notice.innerHTML=currentLesson===2?'Observe à nouveau ton partenaire. Choisis le critère qui lui permettra d’enchaîner plus rapidement avant le Défi Étoile.':'Observe à nouveau ton partenaire. Choisis l’étape respiratoire à améliorer avant le Défi Étoile.';
+ chXP1Notice.innerHTML=(currentLesson===2||currentLesson===5)?'Le coach observe où le tireur <b>perd du temps</b>. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.':currentLesson===4?'Le coach observe la <b>stabilité</b> après l’effort. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.':'Le coach observe la <b>routine respiratoire</b>. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé.';
+ chXP2Notice.innerHTML=(currentLesson===2||currentLesson===5)?'Observe à nouveau ton partenaire. Choisis le critère qui lui permettra d’enchaîner plus rapidement avant le Défi Étoile.':currentLesson===4?'Observe à nouveau ton partenaire. Choisis le critère qui lui permettra de retrouver une position stable avant le Défi Étoile.':'Observe à nouveau ton partenaire. Choisis l’étape respiratoire à améliorer avant le Défi Étoile.';
  renderChXP('xp1');show('l23challenge')
 }
 function chCriteriaHTML(prefix){
@@ -1323,9 +1343,14 @@ function chGoXP2(){if(!chxp1)return alert('Choisis un critère à conseiller ava
 function chGoStar(){
  if(!chxp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');
  chXP2Card.classList.add('hidden');chStarCard.classList.remove('hidden');
- chSpeedStar.classList.toggle('hidden',currentLesson!==2);chBreathStar.classList.toggle('hidden',currentLesson!==3);
- if(currentLesson===2){chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur dispose de <b>5 rechargements maximum</b> pour atteindre la LED la plus élevée en <b>50 secondes</b>.';renderLedButtons()}
- else{chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur réalise sa routine respiratoire puis dispose de <b>5 rechargements maximum</b>. Vert = cible touchée, rouge = cible non touchée.';renderBreathTargets()}
+ chSpeedStar.classList.toggle('hidden',!(currentLesson===2||currentLesson===5));chBreathStar.classList.toggle('hidden',!(currentLesson===3||currentLesson===4||currentLesson===6));
+ if(currentLesson===2||currentLesson===5){chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur dispose de <b>5 rechargements maximum</b> pour atteindre la LED la plus élevée en <b>50 secondes</b>.';renderLedButtons()}
+ else{
+  chStarNotice.innerHTML=currentLesson===4
+   ?'Le coach <b>ne donne plus de conseil</b>. Après les 40 m et l’accélération finale, le tireur dispose de <b>5 rechargements maximum</b>. Vert = cible touchée, rouge = cible non touchée.'
+   :'Le coach <b>ne donne plus de conseil</b>. Le tireur réalise sa routine respiratoire puis dispose de <b>5 rechargements maximum</b>. Vert = cible touchée, rouge = cible non touchée.';
+  renderBreathTargets()
+ }
 }
 function speedStarsForLed(led){
  // Barème visuel automatique, modifiable ensuite si nécessaire.
@@ -1339,12 +1364,12 @@ function setLed(n){chLed=n;renderLedButtons()}
 function renderBreathTargets(){
  chBreathTargets.innerHTML=chBreath.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycleBreath(${i})"></button>`).join('');
  const hits=chBreath.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;
- chBreathScore.textContent=`${hits} / 5`;chBreathStars.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chBreathText.textContent=`${stars} étoile(s) de respiration.`
+ chBreathScore.textContent=`${hits} / 5`;chBreathStars.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chBreathText.textContent=`${stars} étoile(s) de ${currentLesson===4?'précision':'respiration'}.`
 }
 function cycleBreath(i){chBreath[i]=(chBreath[i]+1)%3;renderBreathTargets()}
 function saveL23Challenge(){
  let r=l23Ensure(l23active.name);r.date=day();r.nation=studentNationAt(l23active.i)||null;
- if(currentLesson===2){
+ if(currentLesson===2||currentLesson===5){
   if(!chLed)return alert('Sélectionne la LED maximale atteinte.');
   r.challenge=chLed;r.stars=speedStarsForLed(chLed)
  }else{
@@ -1384,6 +1409,15 @@ function startL23Race(i){
  const cfg=l23Cfg();
  document.getElementById('r23Title').textContent=cfg.main;
  document.getElementById('r23Name').textContent=`${l23active.name} · ${nation}`;
+ const mainNotice=document.querySelector('#l23race .notice');
+ if(mainNotice){
+   const notes={
+    4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 2 · 5 rechargements à chaque passage.',
+    5:'Relais des nations · 4 boucles de 150 m par biathlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
+    6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.'
+   };
+   if(notes[currentLesson])mainNotice.textContent=notes[currentLesson];
+ }
 
  const pursuitBox=document.getElementById('r23PursuitInfo');
  if(currentLesson===3){
@@ -1430,17 +1464,22 @@ function r23Stats(){
  if(!l23race)return;
  document.getElementById('r23Lap').textContent=`${l23race.lap} / 4`;
  document.getElementById('r23Shoot').textContent=`${l23race.shoot} / 3`;
- document.getElementById('r23Shots').textContent=`${l23race.shots} / 5`;
+ document.getElementById('r23Shots').textContent=(currentLesson===5||currentLesson===6)?`${l23race.hits} touches · ${l23race.shots} tirs`:`${l23race.shots} / 5`;
 }
 
 function renderR23Dots(){
  const box=document.getElementById('r23Dots');
  if(!box)return;
  const arr=l23race?.currentShots||[];
- box.innerHTML=Array.from({length:5},(_,i)=>{
-   if(i>=arr.length)return '<div class="dot"></div>';
-   return `<div class="dot ${arr[i]?'on':'missdot'}"></div>`;
- }).join('');
+ if(currentLesson===5||currentLesson===6){
+   const hits=arr.filter(Boolean).length;
+   box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${i<hits?'on':''}"></div>`).join('');
+ }else{
+   box.innerHTML=Array.from({length:5},(_,i)=>{
+    if(i>=arr.length)return '<div class="dot"></div>';
+    return `<div class="dot ${arr[i]?'on':'missdot'}"></div>`;
+   }).join('');
+ }
 }
 
 function renderR23History(){
@@ -1507,7 +1546,10 @@ function r23Action(){
 }
 
 function r23Shot(hit){
- if(!l23race || l23race.state!=='shoot' || l23race.shots>=5)return;
+ if(!l23race || l23race.state!=='shoot')return;
+ const mustHitFive=(currentLesson===5||currentLesson===6);
+ if(!mustHitFive && l23race.shots>=5)return;
+ if(mustHitFive && l23race.hits>=5)return;
 
  const isHit=Boolean(hit);
  l23race.currentShots.push(isHit);
@@ -1517,7 +1559,7 @@ function r23Shot(hit){
  r23Stats();
  renderR23Dots();
 
- if(l23race.shots===5){
+ if((currentLesson===5||currentLesson===6 ? l23race.hits===5 : l23race.shots===5)){
    const duration=Math.round(performance.now()-l23race.shootStart);
    l23race.series.push({
      shots:[...l23race.currentShots],
