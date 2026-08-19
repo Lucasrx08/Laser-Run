@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V34</title>
+<title>Laser Run 6ème · V35</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -1231,7 +1231,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V34 — vues plein écran gymnase + roue + ergonomie tactile
+   V35 — vues plein écran gymnase + roue + ergonomie tactile
    ========================================================= */
 html.raceFullscreenRoot,html.raceFullscreenRoot body{height:100%!important;overflow:hidden!important}
 body.raceFullscreen .raceScreen.raceFullscreenActive{overflow:hidden!important;padding:10px 14px 12px!important}
@@ -1260,7 +1260,7 @@ body.raceFullscreen #pursuitStarts{max-height:calc(100vh - 120px)!important;over
 body.raceFullscreen .pursuitRow{padding:7px 8px!important;margin-bottom:5px!important}
 @media(max-width:1050px){body.raceFullscreen .racePadGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}body.raceFullscreen .tileMain{height:86px!important;min-height:86px!important}}
 
-/* Roue V34 : tout tient dans un écran, sans aller chercher le bouton en bas. */
+/* Roue V35 : tout tient dans un écran, sans aller chercher le bouton en bas. */
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:hidden!important;padding:8px 12px 10px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{position:relative!important;height:58px!important;min-height:58px!important;padding:0!important;margin:0 0 4px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead .section{font-size:24px!important}
@@ -1273,6 +1273,186 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen #nationUndoB
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{width:300px!important;max-width:300px!important;height:100%!important;overflow:hidden!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthleteList{max-height:none!important;height:calc(100% - 38px)!important;overflow:auto!important}
 @media(max-width:900px){body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:auto!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{height:auto!important;grid-template-columns:1fr!important;overflow:visible!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelSide{height:auto!important;grid-template-rows:auto auto auto auto!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{width:min(88vw,560px)!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{width:100%!important;max-width:none!important;height:auto!important}}
+
+
+/* =========================================================
+   V35 — Restauration complète Mass-start / Relais / Poursuite
+   ========================================================= */
+
+/* MASS-START PLEIN ÉCRAN :
+   2 groupes visibles simultanément, chacun 3 colonnes x 5 lignes */
+body.raceFullscreen #pcPanelMass.raceFullscreenActive{
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelMass #massPad{
+  height:calc(100vh - 76px)!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelMass .racePadBlock{
+  margin:0!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-rows:48px minmax(0,1fr)!important;
+  gap:7px!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelMass .raceTop{
+  min-height:48px!important;
+  height:48px!important;
+  padding:8px 10px!important;
+  font-size:14px!important;
+  border-radius:13px!important;
+}
+body.raceFullscreen #pcPanelMass .racePadGrid{
+  height:100%!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(5,minmax(0,1fr))!important;
+  gap:6px!important;
+  overflow:hidden!important;
+  margin:0!important;
+}
+body.raceFullscreen #pcPanelMass .raceTile{
+  min-height:0!important;
+  height:100%!important;
+  border-radius:12px!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) 32px!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain{
+  min-height:0!important;
+  height:100%!important;
+  padding:6px 8px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain b{
+  font-size:12.5px!important;
+  line-height:1.05!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:2!important;
+  -webkit-box-orient:vertical!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain small{
+  font-size:10px!important;
+  margin:2px 0!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain strong{
+  font-size:11.5px!important;
+  margin-top:2px!important;
+  white-space:nowrap!important;
+}
+body.raceFullscreen #pcPanelMass .tileShots{
+  min-height:32px!important;
+  height:32px!important;
+  padding:4px 6px!important;
+  font-size:9.5px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* RELAIS PLEIN ÉCRAN : 15 nations en 5 x 3 sans scroll */
+body.raceFullscreen #pcPanelRelay.raceFullscreenActive{
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelRelay #relayPad{
+  height:calc(100vh - 76px)!important;
+  display:grid!important;
+  grid-template-rows:48px minmax(0,1fr)!important;
+  gap:7px!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelRelay .raceTop{
+  min-height:48px!important;height:48px!important;font-size:14px!important;padding:8px 10px!important
+}
+body.raceFullscreen #pcPanelRelay .racePadGrid{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  margin:0!important;
+}
+body.raceFullscreen #pcPanelRelay .raceTile{
+  min-height:0!important;height:100%!important;
+  display:grid!important;grid-template-rows:minmax(0,1fr) 38px!important;
+  border-radius:13px!important
+}
+body.raceFullscreen #pcPanelRelay .tileMain{
+  min-height:0!important;height:100%!important;padding:8px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important
+}
+body.raceFullscreen #pcPanelRelay .tileMain b{font-size:14px!important}
+body.raceFullscreen #pcPanelRelay .tileMain small{font-size:10px!important;margin:2px 0!important}
+body.raceFullscreen #pcPanelRelay .tileMain strong{font-size:12px!important;margin-top:3px!important}
+body.raceFullscreen #pcPanelRelay .tileShots{
+  min-height:38px!important;height:38px!important;padding:5px 7px!important;
+  font-size:10px!important;line-height:1.1!important;text-align:center!important
+}
+
+/* POURSUITE : tout le poste de départ tient dans l'écran */
+body.raceFullscreen #pcPanelPursuit.raceFullscreenActive{
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelPursuit .pursuitGrid{
+  height:calc(100vh - 76px)!important;
+  grid-template-columns:minmax(0,3fr) 310px!important;
+  gap:8px!important
+}
+body.raceFullscreen #pcPanelPursuit .card{
+  height:100%!important;min-height:0!important;padding:10px 12px!important;overflow:hidden!important
+}
+body.raceFullscreen #pcPanelPursuit .section{font-size:18px!important;margin:2px 0 5px!important}
+body.raceFullscreen #pcPanelPursuit .subTabs{margin:0 0 4px!important}
+body.raceFullscreen #pcPanelPursuit .subTab{padding:7px 10px!important;font-size:11px!important;min-height:34px!important}
+body.raceFullscreen #pcPanelPursuit .pursuitTimer{
+  font-size:clamp(72px,12vw,145px)!important;
+  margin:0 auto 4px!important;line-height:.88!important
+}
+body.raceFullscreen #pcPanelPursuit .pursuitNext{
+  padding:8px!important;margin:0 auto 5px!important;border-radius:13px!important
+}
+body.raceFullscreen #pcPanelPursuit .pursuitNext .muted{font-size:10px!important}
+body.raceFullscreen #pcPanelPursuit .pursuitNextNation{
+  font-size:clamp(27px,4vw,48px)!important;margin-top:2px!important
+}
+body.raceFullscreen #pcPanelPursuit .pursuitCountdown{
+  font-size:clamp(25px,3.5vw,43px)!important;margin-top:2px!important;color:#0d252b!important
+}
+body.raceFullscreen #pcPanelPursuit .toolbar{
+  margin:4px 0!important;gap:5px!important
+}
+body.raceFullscreen #pcPanelPursuit .toolbar .btn{
+  min-height:38px!important;padding:6px 9px!important;font-size:10.5px!important
+}
+body.raceFullscreen #pursuitStarts{
+  max-height:calc(100vh - 112px)!important;
+  overflow:auto!important
+}
+body.raceFullscreen .pursuitRow{
+  padding:5px 6px!important;margin-bottom:4px!important;
+  grid-template-columns:34px minmax(0,1fr) 65px!important;gap:5px!important
+}
+body.raceFullscreen .pursuitRow .big{font-size:13px!important}
+body.raceFullscreen .pursuitRow .muted{font-size:9.5px!important}
+body.raceFullscreen .pursuitRow>div:last-child{font-size:11px!important}
+
+/* Retour visuel clair des données saisies */
+.tileShots[data-complete="1"]{background:#dff2e5!important;color:#145a2c!important}
 
 </style>
 </head>
@@ -1630,6 +1810,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 const DB='lr8_prof', INST='lr8_classes', RES='lr8_results', PIN='lr8_pin';
 let db=read(DB,{classes:[]}), installed=read(INST,{version:0,classes:[]}), currentProf=null,currentClass=null,pair=[],active=null,s1=[0,0,0,0,0],race=null,tick=null,teacher=false,pinMode='unlock',selectedNation=null,xp1=null,xp2=null,pendingTeacherAction='prof',currentLesson=1,l23pair=[],l23active=null,l23race=null,l23tick=null;
 let qrPages=[],qrIndex=0,qrReturn='prof',scanMode='results',stream=null,scanLoop=null,scanBuffer={},pursuitMode=1,pmRunning=false,pmStartPerf=0,pmElapsed=0,pmTick=null,pmLastSignal=-1,currentPcTab='overview',currentRankingTab='precision',pursuitSpeechEnabled=true,pursuitLastSpoken='';
+let pursuitPrestart=false,pursuitPreTimers=[];
 const NATIONS=['France','Norvège','Suède','Allemagne','Italie','Suisse','Finlande','Autriche','Tchéquie','Slovénie','Pologne','Estonie','Lettonie','Lituanie','Ukraine'];
 const CHALLENGE_LESSONS={
  precision:[1,4],
@@ -1962,7 +2143,13 @@ function saveShotProfile(c,name,lesson,hits,time=null){
  }
  r._updatedAt=Date.now();
  write(DB,db);
- // Pas de renderProfClass() ici : cela détruisait les modales et le Mode Course.
+
+ // Met à jour uniquement les profils, sans reconstruire tout le dashboard :
+ // les pourcentages de réussite L4/L5 changent immédiatement.
+ const resultsPanel=document.getElementById('pcPanelResults');
+ if(resultsPanel && !resultsPanel.classList.contains('hidden')){
+   renderStudentProfiles(c);
+ }
 }
 function openHitPad(name,lesson,returnNation=null){
  const c=pc(),old=latestLessonResult(c,name,lesson);
@@ -1996,9 +2183,12 @@ function saveHitPad(hits){
  hitPadContext=null;
  if(lesson===4){
    const btn=document.getElementById(`mass-shots-${safeId(name)}`);
-   if(btn)btn.textContent=shootingSummary(c,name,4);
+   if(btn){btn.textContent=shootingSummary(c,name,4);btn.dataset.complete='1'}
  }else{
-   if(returnNation)relayNationEditor(returnNation);
+   if(returnNation){
+     updateRelayShootingTile(returnNation);
+     relayNationEditor(returnNation);
+   }
  }
 }
 function startTicker(which){
@@ -2071,7 +2261,7 @@ function updateMassTimers(){
 function renderMassPad(){
  const box=document.getElementById('massPad');if(!box)return;
  const c=pc(),slots=athleteSlots(c);
- box.innerHTML=[1,2].map(slot=>`<div class="racePadBlock">
+ box.innerHTML=[1,2].map(slot=>`<div class="racePadBlock massGroup massGroup${slot}">
    <button class="btn orange raceTop" onclick="massTop(${slot})">▶ TOP DÉPART ATHLÈTES ${slot}</button>
    <div class="racePadGrid">${slots[slot-1].map(([n,nation])=>`
      <div id="mass-tile-${safeId(n)}" class="raceTile ${massTimes[n]!=null?'finished':''}">
@@ -2080,7 +2270,7 @@ function renderMassPad(){
          <small>${esc(nation)}</small>
          <strong id="mass-status-${safeId(n)}">${massStatus(n,slot)}</strong>
        </button>
-       <button id="mass-shots-${safeId(n)}" class="tileShots" onclick='openHitPad(${JSON.stringify(n)},4)'>${shootingSummary(c,n,4)}</button>
+       <button id="mass-shots-${safeId(n)}" class="tileShots" data-complete="${latestLessonResult(c,n,4)?.hits!=null?'1':'0'}" onclick='openHitPad(${JSON.stringify(n)},4)'>${shootingSummary(c,n,4)}</button>
      </div>`).join('')||'<div class="muted">Aucun athlète</div>'}
    </div>
  </div>`).join('');
@@ -2118,6 +2308,23 @@ function updateRelayTimers(){
    if(el)el.textContent=`EN COURSE · ${fmt(Date.now()-relayStart)}`;
  });
 }
+
+function relayShootingSummary(c,nation){
+ const names=c.students.filter(x=>(c.nations||{})[x]===nation);
+ if(!names.length)return '🎯 Aucun athlète';
+ const rows=names.map(name=>latestLessonResult(c,name,5));
+ const completed=rows.filter(r=>r&&r.hits!=null);
+ if(!completed.length)return '🎯 Compléter les tirs';
+ const hits=completed.reduce((s,r)=>s+Number(r.hits||0),0);
+ const total=completed.length*15;
+ if(completed.length===names.length)return `🎯 Saisi · ${hits}/${total} touchées`;
+ return `🎯 ${completed.length}/${names.length} athlètes saisis`;
+}
+function updateRelayShootingTile(nation){
+ const btn=document.getElementById(`relay-shots-${safeId(nation)}`);
+ if(btn){const text=relayShootingSummary(pc(),nation);btn.textContent=text;btn.dataset.complete=text.startsWith('🎯 Saisi')?'1':'0'}
+}
+
 function relayNationEditor(nation){
  const c=pc();
  const names=c.students.filter(x=>(c.nations||{})[x]===nation).sort((a,b)=>a.localeCompare(b,'fr'));
@@ -2147,7 +2354,7 @@ function renderRelayPad(){
        <small>${c.students.filter(x=>(c.nations||{})[x]===n).length} athlète(s)</small>
        <strong id="relay-status-${safeId(n)}">${relayStatus(n)}</strong>
      </button>
-     <button class="tileShots" onclick='relayNationEditor(${JSON.stringify(n)})'>🎯 Compléter les tirs</button>
+     <button id="relay-shots-${safeId(n)}" class="tileShots" data-complete="${relayShootingSummary(c,n).startsWith('🎯 Saisi')?'1':'0'}" onclick='relayNationEditor(${JSON.stringify(n)})'>${relayShootingSummary(c,n)}</button>
    </div>`).join('')}</div>`;
  updateRelayTimers();
 }
@@ -2203,7 +2410,7 @@ function renderStudentProfiles(c){
   const pct=attempts?Math.round(hits/attempts*100):null,avgShoot=timed?totalShootMs/timed:null;
   const known=[precision,rapidity,respiration].filter(v=>v!=null),overall=known.length?known.reduce((a,b)=>a+b,0)/known.length:null,level=levelForStars(overall);
   const l2=m.get(2),sprint=l2&&l2.time!=null?fmt(l2.time):'—';
-  return `<div class="profileCard"><div class="profileHead"><div><div class="profileName">${esc(name)}</div><div class="profileNation">${PURSUIT_FLAGS[nation]||'🏳️'} ${esc(nation)}</div></div><div class="profileBadge"><small>PROFIL</small>${level?'NIVEAU '+level:'À compléter'}</div></div>
+  return `<div class="profileCard"><div class="profileHead"><div><div class="profileName">${esc(name)}</div><div class="profileNation">${nationFlag(nation)} ${esc(nation)}</div></div><div class="profileBadge"><small>PROFIL</small>${level?'NIVEAU '+level:'À compléter'}</div></div>
    <div class="profileSectionTitle">Défis Étoile</div>${skillGauge('Précision',precision)}${skillGauge('Rapidité',rapidity)}${skillGauge('Respiration',respiration)}
    <div class="profileSectionTitle">Épreuve principale</div><div class="profileStats"><div class="profileStat"><small>Réussite tir</small><b>${pct==null?'—':pct+' %'}</b></div><div class="profileStat"><small>Temps moyen tir</small><b>${avgShoot==null?'—':fmt(avgShoot)}</b></div><div class="profileStat"><small>Sprint L2</small><b>${sprint}</b></div></div>
    <div class="profileFoot"><div class="profileLevel">${pct==null?'Tirs à compléter':'Efficacité tir · Niveau '+levelForPercent(pct)}</div><div class="profileCrystal">💎 ${studentCrystalContribution(c,name)}</div></div></div>`;
@@ -2315,7 +2522,7 @@ function drawNationWheel(angle=nationWheelAngle){
    ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.stroke();
    const labelR=r*.72,tx=cx+Math.cos(mid)*labelR,ty=cy+Math.sin(mid)*labelR;
    ctx.save();ctx.translate(tx,ty);
-   // V34 : tous les pays sont écrits horizontalement, dans le même sens.
+   // V35 : tous les pays sont écrits horizontalement, dans le même sens.
    let fs=nations.length>=13?22:25;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#0d252b';
    ctx.font=`900 ${fs}px system-ui`;const maxW=r*.34;while(fs>15&&ctx.measureText(nation).width>maxW){fs--;ctx.font=`900 ${fs}px system-ui`}
    ctx.font=`${fs+5}px system-ui`;ctx.fillText(NATION_FLAGS[nation]||'🏳️',0,-15);
@@ -2705,7 +2912,7 @@ function updatePairNation(){
  const missing=selected.filter(x=>!x.nation);
  if(autoBox){
    if(selected.length){
-     autoBox.innerHTML=selected.map(x=>`<b>${esc(x.name)}</b> : ${x.nation?`${PURSUIT_FLAGS[x.nation]||'🏳️'} ${esc(x.nation)}`:'nation non attribuée'}`).join('<br>');
+     autoBox.innerHTML=selected.map(x=>`<b>${esc(x.name)}</b> : ${x.nation?`${nationFlag(x.nation)} ${esc(x.nation)}`:'nation non attribuée'}`).join('<br>');
      autoBox.classList.remove('hidden');
    }else autoBox.classList.add('hidden');
  }
@@ -3370,7 +3577,16 @@ function leaveL23Race(){
 }
 
 
-const PURSUIT_FLAGS={France:'🇫🇷','Norvège':'🇳🇴','Suède':'🇸🇪','Allemagne':'🇩🇪',Italie:'🇮🇹',Espagne:'🇪🇸',Suisse:'🇨🇭',Finlande:'🇫🇮'};
+const PURSUIT_FLAGS={
+ France:'🇫🇷','Norvège':'🇳🇴','Suède':'🇸🇪','Allemagne':'🇩🇪',Italie:'🇮🇹',Suisse:'🇨🇭',
+ Finlande:'🇫🇮',Autriche:'🇦🇹','Tchéquie':'🇨🇿','Slovénie':'🇸🇮',Pologne:'🇵🇱',
+ Estonie:'🇪🇪',Lettonie:'🇱🇻',Lituanie:'🇱🇹',Ukraine:'🇺🇦'
+};
+
+
+function nationFlag(nation){
+ return PURSUIT_FLAGS[String(nation||'').trim()]||'🏳️';
+}
 
 function pursuitL2Results(){
  const c=pc();
@@ -3433,7 +3649,7 @@ function renderPursuitStarts(){
    return;
  }
  box.innerHTML=starts.map((x,i)=>`<div id="pursuitRow${i}" class="pursuitRow">
-  <div style="font-size:28px;text-align:center">${PURSUIT_FLAGS[x.nation]||'🏳️'}</div>
+  <div style="font-size:28px;text-align:center">${nationFlag(x.nation)}</div>
   <div><div class="big">${esc(x.nation)}</div><div class="muted">${esc(x.name)} · Sprint ${fmt(x.time)}</div></div>
   <div style="text-align:right"><b>${x.gap===0?'0 s':'+'+(x.gap/1000).toFixed(1)+' s'}</b></div>
  </div>`).join('');
@@ -3503,7 +3719,7 @@ function updatePursuitClock(){
 
  const x=starts[idx],remain=x.gap-now;
 
- document.getElementById('pursuitNextNation').textContent=`${PURSUIT_FLAGS[x.nation]||''} ${x.nation}`;
+ document.getElementById('pursuitNextNation').textContent=`${nationFlag(x.nation)} ${x.nation}`;
  document.getElementById('pursuitCountdown').textContent=
    remain<=0?'PARTEZ !':
    remain<10000?(remain/1000).toFixed(1)+' s':
@@ -3511,47 +3727,87 @@ function updatePursuitClock(){
 
  if(!pmRunning)return;
 
- // Préparation à 8 s
- if(remain<=8000 && remain>7000){
-   pursuitSpeakOnce(`prep-${idx}`,`${x.nation} se prépare`);
+ // Système professionnel : la voix prépare, les bips donnent le départ exact.
+ // SpeechSynthesis n'est jamais utilisé comme référence temporelle.
+ if(remain<=7000 && remain>6200){
+   pursuitSpeakOnce(`prep-${idx}`,`${x.nation}, préparez-vous`,1.05);
+ }
+ if(remain<=3500 && remain>3300){
+   pursuitSpeakOnce(`ready-${idx}`,`${x.nation}, départ imminent`,1.08);
  }
 
- // Nom + "dans 3" lancé légèrement AVANT 3 s pour absorber la latence de speechSynthesis
- if(remain<=3400 && remain>3000){
-   pursuitSpeakOnce(`name3-${idx}`,`${x.nation} dans 3`,1.12);
+ // Trois bips courts à 3, 2 et 1 seconde ; un bip long exactement au départ.
+ const second=Math.ceil(remain/1000);
+ if(second<=3 && second>=1 && remain>0){
+   const key=`beep-${idx}-${second}`;
+   if(pursuitLastSpoken!==key){
+     pursuitLastSpoken=key;
+     pursuitBeep(.11, second===1?820:700);
+   }
  }
-
- // Les chiffres sont très courts : fenêtre étroite pour rester collés au chrono
- if(remain<=2200 && remain>1800){
-   pursuitSpeakOnce(`two-${idx}`,'2',1.18);
-   pursuitBeep(.08,650);
- }
- if(remain<=1200 && remain>800){
-   pursuitSpeakOnce(`one-${idx}`,'1',1.18);
-   pursuitBeep(.08,650);
- }
-
- // "Top" juste avant zéro pour compenser le démarrage audio
- if(remain<=180 && remain>-180){
-   pursuitSpeakOnce(`go-${idx}`,'Partez !',1.08);
-   pursuitBeep(.45,900);
-   if(navigator.vibrate)navigator.vibrate([140,60,140]);
+ if(remain<=60 && remain>-160){
+   const key=`go-${idx}`;
+   if(pursuitLastSpoken!==key){
+     pursuitLastSpoken=key;
+     pursuitBeep(.55,980);
+     if(navigator.vibrate)navigator.vibrate([180,70,180]);
+   }
  }
 }
-function startPursuitClock(){
- const starts=pursuitStartsForMode();
- if(!starts.length)return alert('Aucun départ disponible. Il faut d’abord récupérer les résultats du Sprint L2.');
- if(pmRunning)return;
- pmRunning=true;pmStartPerf=Date.now();pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
- document.getElementById('pursuitStartBtn').textContent='EN COURS';
+function clearPursuitPrestart(){
+ pursuitPreTimers.forEach(t=>clearTimeout(t));
+ pursuitPreTimers=[];
+ pursuitPrestart=false;
+}
+function launchPursuitClockNow(){
+ pmRunning=true;
+ pmStartPerf=Date.now();
+ pmLastSignal=-1;
+ pursuitLastSpoken='';
+ const b=document.getElementById('pursuitStartBtn');
+ if(b){b.textContent='EN COURS';b.disabled=false}
  saveRaceState();
- // La nation la plus lente du Sprint part à 0 ; les meilleures partent ensuite selon leur avance au Sprint.
- if(pmElapsed===0){pursuitBeep(.55,900);if(navigator.vibrate)navigator.vibrate([160,70,160])}
  clearInterval(pmTick);
  pmTick=setInterval(updatePursuitClock,50);
  updatePursuitClock();
 }
+function startPursuitClock(){
+ const starts=pursuitStartsForMode();
+ if(!starts.length)return alert('Aucun départ disponible. Il faut d’abord récupérer les résultats du Sprint L2.');
+ if(pmRunning||pursuitPrestart)return;
+
+ // Une reprise après pause repart immédiatement.
+ if(pmElapsed>0){
+   launchPursuitClockNow();
+   return;
+ }
+
+ // Le premier départ bénéficie lui aussi d'un vrai 3-2-1.
+ pursuitPrestart=true;
+ if('speechSynthesis' in window)window.speechSynthesis.cancel();
+ const first=starts[0];
+ const next=document.getElementById('pursuitNextNation');
+ const count=document.getElementById('pursuitCountdown');
+ const b=document.getElementById('pursuitStartBtn');
+ if(next)next.textContent=`${nationFlag(first.nation)} ${first.nation}`;
+ if(b){b.textContent='PRÉ-DÉPART';b.disabled=true}
+
+ pursuitSpeak(`${first.nation}, préparez-vous`,1.05);
+ if(count)count.textContent='PRÊT';
+
+ pursuitPreTimers.push(setTimeout(()=>{if(count)count.textContent='3';pursuitBeep(.11,700)},1100));
+ pursuitPreTimers.push(setTimeout(()=>{if(count)count.textContent='2';pursuitBeep(.11,700)},2100));
+ pursuitPreTimers.push(setTimeout(()=>{if(count)count.textContent='1';pursuitBeep(.11,820)},3100));
+ pursuitPreTimers.push(setTimeout(()=>{
+   if(count)count.textContent='PARTEZ !';
+   pursuitBeep(.55,980);
+   if(navigator.vibrate)navigator.vibrate([180,70,180]);
+   clearPursuitPrestart();
+   launchPursuitClockNow();
+ },4100));
+}
 function pausePursuitClock(){
+ clearPursuitPrestart();
  if(!pmRunning)return;
  pmElapsed+=Date.now()-pmStartPerf;
  pmRunning=false;pmStartPerf=0;
@@ -3561,6 +3817,7 @@ function pausePursuitClock(){
  updatePursuitClock();
 }
 function resetPursuitClock(){
+ clearPursuitPrestart();
  clearInterval(pmTick);pmTick=null;
  pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
  saveRaceState();

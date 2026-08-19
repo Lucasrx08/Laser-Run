@@ -1,4 +1,4 @@
-const CACHE='laser-run-v34-20260819';
+const CACHE='laser-run-v35-restauration-20260819';
 
 const CORE=[
   './',
