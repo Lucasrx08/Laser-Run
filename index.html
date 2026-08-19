@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V40.1.1</title>
+<title>Laser Run 6ème · V40.2.1.1</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -1231,7 +1231,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V40 — vues plein écran gymnase + roue + ergonomie tactile
+   V40.2 — vues plein écran gymnase + roue + ergonomie tactile
    ========================================================= */
 html.raceFullscreenRoot,html.raceFullscreenRoot body{height:100%!important;overflow:hidden!important}
 body.raceFullscreen .raceScreen.raceFullscreenActive{overflow:hidden!important;padding:10px 14px 12px!important}
@@ -1260,7 +1260,7 @@ body.raceFullscreen #pursuitStarts{max-height:calc(100vh - 120px)!important;over
 body.raceFullscreen .pursuitRow{padding:7px 8px!important;margin-bottom:5px!important}
 @media(max-width:1050px){body.raceFullscreen .racePadGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}body.raceFullscreen .tileMain{height:86px!important;min-height:86px!important}}
 
-/* Roue V40 : tout tient dans un écran, sans aller chercher le bouton en bas. */
+/* Roue V40.2 : tout tient dans un écran, sans aller chercher le bouton en bas. */
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:hidden!important;padding:8px 12px 10px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{position:relative!important;height:58px!important;min-height:58px!important;padding:0!important;margin:0 0 4px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead .section{font-size:24px!important}
@@ -1276,7 +1276,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V40 — Restauration complète Mass-start / Relais / Poursuite
+   V40.2 — Restauration complète Mass-start / Relais / Poursuite
    ========================================================= */
 
 /* MASS-START PLEIN ÉCRAN :
@@ -1458,7 +1458,7 @@ body.raceFullscreen .pursuitRow>div:last-child{font-size:11px!important}
 
 <style id="v36-critical">
 /* =========================================================
-   V40 — CONSOLIDATION PROFESSIONNELLE
+   V40.2 — CONSOLIDATION PROFESSIONNELLE
    Ces règles sont volontairement placées en dernier.
    ========================================================= */
 
@@ -1807,7 +1807,7 @@ body.raceFullscreen #pcPanelRelay .tileMain small{
 
 <style id="v37-critical">
 /* =========================================================
-   V40 — Attribution des nations / affichage consolidé
+   V40.2 — Attribution des nations / affichage consolidé
    ========================================================= */
 
 .nationDrawPanel{
@@ -1988,7 +1988,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
   image-rendering:auto!important;
 }
 
-/* Paddocks : conserver les améliorations V40 */
+/* Paddocks : conserver les améliorations V40.2 */
 body.raceFullscreen #pcPanelMass .tileMain b{
   font-size:13.5px!important;
 }
@@ -2930,7 +2930,7 @@ function saveShotProfile(c,name,lesson,hits,time=null){
  r._updatedAt=Date.now();
  write(DB,db);
 
- // V40 : mise à jour immédiate et centralisée.
+ // V40.2 : mise à jour immédiate et centralisée.
  // Le profil est déjà prêt lorsque le professeur touche « Profils ».
  syncProfessorResultViews(c);
 }
@@ -3308,7 +3308,7 @@ function renderStudentProfiles(c){
   const rapidity=avgChallengeFromMap(m,[2]);
   const respiration=avgChallengeFromMap(m,[3,6]);
 
-  // V40 : toutes les leçons L1→L7 alimentent le détail de tir.
+  // V40.2 : toutes les leçons L1→L7 alimentent le détail de tir.
   const shooting=profileGlobalShooting(c,name);
   const pct=shooting.pct;
 
@@ -3468,7 +3468,7 @@ function drawNationWheel(angle=nationWheelAngle){
    ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.stroke();
    const labelR=r*.72,tx=cx+Math.cos(mid)*labelR,ty=cy+Math.sin(mid)*labelR;
    ctx.save();ctx.translate(tx,ty);
-   // V40 : tous les pays sont écrits horizontalement, dans le même sens.
+   // V40.2 : tous les pays sont écrits horizontalement, dans le même sens.
    let fs=nations.length>=13?22:25;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#0d252b';
    ctx.font=`900 ${fs}px system-ui`;const maxW=r*.34;while(fs>15&&ctx.measureText(nation).width>maxW){fs--;ctx.font=`900 ${fs}px system-ui`}
    ctx.font=`${fs+5}px system-ui`;ctx.fillText(NATION_FLAGS[nation]||'🏳️',0,-15);
@@ -3722,7 +3722,7 @@ roster.addEventListener('change',async e=>{
 function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>Number(r.lesson||1)===2&&r.time!=null).map(r=>({name:r.name,nation:r.nation||((c.nations||{})[r.name])||null,lesson:2,time:r.time,date:r.date||''}))])}}
 function compactConfigPacket(){const o=configObject();return JSON.stringify({a:'LR40C',v:40,c:o.classes,h:o.history.map(x=>[x[0],x[1].map(r=>[r.name,r.nation,r.time,r.date])])})}
 function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
-function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;const one=compactConfigPacket();qrPages=[one];qrIndex=0;qrReturn=(!document.getElementById('profClass').classList.contains('hidden')?'profClass':'prof');qrTitle.textContent='Diffuser les classes';qrSub.textContent='Un seul QR à scanner sur chaque tablette';qrInfo.textContent=`Configuration compacte V40 : ${db.classes.length} classe(s) · 1 QR.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} athlètes</div></div></div>`).join('');renderQR();show('qr')}
+function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;const one=compactConfigPacket();qrPages=[one];qrIndex=0;qrReturn=(!document.getElementById('profClass').classList.contains('hidden')?'profClass':'prof');qrTitle.textContent='Diffuser les classes';qrSub.textContent='Un seul QR à scanner sur chaque tablette';qrInfo.textContent=`Configuration compacte V40.2 : ${db.classes.length} classe(s) · 1 QR.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} athlètes</div></div></div>`).join('');renderQR();show('qr')}
 function resultRecords(){
  return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))
 }
@@ -3831,10 +3831,253 @@ function buildJOWaves(c=pc()){
 }
 function splitAthleteName(full){const a=String(full||'').trim().split(/\s+/);if(a.length<2)return {last:a[0]||'',first:''};return {last:a[0],first:a.slice(1).join(' ')}}
 function printJOBibs(){
- const c=pc(),waves=buildJOWaves(c);if(!waves.length)return alert('Aucun résultat L6 disponible pour générer les dossards.');
- const cards=waves.map(x=>{const n=splitAthleteName(x.name);return `<article class="bib"><img src="bib-template.png"><div class="bibNation">${nationFlag(x.nation)} ${esc(x.nation)}</div><div class="bibName"><b>${esc(n.first)}</b><strong>${esc(n.last)}</strong></div><div class="bibClass">${esc(c.name)}</div><div class="bibWave">VAGUE ${x.wave}</div><div class="bibNum">${String(x.bib).padStart(2,'0')}</div></article>`}).join('');
- const win=window.open('','_blank');if(!win)return alert('Autorise les fenêtres surgissantes pour générer les dossards.');
- win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Dossards JO ${esc(c.name)}</title><style>@page{size:A4 portrait;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif}.bib{height:50vh;position:relative;overflow:hidden;page-break-inside:avoid}.bib:nth-child(even){page-break-after:always}.bib img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}.bibNation{position:absolute;left:12%;top:43%;font-size:20px;font-weight:900}.bibName{position:absolute;left:18%;bottom:6.5%;width:25%;text-align:center;font-size:18px}.bibName strong{display:block;text-transform:uppercase;font-size:21px}.bibClass{position:absolute;left:45%;bottom:8%;width:18%;text-align:center;font-size:20px;font-weight:900}.bibWave{position:absolute;left:66%;bottom:10%;font-size:13px;font-weight:900}.bibNum{position:absolute;right:9%;bottom:5%;font-size:48px;font-weight:1000;color:#083139}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>${cards}<script>window.onload=()=>setTimeout(()=>window.print(),400)<\/script></body></html>`);win.document.close();
+ const c=pc(),waves=buildJOWaves(c);
+ if(!waves.length)return alert('Aucun résultat L6 disponible pour générer les dossards.');
+
+ const bibs=waves.map(x=>{
+   const n=splitAthleteName(x.name);
+   return {
+     nation:x.nation,
+     flag:nationFlag(x.nation),
+     first:n.first,
+     last:n.last,
+     classe:c.name,
+     num:String(x.bib).padStart(2,'0'),
+     wave:x.wave
+   };
+ });
+
+ // RÈGLE STRICTE : 2 athlètes maximum par feuille A4.
+ // [0,1] = page 1 ; [2,3] = page 2 ; etc.
+ const pages=[];
+ for(let i=0;i<bibs.length;i+=2){
+   pages.push(bibs.slice(i,i+2));
+ }
+
+ const overlay=b=>`<div class="slotData">
+   <div class="season">2026-2027</div>
+   <div class="nationMain">${esc(b.nation)}</div>
+   <div class="flagMain">${b.flag}</div>
+   <div class="bibNum">${b.num}</div>
+
+   <div class="bottomName">
+     <span class="lab">NOM & PRÉNOM</span>
+     <b>${esc(b.last)} ${esc(b.first)}</b>
+   </div>
+
+   <div class="bottomClass">
+     <span class="lab">CLASSE</span>
+     <b>${esc(b.classe)}</b>
+   </div>
+
+   <div class="bottomNation">
+     <span class="lab">NATION</span>
+     <b>${esc(b.nation)}</b>
+   </div>
+ </div>`;
+
+ // Chaque page contient EXACTEMENT deux zones de dossard.
+ // Le modèle A4 n'est jamais dupliqué à l'intérieur d'une même page :
+ // chaque moitié utilise uniquement la moitié correspondante du modèle.
+ const pagesHtml=pages.map((pg,pageIndex)=>`
+   <section class="printPage">
+     <div class="bibSlot bibTop">
+       ${pg[0]?overlay(pg[0]):''}
+     </div>
+     <div class="bibSlot bibBottom">
+       ${pg[1]?overlay(pg[1]):''}
+     </div>
+   </section>
+ `).join('');
+
+ const win=window.open('','_blank');
+ if(!win)return alert('Autorise les fenêtres surgissantes pour générer les dossards.');
+
+ win.document.write(`<!doctype html>
+ <html>
+ <head>
+   <meta charset="utf-8">
+   <title>Dossards JO ${esc(c.name)} 2026-2027</title>
+   <style>
+     @page{
+       size:A4 portrait;
+       margin:0;
+     }
+
+     *{box-sizing:border-box}
+
+     html,body{
+       margin:0;
+       padding:0;
+       width:210mm;
+       background:#fff;
+       font-family:Arial,sans-serif;
+       -webkit-print-color-adjust:exact;
+       print-color-adjust:exact;
+     }
+
+     /* UNE feuille physique = UNE printPage */
+     .printPage{
+       position:relative;
+       width:210mm;
+       height:297mm;
+       margin:0;
+       padding:0;
+       overflow:hidden;
+       display:grid;
+       grid-template-rows:148.5mm 148.5mm;
+       break-after:page;
+       page-break-after:always;
+     }
+
+     .printPage + .printPage{
+       break-before:page;
+       page-break-before:always;
+     }
+
+     .printPage:last-child{
+       break-after:auto;
+       page-break-after:auto;
+     }
+
+     /* UN athlète = UNE moitié de page */
+     .bibSlot{
+       position:relative;
+       width:210mm;
+       height:148.5mm;
+       overflow:hidden;
+       background-image:url("bib-template.png");
+       background-repeat:no-repeat;
+       background-size:210mm 297mm;
+     }
+
+     /* On recadre le modèle A4 :
+        haut = premier dossard du modèle,
+        bas  = deuxième dossard du modèle. */
+     .bibTop{
+       background-position:0 0;
+     }
+
+     .bibBottom{
+       background-position:0 -148.5mm;
+     }
+
+     .slotData{
+       position:absolute;
+       inset:0;
+       color:#073438;
+       font-weight:900;
+     }
+
+     .season{
+       position:absolute;
+       left:45.5%;
+       top:20.3%;
+       width:25%;
+       text-align:center;
+       font-size:6mm;
+       color:#fff;
+       transform:rotate(-3deg);
+       text-shadow:0 .3mm .5mm rgba(0,0,0,.15);
+     }
+
+     .nationMain{
+       position:absolute;
+       left:11.5%;
+       top:47.8%;
+       width:25%;
+       text-align:center;
+       font-size:7mm;
+       color:#fff;
+       text-transform:uppercase;
+       line-height:1;
+     }
+
+     .flagMain{
+       position:absolute;
+       left:12.7%;
+       top:56%;
+       width:22%;
+       text-align:center;
+       font-size:28mm;
+       line-height:1;
+       filter:drop-shadow(0 1mm 1mm rgba(0,0,0,.25));
+     }
+
+     .bibNum{
+       position:absolute;
+       right:5.2%;
+       top:40%;
+       width:30%;
+       text-align:center;
+       font-size:55mm;
+       line-height:.9;
+       font-weight:1000;
+       letter-spacing:-3mm;
+       color:#073438;
+     }
+
+     .lab{
+       display:block;
+       font-size:3.2mm;
+       color:#178d93;
+       font-weight:900;
+       margin-bottom:1mm;
+     }
+
+     .bottomName,.bottomClass,.bottomNation{
+       position:absolute;
+       bottom:4.1%;
+       height:12%;
+       display:flex;
+       flex-direction:column;
+       justify-content:center;
+     }
+
+     .bottomName{left:19.5%;width:25%}
+     .bottomClass{left:53.5%;width:13%}
+     .bottomNation{left:77%;width:20%}
+
+     .bottomName b,.bottomClass b,.bottomNation b{
+       font-size:5.4mm;
+       line-height:1.05;
+       color:#073438;
+     }
+
+     .bottomNation b{text-transform:uppercase}
+
+     @media screen{
+       body{background:#777}
+       .printPage{
+         background:#fff;
+         margin:12px auto;
+         box-shadow:0 4px 18px rgba(0,0,0,.25);
+       }
+     }
+
+     @media print{
+       html,body{
+         width:210mm!important;
+         height:auto!important;
+       }
+
+       .printPage{
+         width:210mm!important;
+         height:297mm!important;
+         margin:0!important;
+       }
+     }
+   </style>
+ </head>
+ <body>
+   ${pagesHtml}
+   <script>
+     window.onload=()=>setTimeout(()=>window.print(),700);
+   <\/script>
+ </body>
+ </html>`);
+
+ win.document.close();
 }
 function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} athlètes</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
 function selectClass(i){currentClass=i;pair=[];selectedNation=null;openLessons()}
@@ -4841,7 +5084,7 @@ function consume(txt){
  try{packet=JSON.parse(txt)}
  catch(e){document.getElementById('scanMsg').textContent='QR illisible.';return}
 
- // V40 : configuration compacte en un seul QR.
+ // V40.2 : configuration compacte en un seul QR.
  if(scanMode==='config' && packet.a==='LR40C' && Array.isArray(packet.c)){
   installed={v:40,classes:packet.c,history:(packet.h||[]).map(x=>[x[0],(x[1]||[]).map(r=>({name:r[0],nation:r[1]||null,lesson:2,time:r[2],date:r[3]||''}))])};
   write(INST,installed);normalizeInstalled();

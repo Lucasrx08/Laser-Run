@@ -1,4 +1,4 @@
-const CACHE='laser-run-v39-classements-profils-20260819';
+const CACHE='laser-run-v40-2-dossards-2-par-page-20260819';
 const CORE=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
