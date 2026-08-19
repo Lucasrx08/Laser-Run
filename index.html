@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V37.1</title>
+<title>Laser Run 6ème · V38.1.1.1</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -1231,7 +1231,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V37 — vues plein écran gymnase + roue + ergonomie tactile
+   V38.1 — vues plein écran gymnase + roue + ergonomie tactile
    ========================================================= */
 html.raceFullscreenRoot,html.raceFullscreenRoot body{height:100%!important;overflow:hidden!important}
 body.raceFullscreen .raceScreen.raceFullscreenActive{overflow:hidden!important;padding:10px 14px 12px!important}
@@ -1260,7 +1260,7 @@ body.raceFullscreen #pursuitStarts{max-height:calc(100vh - 120px)!important;over
 body.raceFullscreen .pursuitRow{padding:7px 8px!important;margin-bottom:5px!important}
 @media(max-width:1050px){body.raceFullscreen .racePadGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}body.raceFullscreen .tileMain{height:86px!important;min-height:86px!important}}
 
-/* Roue V37 : tout tient dans un écran, sans aller chercher le bouton en bas. */
+/* Roue V38.1 : tout tient dans un écran, sans aller chercher le bouton en bas. */
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:hidden!important;padding:8px 12px 10px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{position:relative!important;height:58px!important;min-height:58px!important;padding:0!important;margin:0 0 4px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead .section{font-size:24px!important}
@@ -1276,7 +1276,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V37 — Restauration complète Mass-start / Relais / Poursuite
+   V38.1 — Restauration complète Mass-start / Relais / Poursuite
    ========================================================= */
 
 /* MASS-START PLEIN ÉCRAN :
@@ -1458,7 +1458,7 @@ body.raceFullscreen .pursuitRow>div:last-child{font-size:11px!important}
 
 <style id="v36-critical">
 /* =========================================================
-   V37 — CONSOLIDATION PROFESSIONNELLE
+   V38.1 — CONSOLIDATION PROFESSIONNELLE
    Ces règles sont volontairement placées en dernier.
    ========================================================= */
 
@@ -1807,7 +1807,7 @@ body.raceFullscreen #pcPanelRelay .tileMain small{
 
 <style id="v37-critical">
 /* =========================================================
-   V37 — Attribution des nations / affichage consolidé
+   V38.1 — Attribution des nations / affichage consolidé
    ========================================================= */
 
 .nationDrawPanel{
@@ -1988,7 +1988,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
   image-rendering:auto!important;
 }
 
-/* Paddocks : conserver les améliorations V37 */
+/* Paddocks : conserver les améliorations V38.1 */
 body.raceFullscreen #pcPanelMass .tileMain b{
   font-size:13.5px!important;
 }
@@ -2039,6 +2039,31 @@ body.raceFullscreen #pcPanelRelay .tileMain b{
     max-width:none!important;
     height:360px!important;
   }
+}
+</style>
+
+
+<style id="v38-critical">
+.profileShootDetail{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+.profileShootDetail span{
+  background:#eef5f5;
+  border-radius:10px;
+  padding:7px 9px;
+  font-size:11px;
+  font-weight:850;
+  text-align:center;
+}
+.crystalLesson small{
+  display:block;
+  margin-top:3px;
+  font-size:9px;
+  font-weight:750;
+  opacity:.65;
 }
 </style>
 
@@ -2500,6 +2525,100 @@ function uniqueLessonResults(c,lesson){
  });
  return [...grouped.values()].map(latestResultFrom).filter(Boolean);
 }
+
+function mergedLessonResult(c,name,lesson){
+ const rows=(c.results||[])
+   .filter(r=>r.name===name && Number(r.lesson||1)===Number(lesson))
+   .slice()
+   .sort((a,b)=>resultFreshness(a)-resultFreshness(b));
+
+ if(!rows.length)return null;
+
+ const merged={};
+ rows.forEach(r=>{
+   Object.entries(r).forEach(([k,v])=>{
+     if(v!==undefined && v!==null && v!=='')merged[k]=v;
+   });
+ });
+ return merged;
+}
+function latestLessonField(c,name,lesson,field){
+ const rows=(c.results||[])
+   .filter(r=>r.name===name && Number(r.lesson||1)===Number(lesson))
+   .slice()
+   .sort((a,b)=>resultFreshness(b)-resultFreshness(a));
+ for(const r of rows){
+   const v=r[field];
+   if(v!==undefined && v!==null && v!=='')return v;
+ }
+ return null;
+}
+function nationMembers(c,nation){
+ return c.students.filter(name=>(c.nations||{})[name]===nation);
+}
+function lessonNationTime(c,lesson,nation){
+ lesson=Number(lesson);
+ const names=nationMembers(c,nation);
+ if(!names.length)return null;
+
+ if(lesson===5){
+   // RELAIS :
+   // relayTime est déjà le temps total du relais pour une nation à 2 athlètes.
+   // Si la nation ne possède qu'un seul athlète, on double ce temps
+   // afin de le comparer à un relais réalisé par un binôme.
+   const times=names
+     .map(name=>latestLessonField(c,name,5,'relayTime'))
+     .filter(v=>v!=null && Number.isFinite(Number(v)))
+     .map(Number);
+
+   if(!times.length)return null;
+
+   // relayTime est recopié sur les deux profils d'une nation :
+   // on ne l'additionne jamais deux fois.
+   const relayTime=Math.min(...times);
+   return names.length===1 ? relayTime*2 : relayTime;
+ }
+
+ // L1, L2, L3, L4, L6, L7 :
+ // Le score de nation est normalement la somme des 2 athlètes.
+ const times=names
+   .map(name=>latestLessonField(c,name,lesson,'time'))
+   .filter(v=>v!=null && Number.isFinite(Number(v)))
+   .map(Number);
+
+ if(!times.length)return null;
+
+ // Cas normal : 2 athlètes => addition des deux temps.
+ if(times.length>=2)return times.slice(0,2).reduce((a,b)=>a+b,0);
+
+ // Cas d'un athlète seul / seul résultat disponible :
+ // son temps compte deux fois pour reconstituer un « binôme équivalent ».
+ return times[0]*2;
+}
+function nationRankingForCrystalLesson(c,lesson){
+ const nations=[...new Set(c.students.map(n=>(c.nations||{})[n]).filter(Boolean))];
+
+ return nations
+   .map(nation=>{
+     const names=nationMembers(c,nation);
+     const time=lessonNationTime(c,lesson,nation);
+
+     let doubled=false;
+     if(Number(lesson)===5){
+       doubled=names.length===1 && time!=null;
+     }else{
+       const validTimes=names
+         .map(name=>latestLessonField(c,name,lesson,'time'))
+         .filter(v=>v!=null && Number.isFinite(Number(v)));
+       doubled=validTimes.length===1;
+     }
+
+     return {nation,time,doubled};
+   })
+   .filter(x=>x.time!=null && Number.isFinite(Number(x.time)))
+   .sort((a,b)=>Number(a.time)-Number(b.time)||a.nation.localeCompare(b.nation,'fr'));
+}
+
 function challengeAverage(c,name,type){
  const lessons=CHALLENGE_LESSONS[type]||[];
  const vals=lessons.map(l=>latestByNameLesson(c,name,l)).filter(r=>r&&r.stars!=null).map(r=>Number(r.stars));
@@ -2538,49 +2657,23 @@ function globeStandings(c){
  const nations={};
 
  for(let lesson=1;lesson<=7;lesson++){
-   let nationRanking=[];
-
-   if(lesson===5){
-     // Relais : UNE performance par nation.
-     // Le temps d'arrivée de la nation est stocké dans relayTime sur chacun de ses athlètes.
-     // On ne le somme surtout pas, sinon une nation à 2 athlètes serait pénalisée face à une nation à 1.
-     const byNation={};
-     uniqueLessonResults(c,5).forEach(r=>{
-       const nation=r.nation||(c.nations&&c.nations[r.name]);
-       const t=r.relayTime??null;
-       if(!nation||t==null||!Number.isFinite(Number(t)))return;
-       const value=Number(t);
-       if(byNation[nation]==null||value<byNation[nation])byNation[nation]=value;
-     });
-     nationRanking=Object.entries(byNation)
-       .map(([nation,time])=>({nation,time}))
-       .sort((a,b)=>a.time-b.time||a.nation.localeCompare(b.nation,'fr'));
-   }else{
-     const individual=lessonIndividualRanking(c,lesson);
-     const byNation={};
-
-     individual.forEach(r=>{
-       const nation=r.nation||(c.nations&&c.nations[r.name]);
-       if(!nation)return;
-       if(!byNation[nation])byNation[nation]={nation,time:0,count:0};
-       byNation[nation].time+=Number(r.time);
-       byNation[nation].count++;
-     });
-
-     nationRanking=Object.values(byNation)
-       .filter(x=>x.count>0)
-       .sort((a,b)=>a.time-b.time||a.nation.localeCompare(b.nation,'fr'));
-   }
+   const nationRanking=nationRankingForCrystalLesson(c,lesson);
 
    nationRanking.forEach((x,index)=>{
-     if(!nations[x.nation])nations[x.nation]={nation:x.nation,total:0,lessons:{}};
+     if(!nations[x.nation]){
+       nations[x.nation]={nation:x.nation,total:0,lessons:{},times:{},adjusted:{}};
+     }
+
      const pts=crystalsForPlace(index+1,lesson);
      nations[x.nation].total+=pts;
      nations[x.nation].lessons[lesson]=pts;
+     nations[x.nation].times[lesson]=x.time;
+     nations[x.nation].adjusted[lesson]=!!x.doubled;
    });
  }
 
- return Object.values(nations).sort((a,b)=>b.total-a.total||a.nation.localeCompare(b.nation,'fr'));
+ return Object.values(nations)
+   .sort((a,b)=>b.total-a.total||a.nation.localeCompare(b.nation,'fr'));
 }
 function renderGlobe(targetId,compact=false){
  const c=pc(),rows=globeStandings(c),box=document.getElementById(targetId);
@@ -2591,7 +2684,7 @@ function renderGlobe(targetId,compact=false){
    return;
  }
  box.innerHTML=`<div class="globeHeader proGlobeHeader"><div class="globeHeadCopy"><div class="globeTitle"><span class="globeIcon">💎</span><span>Conquête du Globe de cristal</span></div><div class="globeSub">Cristaux cumulés de L1 à L7</div></div><div class="globeLeader">${rows[0]?`<span>${esc(rows[0].nation)}</span><strong>${rows[0].total}</strong><span>💎</span>`:''}</div></div><div class="notice globeRules"><b>L1 à L6 :</b> places 1–4 = 4 💎 · 5–8 = 3 💎 · 9 et + = 2 💎. <b>L7 JO :</b> 12 💎 · 9 💎 · 6 💎. Les cristaux sont attribués une seule fois à chaque nation selon son classement dans la leçon.</div>`+
- rows.map((x,i)=>`<div class="rankItem globeRankItem"><div class="place">${i+1}</div><div class="globeNation"><div class="big">${esc(x.nation)}</div><div class="crystalDetail">${Array.from({length:7},(_,j)=>`<div class="crystalLesson"><span>L${j+1}${j===6?' JO':''}</span><b>${x.lessons[j+1]||0}<em>💎</em></b></div>`).join('')}</div></div><div class="value globeTotal"><strong>${x.total}</strong><span>💎</span></div></div>`).join('');
+ rows.map((x,i)=>`<div class="rankItem globeRankItem"><div class="place">${i+1}</div><div class="globeNation"><div class="big">${esc(x.nation)}</div><div class="crystalDetail">${Array.from({length:7},(_,j)=>`<div class="crystalLesson"><span>L${j+1}${j===6?' JO':''}</span><b>${x.lessons[j+1]||0}<em>💎</em></b>${x.times&&x.times[j+1]!=null?`<small>${fmt(x.times[j+1])}${x.adjusted&&x.adjusted[j+1]?' · ×2':''}</small>`:''}</div>`).join('')}</div></div><div class="value globeTotal"><strong>${x.total}</strong><span>💎</span></div></div>`).join('');
 }
 function renderChallengeRanking(type){
  const c=pc(),rows=challengeRanking(c,type);
@@ -2622,7 +2715,10 @@ function showPcTab(tab){document.querySelectorAll('.sideTab').forEach(b=>b.class
    if(btn)btn.classList.toggle('active',t===tab);
  });
  if(tab==='results')renderStudentProfiles(pc());
- if(tab==='rankings')showRankingTab(currentRankingTab);
+ if(tab==='rankings'){
+   showRankingTab(currentRankingTab);
+   if(currentRankingTab==='globe')renderGlobe('rankingContent',false);
+ }
  if(tab==='pursuit'){
    restoreRaceState();
    renderPursuitStarts();
@@ -2751,7 +2847,7 @@ function saveShotProfile(c,name,lesson,hits,time=null){
  r._updatedAt=Date.now();
  write(DB,db);
 
- // V37 : mise à jour immédiate et centralisée.
+ // V38.1 : mise à jour immédiate et centralisée.
  // Le profil est déjà prêt lorsque le professeur touche « Profils ».
  syncProfessorResultViews(c);
 }
@@ -2941,11 +3037,15 @@ function updateRelayTimers(){
 function relayShootingSummary(c,nation){
  const names=c.students.filter(x=>(c.nations||{})[x]===nation);
  if(!names.length)return '🎯 Aucun athlète';
- const rows=names.map(name=>latestLessonResult(c,name,5));
- const completed=rows.filter(r=>r&&r.hits!=null);
+
+ const values=names.map(name=>latestLessonField(c,name,5,'hits'));
+ const completed=values.filter(v=>v!=null);
+
  if(!completed.length)return '🎯 Compléter les tirs';
- const hits=completed.reduce((s,r)=>s+Number(r.hits||0),0);
+
+ const hits=completed.reduce((s,v)=>s+Number(v||0),0);
  const total=completed.length*15;
+
  if(completed.length===names.length)return `🎯 Saisi · ${hits}/${total} touchées`;
  return `🎯 ${completed.length}/${names.length} athlètes saisis`;
 }
@@ -2962,7 +3062,7 @@ function relayNationEditor(nation){
  if(!modal)return;
  document.getElementById('shotModalTitle').textContent=`${nation} · Profils de tir`;
  document.getElementById('shotModalBody').innerHTML=names.map((name,i)=>{
-   const r=latestLessonResult(c,name,5);
+   const r=mergedLessonResult(c,name,5);
    return `<button class="shotPerson shotPersonButton" onclick='openHitPad(${JSON.stringify(name)},5,${JSON.stringify(nation)})'>
      <div><b>Athlète ${i+1} · ${esc(name)}</b>
      <div class="muted">${r&&r.hits!=null?`${r.hits}/15 touchées · ${15-r.hits} ratées · ${r.hitRate}%`:'À compléter'}</div></div>
@@ -3030,11 +3130,11 @@ function renderStudentProfiles(c){
   // L4 et L5 sont saisis depuis l'espace professeur : ils alimentent la réussite au tir
   // mais pas le temps moyen au tir.
   [4,5].forEach(l=>{
-    const r=m.get(l);
-    if(r&&r.hits!=null){
-      const a=r.shots!=null?Number(r.shots):15;
-      attempts+=a;
-      hits+=Number(r.hits);
+    const h=latestLessonField(c,name,l,'hits');
+    const s=latestLessonField(c,name,l,'shots');
+    if(h!=null){
+      attempts+=s!=null?Number(s):15;
+      hits+=Number(h);
     }
   });
   const pct=attempts?Math.round(hits/attempts*100):null,avgShoot=timed?totalShootMs/timed:null;
@@ -3043,6 +3143,7 @@ function renderStudentProfiles(c){
   return `<div class="profileCard"><div class="profileHead"><div><div class="profileName">${esc(name)}</div><div class="profileNation">${nationFlag(nation)} ${esc(nation)}</div></div><div class="profileBadge"><small>PROFIL</small>${level?'NIVEAU '+level:'À compléter'}</div></div>
    <div class="profileSectionTitle">Défis Étoile</div>${skillGauge('Précision',precision)}${skillGauge('Rapidité',rapidity)}${skillGauge('Respiration',respiration)}
    <div class="profileSectionTitle">Épreuve principale</div><div class="profileStats"><div class="profileStat"><small>Réussite tir</small><b>${pct==null?'—':pct+' %'}</b></div><div class="profileStat"><small>Temps moyen tir</small><b>${avgShoot==null?'—':fmt(avgShoot)}</b></div><div class="profileStat"><small>Sprint L2</small><b>${sprint}</b></div></div>
+   <div class="profileShootDetail"><span>Mass-start L4 · ${latestLessonField(c,name,4,'hits')==null?'—':latestLessonField(c,name,4,'hits')+'/15'}</span><span>Relais L5 · ${latestLessonField(c,name,5,'hits')==null?'—':latestLessonField(c,name,5,'hits')+'/15'}</span></div>
    <div class="profileFoot"><div class="profileLevel">${pct==null?'Tirs à compléter':'Efficacité tir · Niveau '+levelForPercent(pct)}</div><div class="profileCrystal">💎 ${studentCrystalContribution(c,name)}</div></div></div>`;
  }).join('');
 }
@@ -3152,7 +3253,7 @@ function drawNationWheel(angle=nationWheelAngle){
    ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.stroke();
    const labelR=r*.72,tx=cx+Math.cos(mid)*labelR,ty=cy+Math.sin(mid)*labelR;
    ctx.save();ctx.translate(tx,ty);
-   // V37 : tous les pays sont écrits horizontalement, dans le même sens.
+   // V38.1 : tous les pays sont écrits horizontalement, dans le même sens.
    let fs=nations.length>=13?22:25;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#0d252b';
    ctx.font=`900 ${fs}px system-ui`;const maxW=r*.34;while(fs>15&&ctx.measureText(nation).width>maxW){fs--;ctx.font=`900 ${fs}px system-ui`}
    ctx.font=`${fs+5}px system-ui`;ctx.fillText(NATION_FLAGS[nation]||'🏳️',0,-15);
@@ -3206,11 +3307,9 @@ function undoNationDraw(){
 
 
 function syncProfessorResultViews(c=pc()){
- // Une seule source de données : c.results.
- // Toutes les vues dérivées sont recalculées immédiatement sans retour au menu.
+ // Source unique : c.results. Les vues sont recalculées immédiatement.
  renderStudentProfiles(c);
 
- // Les classements / globe sont également remis à jour si leurs conteneurs existent.
  const globePreview=document.getElementById('pcGlobePreview');
  if(globePreview)renderGlobe('pcGlobePreview',true);
 
