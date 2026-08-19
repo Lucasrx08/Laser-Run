@@ -1,4 +1,4 @@
-const CACHE='laser-run-v30-ui-pro-20260819';
+const CACHE='laser-run-v31-l7-mode-course-20260819';
 const LOCAL=['./','./index.html','./styles.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png'];
 const XLSX_URL='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
 self.addEventListener('install',e=>e.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(LOCAL);try{const r=await fetch(XLSX_URL,{mode:'cors'});await cache.put(XLSX_URL,r);}catch(_){}await self.skipWaiting();})()));

@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V30</title>
+<title>Laser Run 6ème · V31</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -500,7 +500,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
 
-/* V30 — purification UI athlètes */
+/* V31 — purification UI athlètes */
 .sportTopbar{justify-content:flex-start}.sportBadge{margin-left:auto}.sportNav{display:none!important}
 /* Un seul retour contextuel par écran, discret et identique */
 .back{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:9px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(13,37,43,.10)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
@@ -535,7 +535,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.studentModeHub,#l23Work{padding:12px;border-radius:20px}.modeHeader b,#l23S1Title,#l23MainTitle{font-size:18px!important}.modeHeader>span,#l23S1Title:before,#l23MainTitle:before{width:40px;height:40px;flex-basis:40px}.back{font-size:11px!important}.studentTopTools{align-items:center}}
 
 
-/* V30 — Game UI + cibles digitales + mode course plein écran */
+/* V31 — Game UI + cibles digitales + mode course plein écran */
 .lessonGrid{gap:18px}
 .lesson.gameLesson{
   position:relative;overflow:hidden;min-height:190px;padding:22px 22px 18px;
@@ -661,7 +661,7 @@ body.raceFullscreen .tileMain strong{font-size:clamp(18px,2vw,27px)!important}
 
 
 /* =========================================================
-   V30 — Finition professionnelle / lisibilité / alignements
+   V31 — Finition professionnelle / lisibilité / alignements
    ========================================================= */
 
 /* ---------- TUILES PARCOURS ---------- */
@@ -887,6 +887,111 @@ body.raceFullscreen .raceFullscreenBtn{min-height:58px}
   .globeRankItem{grid-template-columns:48px minmax(0,1fr)!important}
   .globeTotal{grid-column:2;justify-content:flex-start!important}
   .crystalDetail{grid-template-columns:repeat(4,minmax(58px,1fr))!important}
+}
+
+
+/* V31 — L7 + Mode Course fiable */
+#l23S1Title.hidden,
+#l23S1Buttons.hidden{
+  display:none!important;
+}
+
+html.raceFullscreenRoot,
+html.raceFullscreenRoot body{
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+
+body.raceFullscreen .raceScreen.raceFullscreenActive{
+  position:fixed!important;
+  inset:0!important;
+  z-index:100000!important;
+  display:block!important;
+  overflow:auto!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  background:#eef3f3!important;
+  padding:16px 20px 28px!important;
+  pointer-events:auto!important;
+}
+
+body.raceFullscreen .raceScreen.raceFullscreenActive *,
+body.raceFullscreen .raceTop,
+body.raceFullscreen .raceTile,
+body.raceFullscreen .tileMain,
+body.raceFullscreen .tileShots,
+body.raceFullscreen #pursuitStartBtn,
+body.raceFullscreen #pursuitPauseBtn,
+body.raceFullscreen #pursuitVoiceBtn,
+body.raceFullscreen #pursuitResetBtn,
+body.raceFullscreen .subTab{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+}
+
+body.raceFullscreen .raceScreenBar{
+  z-index:100010!important;
+}
+
+body.raceFullscreen .raceFullscreenBtn{
+  background:#f7b738!important;
+  color:#0d252b!important;
+  border:2px solid #0d252b!important;
+}
+body.raceFullscreen .raceFullscreenBtn:after{
+  content:" · QUITTER"!important;
+}
+
+/* Les modales de saisie passent toujours devant le plein écran course */
+.shotModal{
+  z-index:200000!important;
+}
+#hitPadModal{
+  z-index:210000!important;
+}
+.shotModal .shotModalCard,
+#hitPadModal .shotModalCard{
+  position:relative!important;
+  z-index:210010!important;
+  pointer-events:auto!important;
+}
+#hitPadGrid,
+.hitNumberPad,
+.hitNumberPad button,
+.shotPersonButton,
+.shotModal button{
+  position:relative!important;
+  z-index:210020!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+}
+
+/* Grandes zones de clic en Mass-start et Relais */
+body.raceFullscreen .racePadGrid{
+  position:relative!important;
+  z-index:1!important;
+}
+body.raceFullscreen .raceTile{
+  overflow:visible!important;
+  isolation:isolate;
+}
+body.raceFullscreen .tileMain{
+  min-height:135px!important;
+  z-index:2!important;
+}
+body.raceFullscreen .tileShots{
+  min-height:58px!important;
+  z-index:3!important;
+}
+
+/* Poursuite : commandes au-dessus du décor */
+body.raceFullscreen #pcPanelPursuit .card{
+  overflow:visible!important;
+}
+body.raceFullscreen #pcPanelPursuit .btn{
+  position:relative!important;
+  z-index:5!important;
 }
 
 </style>
@@ -2100,12 +2205,22 @@ function l23Ensure(name){
  if(!r)r={key:l23Key(name),className:sc()[0],name,date:day(),lesson:currentLesson,nation:studentNationAt(studentEntries().findIndex((x,i)=>studentNameAt(i)===name)),challenge:null,stars:null,time:null,misses:0,place:null};
  return r
 }
+function setL23JoVisibility(){
+ const joOnly=(currentLesson===7);
+ [l23S1Title,l23S1Buttons].forEach(el=>{
+   if(!el)return;
+   el.classList.toggle('hidden',joOnly);
+   if(joOnly)el.style.setProperty('display','none','important');
+   else el.style.removeProperty('display');
+ });
+}
 function openLesson23(n){
  currentLesson=n;l23pair=[];
  const c=l23Cfg(),joOnly=(n===7);
  l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=joOnly?'FINALE JO':c.theme;
- l23S1Title.textContent=`⭐ DÉFI ÉTOILE · ${c.s1}`;l23MainTitle.textContent=joOnly?`🏅 ÉPREUVE OFFICIELLE · ${c.main}`:`🏁 ÉPREUVE PRINCIPALE · ${c.main}`;
- l23S1Title.classList.toggle('hidden',joOnly);l23S1Buttons.classList.toggle('hidden',joOnly);
+ l23S1Title.textContent=`⭐ DÉFI ÉTOILE · ${c.s1}`;
+ l23MainTitle.textContent=joOnly?'🏅 ÉPREUVE OFFICIELLE · Les Jeux Olympiques':`🏁 ÉPREUVE PRINCIPALE · ${c.main}`;
+ setL23JoVisibility();
  l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
 }
 function validateL23Pair(){
@@ -2117,6 +2232,7 @@ function validateL23Pair(){
 }
 function renderL23Pair(){
  l23Work.classList.remove('hidden');
+ setL23JoVisibility();
  l23S1Buttons.innerHTML=currentLesson===7?'':l23pair.map(p=>{let r=l23Record(p.name),v=r&&r.challenge!=null?((currentLesson===2||currentLesson===5)?`LED ${r.challenge} · ${r.stars} ⭐`:`${r.stars} ⭐`):'Commencer';return `<button class="role studentrole" onclick="startL23Challenge(${p.i})"><div><div class="big">${esc(p.name)}</div><div class="muted">${esc(studentNationAt(p.i)||'Nation non attribuée')}</div></div><div>${v}</div></button>`}).join('');
  l23MainButtons.innerHTML=l23pair.map(p=>{
  let r=l23Record(p.name);
@@ -2966,46 +3082,33 @@ function mergeResults(obj){
 }
 
 
-/* V30 — Correctif MODE COURSE */
+/* V31 — MODE COURSE intégré et stable */
 function toggleRaceFullscreen(panelId){
  const panel=document.getElementById(panelId);
  if(!panel)return;
 
- const isActive=document.body.classList.contains('raceFullscreen') &&
-                panel.classList.contains('raceFullscreenActive');
+ const active=document.body.classList.contains('raceFullscreen') &&
+              panel.classList.contains('raceFullscreenActive');
 
- if(isActive){
+ document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
+
+ if(active){
    document.body.classList.remove('raceFullscreen');
-   panel.classList.remove('raceFullscreenActive');
-   document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
-   try{
-     if(document.fullscreenElement && document.exitFullscreen){
-       document.exitFullscreen().catch(()=>{});
-     }
-   }catch(e){}
+   document.documentElement.classList.remove('raceFullscreenRoot');
    return;
  }
 
- document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
  document.body.classList.add('raceFullscreen');
+ document.documentElement.classList.add('raceFullscreenRoot');
  panel.classList.add('raceFullscreenActive');
-
- // Le mode intégré fonctionne même si Safari/iPad refuse l'API Fullscreen.
- try{
-   if(document.documentElement.requestFullscreen && !document.fullscreenElement){
-     document.documentElement.requestFullscreen().catch(()=>{});
-   }
- }catch(e){}
-
- window.scrollTo({top:0,left:0,behavior:'instant'});
+ window.scrollTo(0,0);
 }
 
-document.addEventListener('fullscreenchange',()=>{
- if(!document.fullscreenElement && document.body.classList.contains('raceFullscreen')){
-   // On conserve volontairement le mode course intégré :
-   // l'API plein écran du navigateur est facultative sur iPad/Safari.
- }
-});
+function leaveRaceFullscreen(){
+ document.body.classList.remove('raceFullscreen');
+ document.documentElement.classList.remove('raceFullscreenRoot');
+ document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
+}
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}
 </script>
