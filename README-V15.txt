@@ -1,1 +1,0 @@
-V15 : refonte complète du tableau de bord professeur ; suppression de l'affichage Résultats (données conservées) ; cartes classes enrichies ; correction cristaux par nation conservée.
