@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V35</title>
+<title>Laser Run 6ème · V36</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -1231,7 +1231,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V35 — vues plein écran gymnase + roue + ergonomie tactile
+   V36 — vues plein écran gymnase + roue + ergonomie tactile
    ========================================================= */
 html.raceFullscreenRoot,html.raceFullscreenRoot body{height:100%!important;overflow:hidden!important}
 body.raceFullscreen .raceScreen.raceFullscreenActive{overflow:hidden!important;padding:10px 14px 12px!important}
@@ -1260,7 +1260,7 @@ body.raceFullscreen #pursuitStarts{max-height:calc(100vh - 120px)!important;over
 body.raceFullscreen .pursuitRow{padding:7px 8px!important;margin-bottom:5px!important}
 @media(max-width:1050px){body.raceFullscreen .racePadGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}body.raceFullscreen .tileMain{height:86px!important;min-height:86px!important}}
 
-/* Roue V35 : tout tient dans un écran, sans aller chercher le bouton en bas. */
+/* Roue V36 : tout tient dans un écran, sans aller chercher le bouton en bas. */
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:hidden!important;padding:8px 12px 10px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{position:relative!important;height:58px!important;min-height:58px!important;padding:0!important;margin:0 0 4px!important}
 body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead .section{font-size:24px!important}
@@ -1276,7 +1276,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 
 
 /* =========================================================
-   V35 — Restauration complète Mass-start / Relais / Poursuite
+   V36 — Restauration complète Mass-start / Relais / Poursuite
    ========================================================= */
 
 /* MASS-START PLEIN ÉCRAN :
@@ -1455,6 +1455,315 @@ body.raceFullscreen .pursuitRow>div:last-child{font-size:11px!important}
 .tileShots[data-complete="1"]{background:#dff2e5!important;color:#145a2c!important}
 
 </style>
+
+<style id="v36-critical">
+/* =========================================================
+   V36 — CONSOLIDATION PROFESSIONNELLE
+   Ces règles sont volontairement placées en dernier.
+   ========================================================= */
+
+/* ---------- Attribution des nations ---------- */
+.nationDrawPanel{
+  overflow:hidden!important;
+}
+.nationDrawLayout{
+  min-width:0!important;
+}
+.nationWheelSide,
+.nationAthletesSide{
+  min-width:0!important;
+}
+.nationAthletesSide{
+  overflow:hidden!important;
+}
+.nationAthleteList{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  min-width:0!important;
+}
+.nationPick{
+  max-width:100%!important;
+  overflow:hidden!important;
+}
+.nationPick>div:first-child{
+  min-width:0!important;
+}
+.nationPickName,
+.nationPickMeta{
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Plein écran attribution : aucune colonne ne sort du viewport.
+   La roue, le résultat et les commandes restent visibles sans scroll général. */
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{
+  height:100vh!important;
+  max-height:100vh!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{
+  position:relative!important;
+  top:auto!important;
+  margin:0 0 6px!important;
+  padding:2px 0 7px!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{
+  min-height:0!important;
+  height:100%!important;
+  grid-template-columns:minmax(0,1fr) 300px!important;
+  gap:10px!important;
+  overflow:hidden!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelSide{
+  height:100%!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) 48px 48px 40px!important;
+  gap:6px!important;
+  overflow:hidden!important;
+  align-items:center!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{
+  width:min(68vh,720px)!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:auto!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen #nationWheel{
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawResult{
+  min-height:48px!important;
+  height:48px!important;
+  padding:6px 12px!important;
+  font-size:15px!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationSpinBtn{
+  min-height:48px!important;
+  height:48px!important;
+  margin:0!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen #nationUndoBtn{
+  min-height:40px!important;
+  height:40px!important;
+  margin:0!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{
+  width:300px!important;
+  max-width:300px!important;
+  height:100%!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthleteList{
+  max-height:none!important;
+  height:100%!important;
+  min-height:0!important;
+}
+
+/* ---------- Mode course commun ----------
+   On retire tout le texte pédagogique secondaire en plein écran.
+   Le plein écran devient un poste d'exploitation, pas une copie du dashboard. */
+body.raceFullscreen .raceScreen.raceFullscreenActive{
+  overflow:hidden!important;
+  padding:8px 12px 10px!important;
+}
+body.raceFullscreen .raceScreen.raceFullscreenActive > .section,
+body.raceFullscreen .raceScreen.raceFullscreenActive > .notice{
+  display:none!important;
+}
+body.raceFullscreen .raceScreenBar{
+  height:46px!important;
+  min-height:46px!important;
+  padding:0 0 5px!important;
+  margin:0!important;
+}
+body.raceFullscreen .raceScreenBar span{
+  display:none!important;
+}
+body.raceFullscreen .raceFullscreenBtn{
+  min-height:40px!important;
+  padding:6px 12px!important;
+  font-size:11px!important;
+}
+
+/* ---------- RELAIS ----------
+   15 nations = 5 x 3, visibles intégralement sans scroll. */
+body.raceFullscreen #pcPanelRelay #relayPad{
+  height:calc(100vh - 58px)!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-rows:48px minmax(0,1fr)!important;
+  gap:6px!important;
+}
+body.raceFullscreen #pcPanelRelay .racePadGrid{
+  height:100%!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelRelay .raceTile{
+  min-height:0!important;
+  height:100%!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) 34px!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelRelay .tileMain{
+  min-height:0!important;
+  height:100%!important;
+  padding:6px 8px!important;
+}
+body.raceFullscreen #pcPanelRelay .tileMain b{
+  font-size:13px!important;
+  line-height:1!important;
+}
+body.raceFullscreen #pcPanelRelay .tileMain small{
+  font-size:9px!important;
+  margin:2px 0!important;
+}
+body.raceFullscreen #pcPanelRelay .tileMain strong{
+  font-size:10.5px!important;
+  line-height:1.05!important;
+  margin-top:2px!important;
+}
+body.raceFullscreen #pcPanelRelay .tileShots{
+  min-height:34px!important;
+  height:34px!important;
+  padding:4px 5px!important;
+  font-size:9px!important;
+  line-height:1!important;
+}
+
+/* ---------- MASS-START ----------
+   Deux vagues visibles simultanément, 30 athlètes accessibles sans scroll. */
+body.raceFullscreen #pcPanelMass #massPad{
+  height:calc(100vh - 58px)!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+body.raceFullscreen #pcPanelMass .racePadBlock{
+  min-height:0!important;
+  height:100%!important;
+  display:grid!important;
+  grid-template-rows:46px minmax(0,1fr)!important;
+  gap:5px!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelMass .racePadGrid{
+  min-height:0!important;
+  height:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(5,minmax(0,1fr))!important;
+  gap:5px!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelMass .raceTile{
+  min-height:0!important;
+  height:100%!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) 30px!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain{
+  min-height:0!important;
+  height:100%!important;
+  padding:5px 7px!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain b{
+  font-size:11.5px!important;
+  line-height:1!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain small{
+  font-size:8.5px!important;
+  margin:1px 0!important;
+}
+body.raceFullscreen #pcPanelMass .tileMain strong{
+  font-size:10px!important;
+  line-height:1!important;
+  margin-top:2px!important;
+}
+body.raceFullscreen #pcPanelMass .tileShots{
+  min-height:30px!important;
+  height:30px!important;
+  padding:3px 4px!important;
+  font-size:8.5px!important;
+  line-height:1!important;
+}
+
+/* ---------- Modales tirs ----------
+   Toujours au-dessus du mode course et utilisables sans sortir du pad. */
+body.raceFullscreen .shotModal,
+body.raceFullscreen #hitPadModal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:500000!important;
+}
+body.raceFullscreen .shotModalCard{
+  max-height:88vh!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+}
+
+/* Retour clair de saisie */
+.tileShots[data-complete="1"]{
+  background:#dff2e5!important;
+  color:#145a2c!important;
+  font-weight:950!important;
+}
+
+/* ---------- Poursuite ----------
+   Pas de scroll du poste principal ; liste latérale seule scrollable. */
+body.raceFullscreen #pcPanelPursuit .pursuitGrid{
+  height:calc(100vh - 58px)!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+body.raceFullscreen #pcPanelPursuit .card:last-child{
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+}
+body.raceFullscreen #pursuitStarts{
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+}
+
+/* Tablettes étroites en paysage : on conserve le principe sans casser la logique. */
+@media(max-width:1100px){
+  body.raceFullscreen #pcPanelMass #massPad{
+    gap:5px!important;
+  }
+  body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{
+    grid-template-columns:minmax(0,1fr) 275px!important;
+  }
+  body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{
+    width:275px!important;
+    max-width:275px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -2015,6 +2324,7 @@ function showPcTab(tab){document.querySelectorAll('.sideTab').forEach(b=>b.class
    if(panel)panel.classList.toggle('hidden',t!==tab);
    if(btn)btn.classList.toggle('active',t===tab);
  });
+ if(tab==='results')renderStudentProfiles(pc());
  if(tab==='rankings')showRankingTab(currentRankingTab);
  if(tab==='pursuit'){
    restoreRaceState();
@@ -2144,12 +2454,9 @@ function saveShotProfile(c,name,lesson,hits,time=null){
  r._updatedAt=Date.now();
  write(DB,db);
 
- // Met à jour uniquement les profils, sans reconstruire tout le dashboard :
- // les pourcentages de réussite L4/L5 changent immédiatement.
- const resultsPanel=document.getElementById('pcPanelResults');
- if(resultsPanel && !resultsPanel.classList.contains('hidden')){
-   renderStudentProfiles(c);
- }
+ // V36 : mise à jour immédiate et centralisée.
+ // Le profil est déjà prêt lorsque le professeur touche « Profils ».
+ syncProfessorResultViews(c);
 }
 function openHitPad(name,lesson,returnNation=null){
  const c=pc(),old=latestLessonResult(c,name,lesson);
@@ -2187,6 +2494,7 @@ function saveHitPad(hits){
  }else{
    if(returnNation){
      updateRelayShootingTile(returnNation);
+     syncProfessorResultViews(c);
      relayNationEditor(returnNation);
    }
  }
@@ -2236,6 +2544,7 @@ function massFinish(name,slot){
  r._updatedAt=Date.now();
  write(DB,db);
  saveRaceState();
+ syncProfessorResultViews(c);
 
  const status=document.getElementById(`mass-status-${safeId(name)}`);
  const tile=document.getElementById(`mass-tile-${safeId(name)}`);
@@ -2287,7 +2596,22 @@ function relayTop(){
 function relayFinish(nation){
  if(!relayStart||relayTimes[nation]!=null)return;
  relayTimes[nation]=Date.now()-relayStart;
+
+ const c=pc();
+ const names=c.students.filter(x=>(c.nations||{})[x]===nation);
+ names.forEach(name=>{
+   let r=latestLessonResult(c,name,5);
+   if(!r){
+     r={name,className:c.name,lesson:5,date:day(),nation};
+     c.results.push(r);
+   }
+   r.relayTime=relayTimes[nation];
+   r._updatedAt=Date.now();
+ });
+ write(DB,db);
  saveRaceState();
+ syncProfessorResultViews(c);
+
  const status=document.getElementById(`relay-status-${safeId(nation)}`);
  const tile=document.getElementById(`relay-tile-${safeId(nation)}`);
  if(status)status.textContent=`✅ ARRIVÉE · ${fmt(relayTimes[nation])}`;
@@ -2327,6 +2651,7 @@ function updateRelayShootingTile(nation){
 
 function relayNationEditor(nation){
  const c=pc();
+ closeHitPad();
  const names=c.students.filter(x=>(c.nations||{})[x]===nation).sort((a,b)=>a.localeCompare(b,'fr'));
  const modal=document.getElementById('shotModal');
  if(!modal)return;
@@ -2522,7 +2847,7 @@ function drawNationWheel(angle=nationWheelAngle){
    ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.stroke();
    const labelR=r*.72,tx=cx+Math.cos(mid)*labelR,ty=cy+Math.sin(mid)*labelR;
    ctx.save();ctx.translate(tx,ty);
-   // V35 : tous les pays sont écrits horizontalement, dans le même sens.
+   // V36 : tous les pays sont écrits horizontalement, dans le même sens.
    let fs=nations.length>=13?22:25;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#0d252b';
    ctx.font=`900 ${fs}px system-ui`;const maxW=r*.34;while(fs>15&&ctx.measureText(nation).width>maxW){fs--;ctx.font=`900 ${fs}px system-ui`}
    ctx.font=`${fs+5}px system-ui`;ctx.fillText(NATION_FLAGS[nation]||'🏳️',0,-15);
@@ -2572,6 +2897,21 @@ function undoNationDraw(){
  nationDrawLast=null;
  document.getElementById('nationDrawResult').textContent='Dernier tirage annulé';
  renderNationDrawAthletes();drawNationWheel();
+}
+
+
+function syncProfessorResultViews(c=pc()){
+ // Une seule source de données : c.results.
+ // Toutes les vues dérivées sont recalculées immédiatement sans retour au menu.
+ renderStudentProfiles(c);
+
+ // Les classements / globe sont également remis à jour si leurs conteneurs existent.
+ const globePreview=document.getElementById('pcGlobePreview');
+ if(globePreview)renderGlobe('pcGlobePreview',true);
+
+ if(currentPcTab==='rankings'){
+   showRankingTab(currentRankingTab);
+ }
 }
 
 function renderProfClass(){
