@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V28</title>
+<title>Laser Run 6ème · V29</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -500,7 +500,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
 
-/* V28 — purification UI athlètes */
+/* V29 — purification UI athlètes */
 .sportTopbar{justify-content:flex-start}.sportBadge{margin-left:auto}.sportNav{display:none!important}
 /* Un seul retour contextuel par écran, discret et identique */
 .back{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:9px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(13,37,43,.10)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
@@ -533,6 +533,131 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 #pairWork>.toolbar .btn,#l23Work>.toolbar .btn{font-size:11px;padding:10px 13px!important;box-shadow:none!important}
 /* terminologie athlète et compacité mobile */
 @media(max-width:650px){.studentModeHub,#l23Work{padding:12px;border-radius:20px}.modeHeader b,#l23S1Title,#l23MainTitle{font-size:18px!important}.modeHeader>span,#l23S1Title:before,#l23MainTitle:before{width:40px;height:40px;flex-basis:40px}.back{font-size:11px!important}.studentTopTools{align-items:center}}
+
+
+/* V29 — Game UI + cibles digitales + mode course plein écran */
+.lessonGrid{gap:18px}
+.lesson.gameLesson{
+  position:relative;overflow:hidden;min-height:190px;padding:22px 22px 18px;
+  border:1px solid rgba(13,37,43,.10);outline:0!important;
+  background:linear-gradient(145deg,#fff 0%,#f7faf9 100%);
+  box-shadow:0 14px 34px rgba(13,37,43,.10);
+  border-radius:24px;transition:transform .15s ease,box-shadow .15s ease;
+}
+.lesson.gameLesson:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c4)
+}
+.lesson.gameLesson:after{
+  content:"";position:absolute;width:150px;height:150px;border:22px solid rgba(199,219,223,.28);
+  border-radius:50%;right:-55px;bottom:-75px
+}
+.gameLessonNo{position:absolute;right:18px;top:8px;font-size:86px;line-height:1;font-weight:1000;letter-spacing:-8px;color:rgba(13,37,43,.055)}
+.gameLessonTop{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.gameLessonTag{font-size:11px;letter-spacing:.14em;font-weight:1000;color:#687a7e}
+.gameLessonIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:#0d252b;color:#f7b738;font-size:20px}
+.gameLessonTitle{position:relative;z-index:2;margin-top:24px;max-width:78%;font-size:clamp(22px,2.2vw,31px);line-height:1.02;font-weight:1000;letter-spacing:-1px}
+.gameLessonFoot{position:absolute;z-index:2;left:22px;right:22px;bottom:17px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:950;letter-spacing:.08em;color:#738084}
+.gameLessonFoot b{color:#0d252b;font-size:13px}
+.lesson.gameLesson.joLesson{background:linear-gradient(145deg,#0d252b,#17444d);color:white}
+.lesson.gameLesson.joLesson:before{width:9px}
+.lesson.gameLesson.joLesson:after{border-color:rgba(247,183,56,.15)}
+.lesson.gameLesson.joLesson .gameLessonNo{color:rgba(255,255,255,.06)}
+.lesson.gameLesson.joLesson .gameLessonTag,.lesson.gameLesson.joLesson .gameLessonFoot{color:rgba(255,255,255,.65)}
+.lesson.gameLesson.joLesson .gameLessonIcon{background:var(--c4);color:#0d252b}
+.lesson.gameLesson.joLesson .gameLessonFoot b{color:var(--c4)}
+@media(hover:hover){.lesson.gameLesson.active:hover{transform:translateY(-3px);box-shadow:0 20px 40px rgba(13,37,43,.14)}}
+
+/* Défi et situation principale : même langage "mode de jeu" */
+.studentModeHub{display:grid;gap:18px}
+.modeHeader{position:relative;overflow:hidden;border-radius:22px!important;padding:18px 20px!important;border:0!important;box-shadow:0 10px 28px rgba(13,37,43,.08)}
+.modeHeader>span{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#0d252b;color:#f7b738;font-size:24px}
+.modeHeader small{font-size:10px;letter-spacing:.16em;font-weight:1000;opacity:.62}
+.modeHeader b{font-size:20px;letter-spacing:-.3px}
+.challengeModeHeader{background:linear-gradient(135deg,#f7faf9,#e8f1f2)!important}
+.raceModeHeader{background:linear-gradient(135deg,#0d252b,#17444d)!important;color:#fff}
+.raceModeHeader>span{background:#f7b738;color:#0d252b}
+.modeGrid .role{min-height:126px!important;border-radius:22px!important;box-shadow:0 10px 26px rgba(13,37,43,.08)!important}
+
+/* Cibles digitales : compactes, numérotées et cohérentes avec Laser Run */
+.targetset{max-width:680px;gap:14px;margin:22px auto}
+.target.digitalTarget,.target{
+  border:0!important;background:#f5f8f8!important;box-shadow:none!important;
+  border-radius:24px!important;aspect-ratio:1;position:relative;overflow:hidden;
+  outline:1px solid rgba(13,37,43,.10);transition:transform .12s ease,background .12s ease
+}
+.target.digitalTarget:before,.target:before{
+  content:"";position:absolute;inset:15%;border-radius:50%;
+  border:6px solid #0d252b;box-shadow:inset 0 0 0 10px #f5f8f8,inset 0 0 0 15px #0d252b
+}
+.target.digitalTarget:after,.target:after{
+  content:"";position:absolute;inset:42%;border-radius:50%;background:#f7b738!important;
+  box-shadow:0 0 0 7px rgba(247,183,56,.16)
+}
+.target.digitalTarget span{position:absolute;left:10px;top:8px;z-index:3;font-size:11px;font-weight:1000;color:#728185}
+.target.hit{background:#e9f7ee!important;outline:3px solid #21a447!important}
+.target.hit:before{border-color:#147b38;box-shadow:inset 0 0 0 10px #e9f7ee,inset 0 0 0 15px #21a447}
+.target.hit:after{background:#21a447!important;box-shadow:0 0 0 9px rgba(33,164,71,.15)}
+.target.miss{background:#fff0ef!important;outline:3px solid #d92d20!important}
+.target.miss:before{border-color:#9f2018;box-shadow:inset 0 0 0 10px #fff0ef,inset 0 0 0 15px #d92d20}
+.target.miss:after{background:#d92d20!important;box-shadow:0 0 0 9px rgba(217,45,32,.12)}
+@media(hover:hover){.target:hover{transform:translateY(-2px)}}
+
+.fivehits{max-width:560px;gap:12px}
+.dot.raceDot,.fivehits .dot{
+  position:relative;overflow:hidden;border:0!important;background:#f2f6f6!important;
+  outline:1px solid rgba(13,37,43,.12);box-shadow:none;aspect-ratio:1;border-radius:22px
+}
+.dot.raceDot:before,.fivehits .dot:before{
+  content:"";position:absolute;inset:18%;border-radius:50%;border:5px solid #0d252b;
+  box-shadow:inset 0 0 0 8px #f2f6f6,inset 0 0 0 12px #0d252b
+}
+.dot.raceDot:after,.fivehits .dot:after{content:"";position:absolute;inset:43%;border-radius:50%;background:#f7b738}
+.dot.raceDot span{position:absolute;z-index:3;left:8px;top:6px;font-size:10px;font-weight:1000;color:#748286}
+.dot.on{background:#e9f7ee!important;outline:3px solid #21a447!important}
+.dot.on:before{border-color:#147b38;box-shadow:inset 0 0 0 8px #e9f7ee,inset 0 0 0 12px #21a447}
+.dot.on:after{background:#21a447}
+.dot.missdot{background:#fff0ef!important;outline:3px solid #d92d20!important}
+.dot.missdot:before{border-color:#9f2018;box-shadow:inset 0 0 0 8px #fff0ef,inset 0 0 0 12px #d92d20}
+.dot.missdot:after{background:#d92d20}
+
+/* Mode course professeur */
+.raceScreenBar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px}
+.raceScreenBar>div{display:flex;align-items:baseline;gap:10px}
+.raceScreenBar b{font-size:15px;letter-spacing:.12em}
+.raceScreenBar span{font-size:13px;opacity:.55}
+.raceFullscreenBtn{border:0;border-radius:14px;background:#0d252b;color:white;padding:12px 16px;font-weight:950;letter-spacing:.03em}
+body.raceFullscreen{overflow:hidden;background:#eef3f3}
+body.raceFullscreen .teacherShell>aside,
+body.raceFullscreen .teacherTopbar,
+body.raceFullscreen .teacherHeader,
+body.raceFullscreen .dashboardTabs,
+body.raceFullscreen #pcDashboardHeader,
+body.raceFullscreen .pcClassHeader{display:none!important}
+body.raceFullscreen .teacherShell,
+body.raceFullscreen .teacherMain,
+body.raceFullscreen #profClass,
+body.raceFullscreen .app{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+body.raceFullscreen .dashboardPanel{display:none!important}
+body.raceFullscreen .raceScreen.raceFullscreenActive{
+  display:block!important;position:fixed;z-index:9000;inset:0;background:#eef3f3;
+  overflow:auto;padding:18px 22px 28px
+}
+body.raceFullscreen .raceScreenBar{position:sticky;top:0;z-index:20;background:rgba(238,243,243,.94);backdrop-filter:blur(12px);padding:4px 0 12px}
+body.raceFullscreen .raceFullscreenBtn{background:#f7b738;color:#0d252b}
+body.raceFullscreen .raceFullscreenBtn:after{content:"  · QUITTER"}
+body.raceFullscreen #pcPanelPursuit .pursuitGrid{grid-template-columns:minmax(0,4.5fr) minmax(280px,1fr)!important}
+body.raceFullscreen #pcPanelPursuit .card:first-child{min-height:calc(100vh - 95px)!important}
+body.raceFullscreen #pcPanelPursuit .pursuitTimer{font-size:clamp(130px,20vw,290px)!important}
+body.raceFullscreen .raceTop{min-height:84px!important;font-size:clamp(22px,3vw,38px)!important;border-radius:20px!important}
+body.raceFullscreen .racePadGrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))!important;gap:16px!important}
+body.raceFullscreen .raceTile{min-height:190px!important;border-radius:22px!important}
+body.raceFullscreen .tileMain b{font-size:clamp(24px,3vw,38px)!important}
+body.raceFullscreen .tileMain strong{font-size:clamp(18px,2vw,27px)!important}
+@media(max-width:850px){
+ body.raceFullscreen #pcPanelPursuit .pursuitGrid{grid-template-columns:1fr!important}
+ body.raceFullscreen #pcPanelPursuit .pursuitTimer{font-size:clamp(105px,25vw,210px)!important}
+ .raceScreenBar span{display:none}
+}
 
 </style>
 </head>
@@ -641,7 +766,8 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
   </div>
  </div>
 
- <div id="pcPanelPursuit" class="dashboardPanel hidden">
+ <div id="pcPanelPursuit" class="dashboardPanel hidden raceScreen">
+  <div class="raceScreenBar"><div><b>POURSUITE</b><span>Chronométrage de course</span></div><button class="raceFullscreenBtn" onclick="toggleRaceFullscreen('pcPanelPursuit')">⛶ MODE COURSE</button></div>
   <div class="pursuitGrid">
    <div class="card">
     <div class="section" style="margin-top:0">Chronomètre Poursuite</div>
@@ -669,12 +795,14 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
   </div>
  </div>
 
- <div id="pcPanelMass" class="dashboardPanel hidden">
+ <div id="pcPanelMass" class="dashboardPanel hidden raceScreen">
+ <div class="raceScreenBar"><div><b>MASS-START</b><span>Pad de course</span></div><button class="raceFullscreenBtn" onclick="toggleRaceFullscreen('pcPanelMass')">⛶ MODE COURSE</button></div>
  <div class="section">Mass-start · Pad de course</div>
  <div class="notice">Le professeur déclenche chaque vague. À l’arrivée, l’athlète touche son propre carré pour figer son temps.</div>
  <div id="massPad"></div>
 </div>
-<div id="pcPanelRelay" class="dashboardPanel hidden">
+<div id="pcPanelRelay" class="dashboardPanel hidden raceScreen">
+ <div class="raceScreenBar"><div><b>RELAIS DES NATIONS</b><span>Pad de course</span></div><button class="raceFullscreenBtn" onclick="toggleRaceFullscreen('pcPanelRelay')">⛶ MODE COURSE</button></div>
  <div class="section">Relais des nations · Pad de course</div>
  <div class="notice">Un départ collectif. À l’arrivée du relais, la nation touche son pays pour figer son temps.</div>
  <div id="relayPad"></div>
@@ -1496,7 +1624,22 @@ function setStudentNation(i,nation){if(!Array.isArray(sc()[1][i]))sc()[1][i]=[sc
 function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!exclude.includes(i)&&studentNationAt(i)===nation).length} function openLessons(){
  lessonClass.textContent=sc()[0];
  let ls=[['L1','Centre national de recrutement',1,'openPair()'],['L2','Sprint individuel',1,'openLesson23(2)'],['L3','Poursuite',1,'openLesson23(3)'],['L6','Qualification aux JO',1,'openLesson23(6)'],['L7','Jeux Olympiques',1,'openJOAccess()']];
- lessonGrid.innerHTML=ls.map(x=>`<button class="lesson ${x[2]?'active':'locked'}" ${x[2]?`onclick="${x[3]}"`:'disabled'}><div class="lessonnum">${x[0]}</div><div class="big">${x[1]}</div><div class="muted" style="margin-top:8px">${x[2]?'Disponible':'À venir'}</div></button>`).join('');
+ const lessonMeta={
+  L1:['RECRUTEMENT','◎','ENTRER'],
+  L2:['SPRINT','⚡','ENTRER'],
+  L3:['POURSUITE','◷','ENTRER'],
+  L6:['QUALIFICATION','◆','ENTRER'],
+  L7:['FINALE JO','◉','ENTRER']
+ };
+ lessonGrid.innerHTML=ls.map(x=>{
+   const m=lessonMeta[x[0]]||['ÉPREUVE','◎','ENTRER'];
+   return `<button class="lesson gameLesson ${x[0]==='L7'?'joLesson':''} ${x[2]?'active':'locked'}" ${x[2]?`onclick="${x[3]}"`:'disabled'}>
+     <div class="gameLessonNo">${x[0].replace('L','')}</div>
+     <div class="gameLessonTop"><span class="gameLessonTag">${m[0]}</span><span class="gameLessonIcon">${m[1]}</span></div>
+     <div class="gameLessonTitle">${x[1]}</div>
+     <div class="gameLessonFoot"><span>${x[2]?'ÉPREUVE OUVERTE':'À VENIR'}</span><b>${x[2]?m[2]:'🔒'} ${x[2]?'→':''}</b></div>
+   </button>`;
+ }).join('');
  show('lessons')
 }
 function options(){return '<option value="">Choisir...</option>'+studentEntries().map((x,i)=>`<option value="${i}">${esc(studentNameAt(i))}</option>`).join('')}
@@ -1607,7 +1750,7 @@ function renderXP(prefix){document.getElementById(prefix+'Criteria').innerHTML=c
 function chooseCriterion(prefix,c){if(prefix==='xp1')xp1=c;else xp2=c;renderXP(prefix)}
 function goXP2(){if(!xp1)return alert('Choisis un critère à conseiller avant de passer au Défi XP 2.');xp1Card.classList.add('hidden');xp2Card.classList.remove('hidden');renderXP('xp2')}
 function goStar(){if(!xp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');xp2Card.classList.add('hidden');starCard.classList.remove('hidden');renderTargets()}
-function renderTargets(){targets.innerHTML=s1.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycle(${i})"></button>`).join('');const hits=s1.filter(x=>x===1).length;s1Score.textContent=`${hits} / 5`;const stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;starDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);starText.textContent=stars===4?'Objectif maximal atteint : 4 étoiles de précision.':`${stars} étoile(s) de précision.`}
+function renderTargets(){targets.innerHTML=s1.map((v,i)=>`<button class="target digitalTarget ${v===1?'hit':v===2?'miss':''}" onclick="cycle(${i})"><span>${i+1}</span></button>`).join('');const hits=s1.filter(x=>x===1).length;s1Score.textContent=`${hits} / 5`;const stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;starDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);starText.textContent=stars===4?'Objectif maximal atteint : 4 étoiles de précision.':`${stars} étoile(s) de précision.`}
 function cycle(i){s1[i]=(s1[i]+1)%3;renderTargets()}
 function saveS1(){if(s1.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;let hits=s1.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;let r=ensure(active.name);r.nation=studentNationAt(active.i)||null;r.s1=hits;r.stars=stars;saveRecord(r);openPair()}
 function startRace(i){
@@ -1646,7 +1789,7 @@ function updateStats(){
 }
 function renderDots(){
  const box=document.getElementById('dots');
- box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${race&&i<race.hits?'on':''}"></div>`).join('');
+ box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot raceDot ${race&&i<race.hits?'on':''}"><span>${i+1}</span></div>`).join('');
 }
 function renderL1History(){
  const wrap=document.getElementById('l1HistoryWrap'),box=document.getElementById('l1History');
@@ -1827,7 +1970,7 @@ function renderLedButtons(){
 }
 function setLed(n){chLed=n;renderLedButtons()}
 function renderBreathTargets(){
- chBreathTargets.innerHTML=chBreath.map((v,i)=>`<button class="target ${v===1?'hit':v===2?'miss':''}" onclick="cycleBreath(${i})"></button>`).join('');
+ chBreathTargets.innerHTML=chBreath.map((v,i)=>`<button class="target digitalTarget ${v===1?'hit':v===2?'miss':''}" onclick="cycleBreath(${i})"><span>${i+1}</span></button>`).join('');
  const hits=chBreath.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;
  chBreathScore.textContent=`${hits} / 5`;chBreathStars.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chBreathText.textContent=`${stars} étoile(s) de ${currentLesson===4?'précision':'respiration'}.`
 }
@@ -1969,9 +2112,9 @@ function renderR23Dots(){
    const hits=l23race?.hits||0;
    const timedOut=Boolean(l23race?.l6TimedOut);
    box.innerHTML=Array.from({length:5},(_,i)=>{
-     if(i<hits)return '<div class="dot on"></div>';
-     if(timedOut)return '<div class="dot missdot"></div>';
-     return '<div class="dot"></div>';
+     if(i<hits)return `<div class="dot raceDot on"><span>${i+1}</span></div>`;
+     if(timedOut)return `<div class="dot raceDot missdot"><span>${i+1}</span></div>`;
+     return `<div class="dot raceDot"><span>${i+1}</span></div>`;
    }).join('');
  }else if(currentLesson===5){
    const hits=arr.filter(Boolean).length;
