@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V27</title>
+<title>Laser Run 6ème · V28</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -486,7 +486,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 /* professeur : vraie structure dashboard/sidebar */
 .proScreen{width:100%;margin:0;padding:0!important}.proShell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 72px)}.proSidebar{background:#0d252b;color:#fff;padding:22px 14px;position:sticky;top:72px;height:calc(100vh - 72px);display:flex;flex-direction:column;gap:5px;overflow:auto}.proSideTitle{display:flex;align-items:center;gap:10px;padding:8px 10px 23px;font-weight:1000;font-style:italic}.proSideTitle>span{color:var(--sun);font-size:30px}.proSideTitle small{display:block;font-size:9px;letter-spacing:.14em;color:#9eb6ba;font-style:normal;margin-top:3px}.proSidebar button{border:0;background:transparent;color:#b8c9cc;padding:12px 12px;border-radius:12px;text-align:left;font-weight:800;display:flex;gap:11px;align-items:center}.proSidebar button:hover,.proSidebar button.active{background:#173a42;color:#fff}.proSidebar button.active{box-shadow:inset 3px 0 0 var(--sun)}.proSidebar .joSide{color:#ffd976}.sideDivider{font-size:9px;letter-spacing:.14em;color:#6f8e93;font-weight:900;padding:17px 12px 5px}.sideFoot{margin-top:auto;border-top:1px solid rgba(255,255,255,.1);padding:16px 12px 4px;font-size:12px;font-weight:900}.sideFoot small{color:#7e9ca1}.proMain{padding:28px 32px 50px;min-width:0;background:linear-gradient(180deg,#f5f7f7,#edf2f2)}.proMain>.back{font-size:12px;text-transform:uppercase;letter-spacing:.08em}.legacyTabs{display:none!important}
 #profClass .top{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:0 8px 24px rgba(13,37,43,.06)}#profClass .title{font-size:42px}.dashboardPanel{padding-top:18px}.kpiGrid{gap:12px}.kpi{border:0!important;border-radius:18px!important;background:#fff!important;box-shadow:0 8px 22px rgba(13,37,43,.06)!important;border-top:4px solid var(--sun)!important}.kpi .num{font-size:38px}.card{border-radius:20px!important;border:1px solid var(--line)!important;box-shadow:0 10px 28px rgba(13,37,43,.055)!important;background:#fff!important}.section{text-transform:uppercase;font-style:italic;letter-spacing:-.7px}.globeHeader{background:linear-gradient(110deg,#0d252b,#17434b)!important;border-radius:18px!important}
-/* élèves : écrans type jeu sportif */
+/* athlètes : écrans type jeu sportif */
 #studentHome .top,#lessons .top,#lesson23 .top,#l23race .top,#race .top{background:linear-gradient(105deg,#0d252b,#17434b);color:#fff;border-radius:24px;padding:24px 26px;box-shadow:0 12px 30px rgba(13,37,43,.14);position:relative;overflow:hidden}#studentHome .top:after,#lessons .top:after,#lesson23 .top:after,#l23race .top:after{content:"◎";position:absolute;right:24px;top:-32px;font-size:130px;color:rgba(247,183,56,.10)}#studentHome .pill,#lessons .pill,#lesson23 .pill,#l23race .pill{background:var(--sun);color:#102a30}
 .lessonGrid{gap:16px}.lesson{min-height:155px!important;border-radius:20px!important;background:#fff!important;border:1px solid var(--line)!important;position:relative;overflow:hidden;padding:22px!important;box-shadow:0 10px 24px rgba(13,37,43,.06)!important}.lesson:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--ice)}.lesson.active:before{background:var(--sun)}.lessonnum{display:inline-flex;background:#0d252b;color:#fff;padding:5px 8px;border-radius:7px;font-size:11px!important;letter-spacing:.08em}.lesson .big{font-size:23px;margin-top:12px}.lesson.active{outline:none!important;box-shadow:0 0 0 2px var(--sun),0 12px 26px rgba(13,37,43,.09)!important}.lesson.locked{filter:grayscale(.5);opacity:.5}
 #lesson23 .card{border-top:5px solid var(--sun)!important}#l23MainTitle{font-size:27px;color:#0d252b;border-left:6px solid var(--sun);padding-left:12px;margin-top:26px}#l23MainButtons .role{background:linear-gradient(135deg,#0d252b,#17434b)!important;color:#fff!important;min-height:165px!important}#l23MainButtons .role .muted{color:#b9cacc;opacity:1}#l23MainButtons .role>div:last-child{color:var(--sun);font-weight:950;font-size:18px}
@@ -499,31 +499,61 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:900px){.sportNav{display:none}.proShell{grid-template-columns:72px 1fr}.proSidebar{padding:14px 8px}.proSidebar button span,.proSideTitle div,.sideDivider,.sideFoot{display:none}.proSidebar button{justify-content:center;font-size:18px}.proMain{padding:22px 18px}.sportBadge{display:none}}
 @media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
+
+/* V28 — purification UI athlètes */
+.sportTopbar{justify-content:flex-start}.sportBadge{margin-left:auto}.sportNav{display:none!important}
+/* Un seul retour contextuel par écran, discret et identique */
+.back{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:9px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(13,37,43,.10)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
+.back:hover{background:#fff!important}
+.studentTopTools{margin-bottom:12px}.studentTopTools .back{margin-bottom:0}.studentTopTools .btn{margin-left:auto}
+/* bannière athlète plus claire */
+#studentHome .top,#lessons .top,#lesson23 .top,#l23race .top,#race .top{border:1px solid rgba(255,255,255,.08);box-shadow:0 16px 36px rgba(13,37,43,.13)}
+#lessons .top .sub:before{content:"PARCOURS · ";color:var(--sun);font-weight:900;font-size:11px;letter-spacing:.12em}
+/* Les deux modes d'une leçon deviennent un hub cohérent */
+.studentModeHub,#l23Work{margin-top:22px;padding:18px;border-radius:26px;background:rgba(255,255,255,.52);border:1px solid rgba(13,37,43,.07)}
+.modeHeader,#l23S1Title,#l23MainTitle{display:flex!important;align-items:center;gap:12px;margin:18px 0 12px!important;padding:0!important;border:0!important;background:transparent!important;font-style:normal!important;text-transform:none!important;color:var(--ink)!important}
+.modeHeader>span{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px}.modeHeader small{display:block;font-size:10px;letter-spacing:.14em;color:#789095;font-weight:950}.modeHeader b{display:block;font-size:22px;line-height:1.15;margin-top:2px}
+.challengeModeHeader>span{background:#fff2c9}.raceModeHeader>span{background:#d8eef1}
+#l23S1Title:before{content:"⭐";width:46px;height:46px;border-radius:14px;background:#fff2c9;display:grid;place-items:center;font-size:23px;flex:0 0 46px}
+#l23MainTitle:before{content:"🏁";width:46px;height:46px;border-radius:14px;background:#d8eef1;display:grid;place-items:center;font-size:23px;flex:0 0 46px}
+#l23S1Title,#l23MainTitle{font-size:22px!important;font-weight:950!important}
+#l23S1Title{margin-top:0!important}#l23MainTitle{margin-top:28px!important}
+/* Cartes athlètes des modes */
+#s1Buttons .role,#l23S1Buttons .role{background:linear-gradient(145deg,#fffdf7,#fff6da)!important;color:var(--ink)!important;border:1px solid rgba(247,183,56,.32)!important;min-height:150px!important;box-shadow:0 10px 24px rgba(13,37,43,.055)!important}
+#mainButtons .role,#l23MainButtons .role{background:linear-gradient(135deg,#0d252b,#17434b)!important;color:#fff!important;border:1px solid rgba(255,255,255,.06)!important;min-height:150px!important;box-shadow:0 12px 28px rgba(13,37,43,.14)!important}
+#s1Buttons .role:after,#l23S1Buttons .role:after,#mainButtons .role:after,#l23MainButtons .role:after{display:none!important}
+#s1Buttons .role .muted,#l23S1Buttons .role .muted{color:#66777a!important;opacity:1!important}
+#mainButtons .role .muted,#l23MainButtons .role .muted{color:#b9cacc!important;opacity:1!important}
+#s1Buttons .role>div:last-child,#l23S1Buttons .role>div:last-child{color:#a66e00;font-size:14px;font-weight:950;text-transform:uppercase;letter-spacing:.05em}
+#mainButtons .role>div:last-child,#l23MainButtons .role>div:last-child{color:var(--sun)!important;font-size:14px!important;font-weight:950;text-transform:uppercase;letter-spacing:.05em}
+/* Les titres internes Défi XP restent sobres : éviter l'effet de blocs empilés */
+#s1 .card,#l23challenge .card{border-top:0!important}.xpCriteria{gap:10px}.criterion{box-shadow:none!important;border-radius:15px!important}.advice{border-left:4px solid var(--sun)}
+/* QR comme action secondaire */
+#pairWork>.toolbar,#l23Work>.toolbar{justify-content:flex-end;border-top:1px solid rgba(13,37,43,.08);padding-top:14px;margin-top:24px}
+#pairWork>.toolbar .btn,#l23Work>.toolbar .btn{font-size:11px;padding:10px 13px!important;box-shadow:none!important}
+/* terminologie athlète et compacité mobile */
+@media(max-width:650px){.studentModeHub,#l23Work{padding:12px;border-radius:20px}.modeHeader b,#l23S1Title,#l23MainTitle{font-size:18px!important}.modeHeader>span,#l23S1Title:before,#l23MainTitle:before{width:40px;height:40px;flex-basis:40px}.back{font-size:11px!important}.studentTopTools{align-items:center}}
+
 </style>
 </head>
 <body>
 <div class="app">
 <div class="sportTopbar" id="sportTopbar">
   <button class="sportBrand" onclick="show('home')"><span class="crosshair">◎</span><span>LASER <b>RUN</b></span><em>6ᵉ</em></button>
-  <div class="sportNav">
-    <button onclick="show('home')">ACCUEIL</button>
-    <button onclick="openStudentHome()">ATHLÈTES</button>
-    <button onclick="teacherGate()">PROFESSEUR</button>
-  </div>
-  <div class="sportBadge"><span class="liveDot"></span> EPS · LE BON SAUVEUR</div>
+<div class="sportBadge"><span class="liveDot"></span> EPS · LE BON SAUVEUR</div>
 </div>
 <section id="home">
  <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS - Le Bon Sauveur - Créé par L. RIGAUX</div></div></div>
  <div class="statusbar"><span id="netdot" class="okdot"></span><span id="nettext" class="muted"></span><span class="muted">· Les données de séance restent enregistrées sur l’appareil.</span></div>
  <div class="rolegrid">
-  <button class="role profrole" onclick="teacherGate()"><div class="roleicon">👨‍🏫</div><div><div class="roletitle">Professeur</div><div class="roledesc">Créer les classes, importer les élèves, diffuser les listes et récupérer les résultats.</div></div></button>
-  <button class="role studentrole" onclick="openStudentHome()"><div class="roleicon">🏃</div><div><div class="roletitle">Élèves</div><div class="roledesc">Classes installées → leçon → binôme → situations.</div></div></button>
+  <button class="role profrole" onclick="teacherGate()"><div class="roleicon">👨‍🏫</div><div><div class="roletitle">Professeur</div><div class="roledesc">Créer les classes, importer les athlètes, diffuser les listes et récupérer les résultats.</div></div></button>
+  <button class="role studentrole" onclick="openStudentHome()"><div class="roleicon">🏃</div><div><div class="roletitle">Athlètes</div><div class="roledesc">Classes installées → leçon → binôme → situations.</div></div></button>
  </div>
 </section>
 
 <section id="prof" class="hidden teacherDash">
  <div class="teacherHead">
-  <div><button class="back" onclick="lockTeacher()">← Accueil et verrouiller</button><div class="teacherKicker">LASER RUN 6ÈME</div><div class="title">Espace professeur</div><div class="sub">Pilotez vos classes et suivez la conquête du Globe de cristal.</div></div>
+  <div><button class="back" onclick="lockTeacher()">← Quitter l’espace professeur</button><div class="teacherKicker">LASER RUN 6ÈME</div><div class="title">Espace professeur</div><div class="sub">Pilotez vos classes et suivez la conquête du Globe de cristal.</div></div>
   <span class="pill">🔒 Professeur</span>
  </div>
  <div class="teacherActions">
@@ -566,7 +596,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 
  <div class="dashboardTabs legacyTabs">
   <button id="pcTabBtnOverview" class="dashboardTab active" onclick="showPcTab('overview')">Vue générale</button>
-  <button id="pcTabBtnStudents" class="dashboardTab" onclick="showPcTab('students')">Élèves</button>
+  <button id="pcTabBtnStudents" class="dashboardTab" onclick="showPcTab('students')">Athlètes</button>
   <button id="pcTabBtnResults" class="dashboardTab" onclick="showPcTab('results')">Profils</button>
    <button id="pcTabBtnRankings" class="dashboardTab" onclick="showPcTab('rankings')">Classements</button>
   <button id="pcTabBtnPursuit" class="dashboardTab" onclick="showPcTab('pursuit')">Poursuite</button><button id="pcTabBtnMass" class="dashboardTab" onclick="showPcTab('mass')">Mass-start</button><button id="pcTabBtnRelay" class="dashboardTab" onclick="showPcTab('relay')">Relais</button>
@@ -585,7 +615,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 
  <div id="pcPanelStudents" class="dashboardPanel hidden">
   <div class="card">
-   <div class="section" style="margin-top:0">Élèves</div>
+   <div class="section" style="margin-top:0">Athlètes</div>
    <div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.xls,.xlsx"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button></div>
    <div id="pcStudents" class="list"></div>
   </div>
@@ -641,7 +671,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 
  <div id="pcPanelMass" class="dashboardPanel hidden">
  <div class="section">Mass-start · Pad de course</div>
- <div class="notice">Le professeur déclenche chaque vague. À l’arrivée, l’élève touche son propre carré pour figer son temps.</div>
+ <div class="notice">Le professeur déclenche chaque vague. À l’arrivée, l’athlète touche son propre carré pour figer son temps.</div>
  <div id="massPad"></div>
 </div>
 <div id="pcPanelRelay" class="dashboardPanel hidden">
@@ -656,7 +686,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
    <div class="muted">Code d’accès L7 · propre à cette classe</div>
    <div id="joClassCode" class="joBigCode">----</div>
    <div id="joSchoolYear" class="joYear"></div>
-   <div class="notice">Écris simplement ce code au tableau. Tous les élèves de cette classe utilisent le même code pour ouvrir la L7. Il change automatiquement avec la classe et l’année scolaire.</div>
+   <div class="notice">Écris simplement ce code au tableau. Tous les athlètes de cette classe utilisent le même code pour ouvrir la L7. Il change automatiquement avec la classe et l’année scolaire.</div>
   </div>
  </div>
  <div class="card">
@@ -671,7 +701,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 <div id="pcPanelExport" class="dashboardPanel hidden">
   <div class="card">
    <div class="section" style="margin-top:0">Export iDoceo</div>
-   <div class="notice">Les élèves sont triés par ordre alphabétique. Les colonnes reprennent les Défis Étoile et les situations principales disponibles.</div>
+   <div class="notice">Les athlètes sont triés par ordre alphabétique. Les colonnes reprennent les Défis Étoile et les situations principales disponibles.</div>
    <div class="toolbar"><button class="btn orange" onclick="exportIDoceo()">Exporter le fichier CSV</button></div>
    <div class="section">Gestion de la classe</div>
    <button class="btn red" onclick="deleteClass()">Supprimer la classe</button>
@@ -683,22 +713,22 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 
 <section id="studentHome" class="hidden">
  <button class="back" onclick="show('home')">← Accueil</button>
- <div class="top"><div><div class="title">Espace élèves</div><div class="sub">Choisis ta classe</div></div><span class="pill">Élèves</span></div>
+ <div class="top"><div><div class="title">Espace athlètes</div><div class="sub">Choisis ta classe</div></div><span class="pill">Athlètes</span></div>
  <div class="toolbar"><button class="btn ghost" onclick="requestStudentAdmin()">⚙️ Administration</button></div>
  <div id="studentClasses" class="list"></div>
 </section>
 
 <section id="lessons" class="hidden">
  <div class="studentTopTools">
-  <button class="back" onclick="openStudentHome()">← Classes</button>
+  <button class="back" onclick="openStudentHome()">← Mes classes</button>
   <button class="btn ghost" onclick="openResultsQR()">▦ QR résultats</button>
  </div>
- <div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis ta leçon</div></div><span class="pill">Élèves</span></div>
+ <div class="top"><div><div id="lessonClass" class="title"></div><div class="sub">Choisis ta leçon</div></div><span class="pill">Athlètes</span></div>
  <div id="lessonGrid" class="lessonGrid"></div>
 </section>
 
 <section id="pair" class="hidden">
- <button class="back" onclick="openLessons()">← Leçons</button><div class="top"><div><div class="title">Leçon 1</div><div class="sub">Centre national de recrutement</div></div></div>
+ <button class="back" onclick="openLessons()">← Choix des leçons</button><div class="top"><div><div class="title">Leçon 1</div><div class="sub">Centre national de recrutement</div></div></div>
  <div class="card">
   <div class="section" style="margin-top:0">1. Choisis ton binôme</div>
   <div class="grid2"><div class="field"><label>Athlète 1</label><select id="pa" onchange="updatePairNation()"></select></div><div class="field"><label>Athlète 2</label><select id="pb" onchange="updatePairNation()"></select></div></div>
@@ -711,12 +741,12 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
   <div id="nationConflict" class="warn hidden"></div>
   <div class="toolbar"><button id="validatePairBtn" class="btn orange" onclick="validatePair()">Valider le binôme</button></div>
  </div>
- <div id="pairWork" class="hidden"><div class="section">Situation 1 · Le tir verrouillé</div><div id="s1Buttons" class="grid2"></div><div class="section">Situation principale · Centre national de recrutement</div><div id="mainButtons" class="grid2"></div><div class="toolbar"><button class="btn light" onclick="openResultsQR()">▦ Afficher le QR des résultats</button></div></div>
+ <div id="pairWork" class="hidden studentModeHub"><div class="modeHeader challengeModeHeader"><span>⭐</span><div><small>MODE 1</small><b>Défi Étoile · Le tir verrouillé</b></div></div><div id="s1Buttons" class="grid2 modeGrid challengeGrid"></div><div class="modeHeader raceModeHeader"><span>🏁</span><div><small>MODE 2</small><b>Épreuve principale · Centre national de recrutement</b></div></div><div id="mainButtons" class="grid2 modeGrid raceGrid"></div><div class="toolbar"><button class="btn light" onclick="openResultsQR()">▦ Afficher le QR des résultats</button></div></div>
 </section>
 
 <section id="s1" class="hidden">
- <button class="back" onclick="openPair()">← Binôme</button>
- <div class="top"><div><div class="title">Le tir verrouillé</div><div id="s1Name" class="sub"></div></div><span class="pill">Situation 1</span></div>
+ <button class="back" onclick="openPair()">← Choix des athlètes</button>
+ <div class="top"><div><div class="title">Le tir verrouillé</div><div id="s1Name" class="sub"></div></div><span class="pill">Défi Étoile</span></div>
  <div id="xp1Card" class="card">
   <div class="section" style="margin-top:0">Défi XP 1 · Observer et conseiller</div>
   <div class="notice">Le coach observe la position du tireur. Choisis <b>un seul critère</b> à améliorer, puis donne le conseil proposé avant le défi suivant.</div>
@@ -738,7 +768,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 </section>
 
 <section id="race" class="hidden">
- <button class="back" onclick="leaveRace()">← Binôme</button>
+ <button class="back" onclick="leaveRace()">← Choix des athlètes</button>
  <div class="top"><div><div class="title">Centre national de recrutement</div><div id="raceName" class="sub"></div></div><span id="raceStatus" class="pill">Prêt</span></div>
  <div class="card">
   <div id="timer" class="timer">00:00.0</div>
@@ -754,7 +784,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 
 
 <section id="lesson23" class="hidden">
- <button class="back" onclick="openLessons()">← Leçons</button>
+ <button class="back" onclick="openLessons()">← Choix des leçons</button>
  <div class="top"><div><div id="l23Title" class="title"></div><div id="l23Sub" class="sub"></div></div><span id="l23Theme" class="pill"></span></div>
  <div class="card">
   <div class="section" style="margin-top:0">Choisis ton binôme</div>
@@ -769,7 +799,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 </section>
 
 <section id="l23challenge" class="hidden">
- <button class="back" onclick="show('lesson23')">← Binôme</button>
+ <button class="back" onclick="show('lesson23')">← Choix des athlètes</button>
  <div class="top"><div><div id="chTitle" class="title"></div><div id="chName" class="sub"></div></div><span id="chTheme" class="pill"></span></div>
  <div id="chXP1Card" class="card">
   <div class="section" style="margin-top:0">Défi XP 1 · Observer et conseiller</div>
@@ -802,7 +832,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 </section>
 
 <section id="l23race" class="hidden">
- <button class="back" onclick="leaveL23Race()">← Binôme</button>
+ <button class="back" onclick="leaveL23Race()">← Choix des athlètes</button>
  <div class="top"><div><div id="r23Title" class="title"></div><div id="r23Name" class="sub"></div></div><span id="r23Status" class="pill">Prêt</span></div>
  <div class="card">
   <div id="r23PursuitInfo" class="notice hidden"></div>
@@ -826,7 +856,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 </section>
 
 <section id="pursuitMaster" class="hidden">
- <button class="back" onclick="show('profClass')">← Classe</button>
+ <button class="back" onclick="show('profClass')">← Tableau de bord</button>
  <div class="top"><div><div class="title">Poursuite · Départs</div><div id="pmClass" class="sub"></div></div><span class="pill">Leçon 3</span></div>
  <div class="toolbar">
   <button id="pmMode1" class="btn orange" onclick="setPursuitMode(1)">Athlètes 1</button>
@@ -923,7 +953,7 @@ function renderProf(){
   const lessons=[...new Set((c.results||[]).map(r=>Number(r.lesson)).filter(Boolean))];
   const globe=globeStandings(c), leader=globe[0];
   return `<button class="teacherClassCard" onclick="openProfClass(${i})">
-   <div class="tccTop"><div><div class="tccName">${esc(c.name)}</div><div class="muted">${c.students.length} élève${c.students.length>1?'s':''} · ${nations.length} nation${nations.length>1?'s':''}</div></div><span class="tccArrow">→</span></div>
+   <div class="tccTop"><div><div class="tccName">${esc(c.name)}</div><div class="muted">${c.students.length} athlète${c.students.length>1?'s':''} · ${nations.length} nation${nations.length>1?'s':''}</div></div><span class="tccArrow">→</span></div>
    <div class="tccStats"><div><small>Leçons</small><b>${lessons.length}/7</b></div><div><small>Leader Globe</small><b>${leader?esc(leader.nation):'—'}</b></div><div><small>Cristaux</small><b>${leader?'💎 '+leader.total:'—'}</b></div></div>
   </button>`;
  }).join(''):'<div class="card muted">Aucune classe enregistrée. Ouvrez « Gestion » pour créer votre première classe.</div>';
@@ -986,9 +1016,9 @@ function lessonIndividualRanking(c,lesson){
 function globeStandings(c){
  const nations={};
 
- // Les cristaux récompensent la NATION, jamais chaque élève individuellement.
+ // Les cristaux récompensent la NATION, jamais chaque athlète individuellement.
  // Pour chaque leçon, on classe d'abord les nations à partir du total des
- // performances individuelles de leurs élèves, puis on attribue UNE seule
+ // performances individuelles de leurs athlètes, puis on attribue UNE seule
  // quantité de cristaux à chaque nation selon sa place.
  for(let lesson=1;lesson<=7;lesson++){
    const individual=lessonIndividualRanking(c,lesson);
@@ -1290,13 +1320,13 @@ function levelForStars(v){if(v==null)return 0;if(v>=3.5)return 4;if(v>=2.5)retur
 function levelForPercent(v){if(v==null)return 0;if(v>=80)return 4;if(v>=60)return 3;if(v>=40)return 2;return 1}
 function skillGauge(label,value){const level=levelForStars(value),pct=value==null?0:Math.max(0,Math.min(100,value/4*100));return `<div class="skillRow"><div class="skillLabel">${label}</div><div class="skillTrack"><div class="skillFill ${level?'lvl'+level:''}" style="width:${pct}%"></div></div><div class="skillValue">${value==null?'—':value.toFixed(1)+' ⭐'}</div></div>`}
 function studentCrystalContribution(c,name){
- // Le Globe récompense la nation, pas l'élève : on affiche donc le total actuel de sa nation.
+ // Le Globe récompense la nation, pas l'athlète : on affiche donc le total actuel de sa nation.
  const nation=(c.nations&&c.nations[name])||null;if(!nation)return 0;const row=globeStandings(c).find(x=>x.nation===nation);return row?row.total:0;
 }
 function renderStudentProfiles(c){
  const box=document.getElementById('pcResults');if(!box)return;
  const names=c.students.slice().sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));
- if(!names.length){box.innerHTML='<div class="muted">Aucun élève.</div>';return}
+ if(!names.length){box.innerHTML='<div class="muted">Aucun athlète.</div>';return}
  box.innerHTML=names.map(name=>{
   const m=latestStudentResults(c,name),nation=(c.nations&&c.nations[name])||[...m.values()].find(r=>r.nation)?.nation||'Nation non attribuée';
   const precision=avgChallengeFromMap(m,[1]),rapidity=avgChallengeFromMap(m,[2]),respiration=avgChallengeFromMap(m,[3,6]);
@@ -1318,19 +1348,19 @@ function renderStudentProfiles(c){
   const l2=m.get(2),sprint=l2&&l2.time!=null?fmt(l2.time):'—';
   return `<div class="profileCard"><div class="profileHead"><div><div class="profileName">${esc(name)}</div><div class="profileNation">${PURSUIT_FLAGS[nation]||'🏳️'} ${esc(nation)}</div></div><div class="profileBadge"><small>PROFIL</small>${level?'NIVEAU '+level:'À compléter'}</div></div>
    <div class="profileSectionTitle">Défis Étoile</div>${skillGauge('Précision',precision)}${skillGauge('Rapidité',rapidity)}${skillGauge('Respiration',respiration)}
-   <div class="profileSectionTitle">Situation principale</div><div class="profileStats"><div class="profileStat"><small>Réussite tir</small><b>${pct==null?'—':pct+' %'}</b></div><div class="profileStat"><small>Temps moyen tir</small><b>${avgShoot==null?'—':fmt(avgShoot)}</b></div><div class="profileStat"><small>Sprint L2</small><b>${sprint}</b></div></div>
+   <div class="profileSectionTitle">Épreuve principale</div><div class="profileStats"><div class="profileStat"><small>Réussite tir</small><b>${pct==null?'—':pct+' %'}</b></div><div class="profileStat"><small>Temps moyen tir</small><b>${avgShoot==null?'—':fmt(avgShoot)}</b></div><div class="profileStat"><small>Sprint L2</small><b>${sprint}</b></div></div>
    <div class="profileFoot"><div class="profileLevel">${pct==null?'Tirs à compléter':'Efficacité tir · Niveau '+levelForPercent(pct)}</div><div class="profileCrystal">💎 ${studentCrystalContribution(c,name)}</div></div></div>`;
  }).join('');
 }
 function renderProfClass(){
  const c=pc();
  document.getElementById('pcTitle').textContent=c.name;
- document.getElementById('pcSub').textContent=`${c.students.length} élèves · ${(c.results||[]).length} résultat(s)`;
+ document.getElementById('pcSub').textContent=`${c.students.length} athlètes · ${(c.results||[]).length} résultat(s)`;
 
  document.getElementById('pcStudents').innerHTML=c.students.length?c.students.slice().sort((a,b)=>a.localeCompare(b,'fr')).map(n=>{
    const i=c.students.indexOf(n);
    return `<div class="row"><div><div class="big">${esc(n)}</div><div class="muted">${(c.nations&&c.nations[n])?esc(c.nations[n]):'Nation non attribuée'}</div></div><button class="btn ghost" onclick="removeStudent(${i})">Retirer</button></div>`;
- }).join(''):'<div class="muted">Aucun élève.</div>';
+ }).join(''):'<div class="muted">Aucun athlète.</div>';
 
  renderStudentProfiles(c);
 
@@ -1338,7 +1368,7 @@ function renderProfClass(){
  const completedLessons=new Set((c.results||[]).filter(r=>r.time!=null).map(r=>Number(r.lesson||1))).size;
  const knownNations=new Set(c.students.map(n=>(c.nations&&c.nations[n])||null).filter(Boolean)).size;
  document.getElementById('pcKpis').innerHTML=`
-  <div class="kpi"><div class="muted">Élèves</div><div class="num">${c.students.length}</div></div>
+  <div class="kpi"><div class="muted">Athlètes</div><div class="num">${c.students.length}</div></div>
   <div class="kpi"><div class="muted">Nations</div><div class="num">${knownNations}</div></div>
   <div class="kpi"><div class="muted">Leçons avec résultats</div><div class="num">${completedLessons}/7</div></div>
   <div class="kpi"><div class="muted">Leader Globe</div><div class="num">${globe[0]?esc(globe[0].nation):'—'}</div></div>`;
@@ -1355,11 +1385,11 @@ function exportIDoceo(){
  a.href=url;a.download=`${c.name.replace(/[^a-z0-9]+/gi,'-')}-Laser-Run-iDoceo.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
 }
 function deleteClass(){if(confirm(`Supprimer ${pc().name} ?`)){db.classes.splice(currentProf,1);write(DB,db);openProf()}} function manualStudent(){let n=prompt('Nom Prénom :');if(n){pc().students.push(n.trim());write(DB,db);renderProfClass()}} function removeStudent(i){pc().students.splice(i,1);write(DB,db);renderProfClass()}
-roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let names=[];if(f.name.toLowerCase().endsWith('.csv')){let t=await f.text();names=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&/nom|pr[eé]nom/i.test(p.join(' ')))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean)}else{if(typeof XLSX==='undefined')throw new Error('xlsx');let wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&/nom|pr[eé]nom/i.test(r.join(' ')))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])})}let seen=new Set(pc().students.map(x=>x.toLowerCase()));names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){pc().students.push(n);seen.add(n.toLowerCase())}});write(DB,db);renderProfClass();alert(`${names.length} élève(s) lu(s).`)}catch(err){alert('Lecture Excel indisponible. Vérifie que l’application a été ouverte au moins une fois avec Internet, ou utilise un CSV.')}e.target.value=''});
+roster.addEventListener('change',async e=>{let f=e.target.files[0];if(!f)return;try{let names=[];if(f.name.toLowerCase().endsWith('.csv')){let t=await f.text();names=t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((l,i)=>{let p=l.split(/[;,]/).map(x=>x.trim());if(i===0&&/nom|pr[eé]nom/i.test(p.join(' ')))return null;return p.length>=2?`${p[0]} ${p[1]}`:p[0]}).filter(Boolean)}else{if(typeof XLSX==='undefined')throw new Error('xlsx');let wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});rows.forEach((r,i)=>{r=r.map(x=>String(x).trim());if(!r.some(Boolean))return;if(i===0&&/nom|pr[eé]nom/i.test(r.join(' ')))return;names.push(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0])})}let seen=new Set(pc().students.map(x=>x.toLowerCase()));names.filter(Boolean).forEach(n=>{if(!seen.has(n.toLowerCase())){pc().students.push(n);seen.add(n.toLowerCase())}});write(DB,db);renderProfClass();alert(`${names.length} athlète(s) lu(s).`)}catch(err){alert('Lecture Excel indisponible. Vérifie que l’application a été ouverte au moins une fois avec Internet, ou utilise un CSV.')}e.target.value=''});
 
 function configObject(){return {v:Date.now(),classes:db.classes.map(c=>[c.name,c.students.map(n=>[n,(c.nations&&c.nations[n])||null])]),history:db.classes.map(c=>[c.name,(c.results||[]).filter(r=>(r.lesson||1)<=6)])}}
 function makeChunks(type,obj,max=900){let raw=JSON.stringify(obj),id=Date.now().toString(36),parts=[];for(let i=0;i<raw.length;i+=max)parts.push(raw.slice(i,i+max));return parts.map((d,i)=>JSON.stringify({a:type,id,p:i+1,t:parts.length,d}))}
-function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject(),520);qrIndex=0;qrReturn=(!document.getElementById('profClass').classList.contains('hidden')?'profClass':'prof');qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette élève';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} élèves</div></div></div>`).join('');renderQR();show('qr')}
+function openConfigQR(){if(!db.classes.length)return alert('Crée au moins une classe.');if(db.classes.some(c=>!c.students.length)&&!confirm('Certaines classes sont vides. Continuer ?'))return;qrPages=makeChunks('LR10C',configObject(),520);qrIndex=0;qrReturn=(!document.getElementById('profClass').classList.contains('hidden')?'profClass':'prof');qrTitle.textContent='Diffuser les classes';qrSub.textContent='À scanner une seule fois sur chaque tablette athlète';qrInfo.textContent=`Configuration : ${db.classes.length} classe(s). ${qrPages.length} QR à scanner dans l’ordre.`;qrDetail.innerHTML=db.classes.map(c=>`<div class="row"><div><b>${esc(c.name)}</b><div class="muted">${c.students.length} athlètes</div></div></div>`).join('');renderQR();show('qr')}
 function resultRecords(){
  return read(RES,[]).filter(r=>r.date===day()&&(r.s1!=null||r.challenge!=null||r.time!=null))
 }
@@ -1373,7 +1403,7 @@ function compactResult(r){
 }
 function makeResultQRPackets(records){
  // V21 : un seul QR par tablette.
- // Les champs sont compactés au maximum pour éviter un QR par élève.
+ // Les champs sont compactés au maximum pour éviter un QR par athlète.
  const compact=records.map(compactResult);
  return [JSON.stringify({a:'LR21R',v:21,d:day(),r:compact})];
 }
@@ -1456,7 +1486,7 @@ function renderJOPanel(){
  }
  box.innerHTML=rank.map((r,i)=>`<div class="rankItem"><div class="place">${i+1}</div><div><div class="big">${esc(r.name)}</div><div class="muted">${PURSUIT_FLAGS[r.nation||(c.nations||{})[r.name]]||'🏳️'} ${esc(r.nation||(c.nations||{})[r.name]||'Nation non attribuée')}</div></div><div class="value">${fmt(r.time)}</div></div>`).join('');
 }
-function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} élèves</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
+function openStudentHome(){normalizeInstalled();studentClasses.innerHTML=installed.classes.length?installed.classes.map((c,i)=>`<button class="row" style="width:100%;text-align:left;border:0" onclick="selectClass(${i})"><div><div class="big">${esc(c[0])}</div><div class="muted">${c[1].length} athlètes</div></div><div style="font-size:28px">›</div></button>`).join(''):'<div class="card muted">Aucune classe installée. Demande à ton enseignant de configurer cette tablette.</div>';show('studentHome')}
 function selectClass(i){currentClass=i;pair=[];selectedNation=null;openLessons()}
 function sc(){return installed.classes[currentClass]}
 function studentEntries(){return sc()[1]||[]}
@@ -1511,15 +1541,15 @@ function updatePairNation(){
    autoBox.classList.remove('hidden');
  }
 
- // Si les deux élèves ont déjà une nation, aucune nouvelle attribution n'est nécessaire,
+ // Si les deux athlètes ont déjà une nation, aucune nouvelle attribution n'est nécessaire,
  // même si leurs nations sont différentes.
  if(selected.length===2 && selected.every(x=>x.nation)){
    assignBox.classList.add('hidden');
    return;
  }
 
- // Si au moins un élève n'a pas encore de nation, l'enseignant/élève peut attribuer
- // une nation uniquement à l'élève non encore affecté.
+ // Si au moins un athlète n'a pas encore de nation, l'enseignant/athlète peut attribuer
+ // une nation uniquement à l'athlète non encore affecté.
  assignBox.classList.remove('hidden');
 }
 function validatePair(){
@@ -1698,7 +1728,7 @@ function openLesson23(n){
  currentLesson=n;l23pair=[];
  const c=l23Cfg(),joOnly=(n===7);
  l23Title.textContent=c.title;l23Sub.textContent=c.sub;l23Theme.textContent=joOnly?'FINALE JO':c.theme;
- l23S1Title.textContent=`Situation 1 · ${c.s1}`;l23MainTitle.textContent=joOnly?`🏅 ÉPREUVE OFFICIELLE · ${c.main}`:`Situation principale · ${c.main}`;
+ l23S1Title.textContent=`⭐ DÉFI ÉTOILE · ${c.s1}`;l23MainTitle.textContent=joOnly?`🏅 ÉPREUVE OFFICIELLE · ${c.main}`:`🏁 ÉPREUVE PRINCIPALE · ${c.main}`;
  l23S1Title.classList.toggle('hidden',joOnly);l23S1Buttons.classList.toggle('hidden',joOnly);
  l23a.innerHTML=options();l23b.innerHTML=options();l23Work.classList.add('hidden');show('lesson23')
 }
@@ -2069,7 +2099,7 @@ function r23Shot(hit){
  const now=performance.now();if(now-r23ShotGuard<120)return;r23ShotGuard=now;
 
  // L6 · Mode 3 : on ne saisit jamais une cible ratée.
- // L'élève ne valide que les cibles touchées. À 50 s, les cibles restantes passent en rouge.
+ // L'athlète ne valide que les cibles touchées. À 50 s, les cibles restantes passent en rouge.
  if(currentLesson===6||currentLesson===7){
    if(!hit || l23race.hits>=5)return;
 
