@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V43</title>
+<title>Laser Run 6ème · V44</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -3922,11 +3922,11 @@ function printJOBibs(){
        position:absolute;inset:0;color:#073438;font-weight:900;
      }
 
-     /* V43 — finition dossards JO : numéro sécurisé dans le cadre et correction optique du pays supérieur. */
+     /* V44 — finition dossards JO : nation+drapeau et grand numéro décalés de 15 px vers la gauche. */
      /* Bloc nation centré sur le cartouche noir + blason */
      .nationZone{
        position:absolute;
-       left:9.0%; top:55.0%;
+       left:calc(9.0% - 15px); top:55.0%;
        width:28.8%; height:26.5%;
        display:flex;flex-direction:column;
        align-items:center;justify-content:flex-start;
@@ -3959,7 +3959,7 @@ function printJOBibs(){
      /* Numéro parfaitement centré dans la grande zone droite */
      .bibNum{
        position:absolute;
-       right:6.2%; top:35.2%;
+       right:calc(6.2% + 15px); top:35.2%;
        width:34.5%; height:43%;
        display:flex;align-items:center;justify-content:center;
        text-align:center;

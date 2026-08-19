@@ -1,4 +1,4 @@
-const CACHE='laser-run-v43-github-complet-20260819';
+const CACHE='laser-run-v44-github-complet-20260819';
 const CORE=[
   './',
   './index.html',
