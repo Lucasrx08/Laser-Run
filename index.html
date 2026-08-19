@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V33.2.1.1</title>
+<title>Laser Run 6ème · V34</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -1229,6 +1229,51 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
   }
 }
 
+
+/* =========================================================
+   V34 — vues plein écran gymnase + roue + ergonomie tactile
+   ========================================================= */
+html.raceFullscreenRoot,html.raceFullscreenRoot body{height:100%!important;overflow:hidden!important}
+body.raceFullscreen .raceScreen.raceFullscreenActive{overflow:hidden!important;padding:10px 14px 12px!important}
+body.raceFullscreen .raceScreenBar{position:relative!important;top:auto!important;height:52px!important;min-height:52px!important;padding:0 0 8px!important;margin:0 0 6px!important;background:#eef3f3!important}
+body.raceFullscreen .raceScreenBar b{font-size:13px!important}
+body.raceFullscreen .raceFullscreenBtn{min-height:44px!important;padding:8px 14px!important}
+body.raceFullscreen .racePadBlock{margin:0 0 8px!important}
+body.raceFullscreen .raceTop{min-height:58px!important;height:58px!important;font-size:clamp(19px,2.2vw,31px)!important;margin:0 0 8px!important;border-radius:14px!important;padding:8px 12px!important}
+body.raceFullscreen .racePadGrid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;margin:0!important;align-items:stretch!important}
+body.raceFullscreen .raceTile{min-height:0!important;height:auto!important;border-radius:14px!important;overflow:hidden!important}
+body.raceFullscreen .tileMain{min-height:94px!important;height:94px!important;padding:10px 12px!important}
+body.raceFullscreen .tileMain b{font-size:clamp(17px,1.8vw,25px)!important;line-height:1.02!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body.raceFullscreen .tileMain small{font-size:12px!important;margin:3px 0!important}
+body.raceFullscreen .tileMain strong{font-size:clamp(15px,1.5vw,21px)!important;margin-top:4px!important;line-height:1.05!important}
+body.raceFullscreen .tileShots{min-height:40px!important;height:40px!important;padding:7px 10px!important;font-size:13px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+body.raceFullscreen #pcPanelMass,body.raceFullscreen #pcPanelRelay{height:100vh!important}
+body.raceFullscreen #massPad,body.raceFullscreen #relayPad{height:calc(100vh - 70px)!important;overflow:hidden!important}
+body.raceFullscreen #pcPanelPursuit .pursuitGrid{height:calc(100vh - 70px)!important;grid-template-columns:minmax(0,3.4fr) minmax(250px,.8fr)!important;gap:10px!important}
+body.raceFullscreen #pcPanelPursuit .card{min-height:0!important;height:100%!important;padding:12px 16px!important;overflow:hidden!important}
+body.raceFullscreen #pcPanelPursuit .card:first-child{min-height:0!important;justify-content:center!important}
+body.raceFullscreen #pcPanelPursuit .pursuitTimer{font-size:clamp(90px,15vw,190px)!important;margin:4px auto 10px!important;line-height:.9!important}
+body.raceFullscreen #pcPanelPursuit .pursuitNext{padding:12px!important;margin:0 auto 8px!important}
+body.raceFullscreen #pcPanelPursuit .pursuitNextNation{font-size:clamp(34px,5vw,62px)!important}
+body.raceFullscreen #pcPanelPursuit .pursuitCountdown{font-size:clamp(28px,4vw,48px)!important;margin-top:5px!important}
+body.raceFullscreen #pursuitStarts{max-height:calc(100vh - 120px)!important;overflow:auto!important}
+body.raceFullscreen .pursuitRow{padding:7px 8px!important;margin-bottom:5px!important}
+@media(max-width:1050px){body.raceFullscreen .racePadGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}body.raceFullscreen .tileMain{height:86px!important;min-height:86px!important}}
+
+/* Roue V34 : tout tient dans un écran, sans aller chercher le bouton en bas. */
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:hidden!important;padding:8px 12px 10px!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{position:relative!important;height:58px!important;min-height:58px!important;padding:0!important;margin:0 0 4px!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead .section{font-size:24px!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{height:calc(100vh - 72px)!important;min-height:0!important;grid-template-columns:minmax(0,1fr) 300px!important;gap:10px!important;overflow:hidden!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelSide{height:100%!important;display:grid!important;grid-template-rows:minmax(0,1fr) 46px 50px 42px!important;gap:6px!important;min-height:0!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{width:min(100%,calc(100vh - 220px))!important;max-width:none!important;height:auto!important;align-self:center!important;justify-self:center!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawResult{min-height:46px!important;height:46px!important;font-size:16px!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationSpinBtn{min-height:50px!important;height:50px!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen #nationUndoBtn{min-height:42px!important;height:42px!important;padding:6px 10px!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{width:300px!important;max-width:300px!important;height:100%!important;overflow:hidden!important}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthleteList{max-height:none!important;height:calc(100% - 38px)!important;overflow:auto!important}
+@media(max-width:900px){body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{overflow:auto!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{height:auto!important;grid-template-columns:1fr!important;overflow:visible!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelSide{height:auto!important;grid-template-rows:auto auto auto auto!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{width:min(88vw,560px)!important}body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{width:100%!important;max-width:none!important;height:auto!important}}
+
 </style>
 </head>
 <body>
@@ -1455,12 +1500,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
   <div class="section" style="margin-top:0">1. Choisis ton binôme</div>
   <div class="grid2"><div class="field"><label>Athlète 1</label><select id="pa" onchange="updatePairNation()"></select></div><div class="field"><label>Athlète 2</label><select id="pb" onchange="updatePairNation()"></select></div></div>
   <div id="nationAutoBox" class="notice hidden" style="margin-top:18px"></div>
-  <div id="nationAssignBox">
-   <div class="section">2. Attribuez votre nation</div>
-   <div class="muted" style="margin-bottom:12px">Cette attribution est faite une seule fois en Leçon 1 et sera conservée pour tout le cycle.</div>
-   <div id="nationGrid" class="nationGrid"></div>
-  </div>
-  <div id="nationConflict" class="warn hidden"></div>
+  <div id="nationMissingBox" class="warn hidden" style="margin-top:18px">La nation doit être attribuée par l’enseignant depuis <b>Professeur → Athlètes → Attribution des nations</b>.</div>
   <div class="toolbar"><button id="validatePairBtn" class="btn orange" onclick="validatePair()">Valider le binôme</button></div>
  </div>
  <div id="pairWork" class="hidden studentModeHub"><div class="modeHeader challengeModeHeader"><span>⭐</span><div><small>MODE 1</small><b>Défi Étoile · Le tir verrouillé</b></div></div><div id="s1Buttons" class="grid2 modeGrid challengeGrid"></div><div class="modeHeader raceModeHeader"><span>🏁</span><div><small>MODE 2</small><b>Épreuve principale · Centre national de recrutement</b></div></div><div id="mainButtons" class="grid2 modeGrid raceGrid"></div><div class="toolbar"><button class="btn light" onclick="openResultsQR()">▦ Afficher le QR des résultats</button></div></div>
@@ -2261,59 +2301,29 @@ function renderNationDrawAthletes(){
 }
 function drawNationWheel(angle=nationWheelAngle){
  const canvas=document.getElementById('nationWheel');if(!canvas)return;
- const ctx=canvas.getContext('2d'),nations=availableDrawNations(),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=Math.min(w,h)/2-20;
+ const ctx=canvas.getContext('2d'),nations=availableDrawNations(),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=Math.min(w,h)/2-24;
  ctx.clearRect(0,0,w,h);
-
  if(!nations.length){
    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#dfe9ea';ctx.fill();
    ctx.fillStyle='#0d252b';ctx.font='900 42px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
    ctx.fillText('Toutes les nations',cx,cy-24);ctx.fillText('sont attribuées',cx,cy+28);return;
  }
-
  const step=Math.PI*2/nations.length;
  nations.forEach((nation,i)=>{
    const a0=angle+i*step-Math.PI/2,a1=a0+step,mid=a0+step/2;
-
    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a0,a1);ctx.closePath();
-   ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();
-   ctx.strokeStyle='#ffffff';ctx.lineWidth=7;ctx.stroke();
-
-   // Label horizontal near the outer rim so all country names stay readable.
-   const labelR=r*0.73;
-   const tx=cx+Math.cos(mid)*labelR;
-   const ty=cy+Math.sin(mid)*labelR;
-
-   ctx.save();
-   ctx.translate(tx,ty);
-
-   // Keep every label upright.
-   let rot=mid+Math.PI/2;
-   if(rot>Math.PI/2 && rot<Math.PI*1.5)rot+=Math.PI;
-   ctx.rotate(rot);
-
-   const flag=NATION_FLAGS[nation]||'🏳️';
-   let fs=nations.length>=13?24:28;
-   ctx.font=`900 ${fs}px system-ui`;
-   ctx.textAlign='center';
-   ctx.textBaseline='middle';
-   ctx.fillStyle='#0d252b';
-
-   const maxW=r*0.37;
-   while(fs>18 && ctx.measureText(nation).width>maxW){
-     fs--;
-     ctx.font=`900 ${fs}px system-ui`;
-   }
-
-   ctx.fillText(flag,0,-18);
-   ctx.fillText(nation,0,17);
-   ctx.restore();
+   ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.stroke();
+   const labelR=r*.72,tx=cx+Math.cos(mid)*labelR,ty=cy+Math.sin(mid)*labelR;
+   ctx.save();ctx.translate(tx,ty);
+   // V34 : tous les pays sont écrits horizontalement, dans le même sens.
+   let fs=nations.length>=13?22:25;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#0d252b';
+   ctx.font=`900 ${fs}px system-ui`;const maxW=r*.34;while(fs>15&&ctx.measureText(nation).width>maxW){fs--;ctx.font=`900 ${fs}px system-ui`}
+   ctx.font=`${fs+5}px system-ui`;ctx.fillText(NATION_FLAGS[nation]||'🏳️',0,-15);
+   ctx.font=`900 ${fs}px system-ui`;ctx.fillText(nation,0,17);ctx.restore();
  });
-
- // Center cap.
- ctx.beginPath();ctx.arc(cx,cy,116,0,Math.PI*2);ctx.fillStyle='#0d252b';ctx.fill();
- ctx.beginPath();ctx.arc(cx,cy,96,0,Math.PI*2);ctx.fillStyle='#f7b738';ctx.fill();
- ctx.fillStyle='#0d252b';ctx.font='1000 30px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
- ctx.fillText('LASER',cx,cy-16);ctx.fillText('RUN',cx,cy+20);
+ ctx.beginPath();ctx.arc(cx,cy,108,0,Math.PI*2);ctx.fillStyle='#0d252b';ctx.fill();
+ ctx.beginPath();ctx.arc(cx,cy,89,0,Math.PI*2);ctx.fillStyle='#f7b738';ctx.fill();
+ ctx.fillStyle='#0d252b';ctx.font='1000 29px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('LASER',cx,cy-15);ctx.fillText('RUN',cx,cy+19);
 }
 function spinNationWheel(){
  if(nationWheelSpinning)return;
@@ -2476,12 +2486,19 @@ function csvRosterNames(text){
 async function readRosterFile(file){
  const lower=(file.name||'').toLowerCase();
  const mime=file.type||'';
+ const decodeRosterText=async()=>{
+   const buf=await file.arrayBuffer();
+   let text=new TextDecoder('utf-8',{fatal:false}).decode(buf);
+   const bad=(text.match(/�/g)||[]).length;
+   if(bad){try{text=new TextDecoder('windows-1252').decode(buf)}catch(e){}}
+   return text.replace(/^\uFEFF/,'');
+ };
  const csvLike=lower.endsWith('.csv')||lower.endsWith('.txt')||
                /text\/csv|text\/plain|application\/csv|application\/vnd\.ms-excel/i.test(mime);
 
  if(csvLike){
    try{
-     const names=csvRosterNames(await file.text());
+     const names=csvRosterNames(await decodeRosterText());
      if(names.length)return names;
    }catch(e){}
  }
@@ -2498,7 +2515,7 @@ async function readRosterFile(file){
 
  // Some browsers give CSV files a misleading MIME.
  try{
-   const names=csvRosterNames(await file.text());
+   const names=csvRosterNames(await decodeRosterText());
    if(names.length)return names;
  }catch(e){}
 
@@ -2667,76 +2684,43 @@ function nationCount(nation,exclude=[]){return studentEntries().filter((x,i)=>!e
  show('lessons')
 }
 function options(){return '<option value="">Choisir...</option>'+studentEntries().map((x,i)=>`<option value="${i}">${esc(studentNameAt(i))}</option>`).join('')}
-function renderNations(){nationGrid.innerHTML=NATIONS.map(n=>`<button class="nationBtn ${selectedNation===n?'selected':''}" onclick="selectNation('${n}')"><div class="nationName">${n}</div></button>`).join('')}
-function selectNation(n){
- selectedNation=n;
- renderNations();
- updatePairNation();
-}
+function renderNations(){}
+function selectNation(){}
 function openPair(){
  pa.innerHTML=options();
  pb.innerHTML=options();
  pairWork.classList.add('hidden');
- selectedNation=null;
- renderNations();
  if(pair.length===2){pa.value=pair[0].i;pb.value=pair[1].i}
  updatePairNation();
  show('pair');
 }
 function updatePairNation(){
  const autoBox=document.getElementById('nationAutoBox');
- const assignBox=document.getElementById('nationAssignBox');
- const conflict=document.getElementById('nationConflict');
+ const missingBox=document.getElementById('nationMissingBox');
  const btn=document.getElementById('validatePairBtn');
- conflict.classList.add('hidden');
- autoBox.classList.add('hidden');
- btn.disabled=false;
-
  const av=pa.value,bv=pb.value;
  const selected=[];
  if(av!=='')selected.push({i:+av,name:studentNameAt(+av),nation:studentNationAt(+av)});
  if(bv!==''&&bv!==av)selected.push({i:+bv,name:studentNameAt(+bv),nation:studentNationAt(+bv)});
-
- if(!selected.length){
-   assignBox.classList.remove('hidden');
-   return;
+ const missing=selected.filter(x=>!x.nation);
+ if(autoBox){
+   if(selected.length){
+     autoBox.innerHTML=selected.map(x=>`<b>${esc(x.name)}</b> : ${x.nation?`${PURSUIT_FLAGS[x.nation]||'🏳️'} ${esc(x.nation)}`:'nation non attribuée'}`).join('<br>');
+     autoBox.classList.remove('hidden');
+   }else autoBox.classList.add('hidden');
  }
-
- const known=selected.filter(x=>x.nation);
- if(known.length){
-   autoBox.innerHTML=known.map(x=>`<b>${esc(x.name)}</b> : ${esc(x.nation)}`).join('<br>');
-   autoBox.classList.remove('hidden');
- }
-
- // Si les deux athlètes ont déjà une nation, aucune nouvelle attribution n'est nécessaire,
- // même si leurs nations sont différentes.
- if(selected.length===2 && selected.every(x=>x.nation)){
-   assignBox.classList.add('hidden');
-   return;
- }
-
- // Si au moins un athlète n'a pas encore de nation, l'enseignant/athlète peut attribuer
- // une nation uniquement à l'athlète non encore affecté.
- assignBox.classList.remove('hidden');
+ if(missingBox)missingBox.classList.toggle('hidden',!missing.length);
+ if(btn)btn.disabled=!selected.length||missing.length>0;
 }
 function validatePair(){
  const av=pa.value,bv=pb.value;
  if(av==='')return alert('Choisis au moins Athlète 1.');
  if(bv!==''&&av===bv)return alert('Choisis deux athlètes différents.');
-
  const selected=[{i:+av,name:studentNameAt(+av)}];
  if(bv!=='')selected.push({i:+bv,name:studentNameAt(+bv)});
-
- // Attribution initiale de la nation seulement aux athlètes qui n'en ont pas.
  const missing=selected.filter(x=>!studentNationAt(x.i));
- if(missing.length){
-   const already=selected.find(x=>studentNationAt(x.i));
-   const nation=selectedNation||(already?studentNationAt(already.i):null);
-   if(!nation)return alert('Choisis la nation à attribuer.');
-   missing.forEach(x=>setStudentNation(x.i,nation));
- }
+ if(missing.length)return alert('Nation non attribuée : demande à l’enseignant de faire le tirage dans Professeur → Athlètes.');
  pair=selected;
- selectedNation=null;
  renderPair();
  updatePairNation();
 }
