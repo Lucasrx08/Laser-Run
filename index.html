@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V33.1.1.1</title>
+<title>Laser Run 6ème · V33.2.1.1</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -500,7 +500,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
 
-/* V33.1 — purification UI athlètes */
+/* V33.2 — purification UI athlètes */
 .sportTopbar{justify-content:flex-start}.sportBadge{margin-left:auto}.sportNav{display:none!important}
 /* Un seul retour contextuel par écran, discret et identique */
 .back{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:9px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(13,37,43,.10)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
@@ -535,7 +535,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.studentModeHub,#l23Work{padding:12px;border-radius:20px}.modeHeader b,#l23S1Title,#l23MainTitle{font-size:18px!important}.modeHeader>span,#l23S1Title:before,#l23MainTitle:before{width:40px;height:40px;flex-basis:40px}.back{font-size:11px!important}.studentTopTools{align-items:center}}
 
 
-/* V33.1 — Game UI + cibles digitales + mode course plein écran */
+/* V33.2 — Game UI + cibles digitales + mode course plein écran */
 .lessonGrid{gap:18px}
 .lesson.gameLesson{
   position:relative;overflow:hidden;min-height:190px;padding:22px 22px 18px;
@@ -661,7 +661,7 @@ body.raceFullscreen .tileMain strong{font-size:clamp(18px,2vw,27px)!important}
 
 
 /* =========================================================
-   V33.1 — Finition professionnelle / lisibilité / alignements
+   V33.2 — Finition professionnelle / lisibilité / alignements
    ========================================================= */
 
 /* ---------- TUILES PARCOURS ---------- */
@@ -890,7 +890,7 @@ body.raceFullscreen .raceFullscreenBtn{min-height:58px}
 }
 
 
-/* V33.1 — L7 + Mode Course fiable */
+/* V33.2 — L7 + Mode Course fiable */
 #l23S1Title.hidden,
 #l23S1Buttons.hidden{
   display:none!important;
@@ -995,7 +995,7 @@ body.raceFullscreen #pcPanelPursuit .btn{
 }
 
 
-/* V33.1 — Attribution des nations */
+/* V33.2 — Attribution des nations */
 .nationDrawPanel{margin:18px 0 22px;padding:20px;border:1px solid rgba(13,37,43,.10);border-radius:26px;background:linear-gradient(145deg,#f8fbfb,#fff);box-shadow:0 14px 34px rgba(13,37,43,.07)}
 .nationDrawHead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
 .nationDrawLayout{display:grid;grid-template-columns:minmax(330px,.9fr) minmax(360px,1.1fr);gap:24px;align-items:start}
@@ -1018,7 +1018,7 @@ body.raceFullscreen #pcPanelPursuit .btn{
 @media(max-width:900px){.nationDrawLayout{grid-template-columns:1fr}.nationWheelWrap{max-width:420px}.nationAthleteList{max-height:430px}}
 
 
-/* V33.1.1 — Attribution des nations : esthétique + plein écran */
+/* V33.2.1 — Attribution des nations : esthétique + plein écran */
 .nationDrawHeadActions{display:flex;gap:10px;align-items:center}
 .nationDrawHeadActions .btn.dark{background:#0d252b;color:#fff}
 .nationDrawLayout{
@@ -1075,6 +1075,158 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
  body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{
    width:min(78vh,760px)!important
  }
+}
+
+
+/* V33.2 — roue lisible, colonne athlètes compacte, plein écran visible, import CSV sans filtre Safari */
+.importHint{
+  align-self:center;
+  font-size:11px;
+  font-weight:800;
+  color:#6e8084;
+  padding:0 4px;
+}
+.nationDrawPanel{
+  max-width:none!important;
+}
+.nationDrawHead{
+  position:relative!important;
+  z-index:20!important;
+}
+.nationDrawHeadActions{
+  display:flex!important;
+  gap:8px!important;
+  flex:0 0 auto!important;
+}
+#nationFullscreenBtn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:150px!important;
+  background:#0d252b!important;
+  color:#fff!important;
+  border:0!important;
+}
+
+/* Roue vraiment plus grande + liste d'athlètes plus étroite */
+.nationDrawLayout{
+  grid-template-columns:minmax(760px,1fr) 330px!important;
+  gap:14px!important;
+  align-items:start!important;
+}
+.nationWheelSide{
+  padding:0 4px!important;
+}
+.nationWheelWrap{
+  width:min(100%,820px)!important;
+  margin:0 auto!important;
+}
+#nationWheel{
+  width:100%!important;
+  height:auto!important;
+}
+.nationAthletesSide{
+  width:330px!important;
+  max-width:330px!important;
+  padding:10px!important;
+}
+.nationAthleteList{
+  gap:4px!important;
+  max-height:670px!important;
+}
+.nationPick{
+  padding:7px 9px!important;
+  min-height:58px!important;
+}
+.nationPickName{
+  font-size:13.5px!important;
+}
+.nationPickMeta{
+  font-size:10px!important;
+}
+.nationPickFlag{
+  font-size:18px!important;
+}
+.nationSelectBar{
+  padding:0 0 8px!important;
+}
+.nationSelectBar b{
+  font-size:13px!important;
+}
+.nationSelectBar .pill{
+  font-size:9.5px!important;
+}
+
+/* Plein écran intégré : toute la largeur, roue maximale, liste resserrée */
+html.nationDrawFullscreenRoot,
+html.nationDrawFullscreenRoot body{
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{
+  position:fixed!important;
+  inset:0!important;
+  z-index:300000!important;
+  margin:0!important;
+  padding:14px 18px 18px!important;
+  border-radius:0!important;
+  overflow:auto!important;
+  background:#f4f7f7!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{
+  position:sticky!important;
+  top:0!important;
+  background:rgba(244,247,247,.97)!important;
+  backdrop-filter:blur(12px);
+  padding:4px 0 10px!important;
+  margin-bottom:4px!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{
+  grid-template-columns:minmax(0,1fr) 310px!important;
+  gap:10px!important;
+  min-height:calc(100vh - 88px)!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{
+  width:min(86vh,920px)!important;
+  max-width:920px!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{
+  width:310px!important;
+  max-width:310px!important;
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthleteList{
+  max-height:calc(100vh - 170px)!important;
+}
+
+/* iPad paysage */
+@media (max-width:1180px){
+  .nationDrawLayout{
+    grid-template-columns:minmax(620px,1fr) 300px!important;
+  }
+  .nationWheelWrap{
+    width:min(100%,760px)!important;
+  }
+  .nationAthletesSide{
+    width:300px!important;
+    max-width:300px!important;
+  }
+}
+
+/* Portrait / petit écran */
+@media (max-width:900px){
+  .nationDrawLayout,
+  body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{
+    grid-template-columns:1fr!important;
+  }
+  .nationAthletesSide,
+  body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthletesSide{
+    width:100%!important;
+    max-width:none!important;
+  }
+  .nationWheelWrap{
+    width:min(94vw,760px)!important;
+  }
 }
 
 </style>
@@ -1159,12 +1311,12 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
  <div id="pcPanelStudents" class="dashboardPanel hidden">
   <div class="card">
    <div class="section" style="margin-top:0">Athlètes</div>
-   <div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.txt,.xls,.xlsx,text/csv,text/plain,application/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button><button class="btn orange" onclick="openNationDraw()">🎡 Attribution des nations</button></div>
+   <div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><span class="importHint">CSV, TXT, XLS ou XLSX</span><input id="roster" class="hidden" type="file"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button><button class="btn orange" onclick="openNationDraw()">🎡 Attribution des nations</button></div>
    <div id="nationDrawPanel" class="nationDrawPanel hidden">
     <div class="nationDrawHead">
      <div><div class="section" style="margin:0">Attribution des nations</div><div class="muted">Sélectionne 1 ou 2 athlètes à droite, puis lance la roue.</div></div>
      <div class="nationDrawHeadActions">
-      <button id="nationFullscreenBtn" class="btn dark" onclick="toggleNationFullscreen()">⛶ MODE PLEIN ÉCRAN</button>
+      <button id="nationFullscreenBtn" class="btn dark" onclick="toggleNationFullscreen()">⛶ PLEIN ÉCRAN</button>
       <button class="btn ghost" onclick="closeNationDraw()">Fermer</button>
      </div>
     </div>
@@ -1172,7 +1324,7 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
      <div class="nationWheelSide">
       <div class="nationWheelWrap">
        <div class="nationWheelPointer">▼</div>
-       <canvas id="nationWheel" width="520" height="520"></canvas>
+       <canvas id="nationWheel" width="900" height="900"></canvas>
       </div>
       <div id="nationDrawResult" class="nationDrawResult">Prêt pour le tirage</div>
       <button id="nationSpinBtn" class="btn orange nationSpinBtn" onclick="spinNationWheel()">🎡 LANCER LE TIRAGE</button>
@@ -2041,7 +2193,7 @@ function toggleNationFullscreen(){
  document.body.classList.toggle('nationDrawFullscreenBody',active);
  document.documentElement.classList.toggle('nationDrawFullscreenRoot',active);
  const btn=document.getElementById('nationFullscreenBtn');
- if(btn)btn.textContent=active?'✕ QUITTER LE PLEIN ÉCRAN':'⛶ MODE PLEIN ÉCRAN';
+ if(btn)btn.textContent=active?'✕ QUITTER':'⛶ PLEIN ÉCRAN';
  setTimeout(()=>drawNationWheel(),40);
 }
 function leaveNationFullscreen(){
@@ -2050,7 +2202,7 @@ function leaveNationFullscreen(){
  document.body.classList.remove('nationDrawFullscreenBody');
  document.documentElement.classList.remove('nationDrawFullscreenRoot');
  const btn=document.getElementById('nationFullscreenBtn');
- if(btn)btn.textContent='⛶ MODE PLEIN ÉCRAN';
+ if(btn)btn.textContent='⛶ PLEIN ÉCRAN';
 }
 
 function openNationDraw(){
@@ -2109,41 +2261,59 @@ function renderNationDrawAthletes(){
 }
 function drawNationWheel(angle=nationWheelAngle){
  const canvas=document.getElementById('nationWheel');if(!canvas)return;
- const ctx=canvas.getContext('2d'),nations=availableDrawNations(),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=Math.min(w,h)/2-12;
+ const ctx=canvas.getContext('2d'),nations=availableDrawNations(),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=Math.min(w,h)/2-20;
  ctx.clearRect(0,0,w,h);
+
  if(!nations.length){
    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#dfe9ea';ctx.fill();
-   ctx.fillStyle='#0d252b';ctx.font='900 24px system-ui';ctx.textAlign='center';ctx.fillText('Toutes les nations',cx,cy-8);ctx.fillText('sont attribuées',cx,cy+25);return;
+   ctx.fillStyle='#0d252b';ctx.font='900 42px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+   ctx.fillText('Toutes les nations',cx,cy-24);ctx.fillText('sont attribuées',cx,cy+28);return;
  }
+
  const step=Math.PI*2/nations.length;
  nations.forEach((nation,i)=>{
-   const a0=angle+i*step-Math.PI/2,a1=a0+step;
+   const a0=angle+i*step-Math.PI/2,a1=a0+step,mid=a0+step/2;
+
    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a0,a1);ctx.closePath();
    ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();
-   ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.stroke();
+   ctx.strokeStyle='#ffffff';ctx.lineWidth=7;ctx.stroke();
+
+   // Label horizontal near the outer rim so all country names stay readable.
+   const labelR=r*0.73;
+   const tx=cx+Math.cos(mid)*labelR;
+   const ty=cy+Math.sin(mid)*labelR;
+
    ctx.save();
-   const mid=a0+step/2;
-   ctx.translate(cx,cy);
-   ctx.rotate(mid);
-   const flip=Math.cos(mid)<0;
-   if(flip)ctx.rotate(Math.PI);
-   ctx.textAlign=flip?'left':'right';
+   ctx.translate(tx,ty);
+
+   // Keep every label upright.
+   let rot=mid+Math.PI/2;
+   if(rot>Math.PI/2 && rot<Math.PI*1.5)rot+=Math.PI;
+   ctx.rotate(rot);
+
+   const flag=NATION_FLAGS[nation]||'🏳️';
+   let fs=nations.length>=13?24:28;
+   ctx.font=`900 ${fs}px system-ui`;
+   ctx.textAlign='center';
    ctx.textBaseline='middle';
    ctx.fillStyle='#0d252b';
-   const label=`${NATION_FLAGS[nation]||'🏳️'} ${nation}`;
-   let fs=nations.length>=13?15:17;
-   ctx.font=`900 ${fs}px system-ui`;
-   const maxW=r*.55;
-   while(fs>11&&ctx.measureText(label).width>maxW){
+
+   const maxW=r*0.37;
+   while(fs>18 && ctx.measureText(nation).width>maxW){
      fs--;
      ctx.font=`900 ${fs}px system-ui`;
    }
-   ctx.fillText(label,flip?-(r-18):(r-18),0);
+
+   ctx.fillText(flag,0,-18);
+   ctx.fillText(nation,0,17);
    ctx.restore();
  });
- ctx.beginPath();ctx.arc(cx,cy,70,0,Math.PI*2);ctx.fillStyle='#0d252b';ctx.fill();
- ctx.beginPath();ctx.arc(cx,cy,58,0,Math.PI*2);ctx.fillStyle='#f7b738';ctx.fill();
- ctx.fillStyle='#0d252b';ctx.font='1000 18px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('LASER',cx,cy-10);ctx.fillText('RUN',cx,cy+13);
+
+ // Center cap.
+ ctx.beginPath();ctx.arc(cx,cy,116,0,Math.PI*2);ctx.fillStyle='#0d252b';ctx.fill();
+ ctx.beginPath();ctx.arc(cx,cy,96,0,Math.PI*2);ctx.fillStyle='#f7b738';ctx.fill();
+ ctx.fillStyle='#0d252b';ctx.font='1000 30px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.fillText('LASER',cx,cy-16);ctx.fillText('RUN',cx,cy+20);
 }
 function spinNationWheel(){
  if(nationWheelSpinning)return;
@@ -3604,7 +3774,7 @@ function mergeResults(obj){
 }
 
 
-/* V33.1 — MODE COURSE intégré et stable */
+/* V33.2 — MODE COURSE intégré et stable */
 function toggleRaceFullscreen(panelId){
  const panel=document.getElementById(panelId);
  if(!panel)return;
