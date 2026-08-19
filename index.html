@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V33.1</title>
+<title>Laser Run 6ème · V33.1.1.1</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -500,7 +500,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
 
-/* V33 — purification UI athlètes */
+/* V33.1 — purification UI athlètes */
 .sportTopbar{justify-content:flex-start}.sportBadge{margin-left:auto}.sportNav{display:none!important}
 /* Un seul retour contextuel par écran, discret et identique */
 .back{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:9px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(13,37,43,.10)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
@@ -535,7 +535,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.studentModeHub,#l23Work{padding:12px;border-radius:20px}.modeHeader b,#l23S1Title,#l23MainTitle{font-size:18px!important}.modeHeader>span,#l23S1Title:before,#l23MainTitle:before{width:40px;height:40px;flex-basis:40px}.back{font-size:11px!important}.studentTopTools{align-items:center}}
 
 
-/* V33 — Game UI + cibles digitales + mode course plein écran */
+/* V33.1 — Game UI + cibles digitales + mode course plein écran */
 .lessonGrid{gap:18px}
 .lesson.gameLesson{
   position:relative;overflow:hidden;min-height:190px;padding:22px 22px 18px;
@@ -661,7 +661,7 @@ body.raceFullscreen .tileMain strong{font-size:clamp(18px,2vw,27px)!important}
 
 
 /* =========================================================
-   V33 — Finition professionnelle / lisibilité / alignements
+   V33.1 — Finition professionnelle / lisibilité / alignements
    ========================================================= */
 
 /* ---------- TUILES PARCOURS ---------- */
@@ -890,7 +890,7 @@ body.raceFullscreen .raceFullscreenBtn{min-height:58px}
 }
 
 
-/* V33 — L7 + Mode Course fiable */
+/* V33.1 — L7 + Mode Course fiable */
 #l23S1Title.hidden,
 #l23S1Buttons.hidden{
   display:none!important;
@@ -995,7 +995,7 @@ body.raceFullscreen #pcPanelPursuit .btn{
 }
 
 
-/* V33 — Attribution des nations */
+/* V33.1 — Attribution des nations */
 .nationDrawPanel{margin:18px 0 22px;padding:20px;border:1px solid rgba(13,37,43,.10);border-radius:26px;background:linear-gradient(145deg,#f8fbfb,#fff);box-shadow:0 14px 34px rgba(13,37,43,.07)}
 .nationDrawHead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
 .nationDrawLayout{display:grid;grid-template-columns:minmax(330px,.9fr) minmax(360px,1.1fr);gap:24px;align-items:start}
@@ -1016,6 +1016,66 @@ body.raceFullscreen #pcPanelPursuit .btn{
 .nationPickMeta{font-size:12px;color:#607579;font-weight:750;margin-top:3px}
 .nationPickFlag{font-size:25px;flex:0 0 auto}
 @media(max-width:900px){.nationDrawLayout{grid-template-columns:1fr}.nationWheelWrap{max-width:420px}.nationAthleteList{max-height:430px}}
+
+
+/* V33.1.1 — Attribution des nations : esthétique + plein écran */
+.nationDrawHeadActions{display:flex;gap:10px;align-items:center}
+.nationDrawHeadActions .btn.dark{background:#0d252b;color:#fff}
+.nationDrawLayout{
+  grid-template-columns:minmax(650px,1.65fr) minmax(300px,.55fr)!important;
+  gap:16px!important;
+}
+.nationWheelSide{padding:4px!important}
+.nationWheelWrap{
+  width:min(100%,720px)!important;
+  max-width:none!important;
+}
+.nationAthletesSide{padding:11px!important}
+.nationAthleteList{gap:5px!important;max-height:650px!important}
+.nationPick{padding:8px 10px!important;border-radius:12px!important}
+.nationPickName{font-size:14px!important}
+.nationPickMeta{font-size:10.5px!important;margin-top:1px!important}
+.nationPickFlag{font-size:19px!important}
+.nationSelectBar{padding:2px 2px 9px!important}
+.nationSelectBar b{font-size:13px!important}
+.nationSelectBar .pill{font-size:10px!important}
+.nationDrawResult{min-height:54px!important;font-size:18px!important}
+.nationSpinBtn{min-height:54px!important}
+
+html.nationDrawFullscreenRoot,
+html.nationDrawFullscreenRoot body{
+  width:100%!important;height:100%!important;overflow:hidden!important
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen{
+  display:block!important;
+  position:fixed!important;inset:0!important;z-index:250000!important;
+  margin:0!important;padding:16px 22px 20px!important;border-radius:0!important;
+  overflow:auto!important;background:#f4f7f7!important
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawHead{
+  position:sticky;top:0;z-index:15;background:rgba(244,247,247,.96);
+  backdrop-filter:blur(12px);padding:3px 0 10px;margin-bottom:8px
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{
+  grid-template-columns:minmax(760px,1.8fr) minmax(280px,.5fr)!important;
+  min-height:calc(100vh - 90px)
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{
+  width:min(82vh,860px)!important
+}
+body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthleteList{
+  max-height:calc(100vh - 175px)!important
+}
+@media(max-width:1100px){
+ .nationDrawLayout{grid-template-columns:1fr!important}
+ .nationWheelWrap{width:min(94vw,700px)!important}
+ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationDrawLayout{
+   grid-template-columns:1fr!important
+ }
+ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationWheelWrap{
+   width:min(78vh,760px)!important
+ }
+}
 
 </style>
 </head>
@@ -1099,11 +1159,14 @@ body.raceFullscreen #pcPanelPursuit .btn{
  <div id="pcPanelStudents" class="dashboardPanel hidden">
   <div class="card">
    <div class="section" style="margin-top:0">Athlètes</div>
-   <div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.xls,.xlsx,text/csv"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button><button class="btn orange" onclick="openNationDraw()">🎡 Attribution des nations</button></div>
+   <div class="toolbar"><label class="btn light" for="roster">Importer Excel / CSV</label><input id="roster" class="hidden" type="file" accept=".csv,.txt,.xls,.xlsx,text/csv,text/plain,application/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*"><button class="btn ghost" onclick="manualStudent()">+ Ajouter manuellement</button><button class="btn orange" onclick="openNationDraw()">🎡 Attribution des nations</button></div>
    <div id="nationDrawPanel" class="nationDrawPanel hidden">
     <div class="nationDrawHead">
      <div><div class="section" style="margin:0">Attribution des nations</div><div class="muted">Sélectionne 1 ou 2 athlètes à droite, puis lance la roue.</div></div>
-     <button class="btn ghost" onclick="closeNationDraw()">Fermer</button>
+     <div class="nationDrawHeadActions">
+      <button id="nationFullscreenBtn" class="btn dark" onclick="toggleNationFullscreen()">⛶ MODE PLEIN ÉCRAN</button>
+      <button class="btn ghost" onclick="closeNationDraw()">Fermer</button>
+     </div>
     </div>
     <div class="nationDrawLayout">
      <div class="nationWheelSide">
@@ -1970,6 +2033,26 @@ function availableDrawNations(){
  const c=pc(),used=new Set(Object.values(c.nations||{}).filter(Boolean));
  return NATIONS.filter(n=>!used.has(n));
 }
+
+function toggleNationFullscreen(){
+ const panel=document.getElementById('nationDrawPanel');
+ if(!panel)return;
+ const active=panel.classList.toggle('nationDrawFullscreen');
+ document.body.classList.toggle('nationDrawFullscreenBody',active);
+ document.documentElement.classList.toggle('nationDrawFullscreenRoot',active);
+ const btn=document.getElementById('nationFullscreenBtn');
+ if(btn)btn.textContent=active?'✕ QUITTER LE PLEIN ÉCRAN':'⛶ MODE PLEIN ÉCRAN';
+ setTimeout(()=>drawNationWheel(),40);
+}
+function leaveNationFullscreen(){
+ const panel=document.getElementById('nationDrawPanel');
+ if(panel)panel.classList.remove('nationDrawFullscreen');
+ document.body.classList.remove('nationDrawFullscreenBody');
+ document.documentElement.classList.remove('nationDrawFullscreenRoot');
+ const btn=document.getElementById('nationFullscreenBtn');
+ if(btn)btn.textContent='⛶ MODE PLEIN ÉCRAN';
+}
+
 function openNationDraw(){
  if(!pc().students.length)return alert('Importe ou ajoute d’abord les athlètes.');
  nationDrawSelected=[];
@@ -1982,6 +2065,7 @@ function openNationDraw(){
 }
 function closeNationDraw(){
  if(nationWheelSpinning)return;
+ leaveNationFullscreen();
  document.getElementById('nationDrawPanel').classList.add('hidden');
  document.getElementById('pcStudents').classList.remove('hidden');
  nationDrawSelected=[];
@@ -2037,10 +2121,25 @@ function drawNationWheel(angle=nationWheelAngle){
    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a0,a1);ctx.closePath();
    ctx.fillStyle=i%2===0?'#c7dbdf':'#ebe5df';ctx.fill();
    ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.stroke();
-   ctx.save();ctx.translate(cx,cy);ctx.rotate(a0+step/2);
-   ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle='#0d252b';
-   ctx.font=nations.length>10?'800 14px system-ui':'900 17px system-ui';
-   ctx.fillText(`${NATION_FLAGS[nation]||'🏳️'} ${nation}`,r-24,0);ctx.restore();
+   ctx.save();
+   const mid=a0+step/2;
+   ctx.translate(cx,cy);
+   ctx.rotate(mid);
+   const flip=Math.cos(mid)<0;
+   if(flip)ctx.rotate(Math.PI);
+   ctx.textAlign=flip?'left':'right';
+   ctx.textBaseline='middle';
+   ctx.fillStyle='#0d252b';
+   const label=`${NATION_FLAGS[nation]||'🏳️'} ${nation}`;
+   let fs=nations.length>=13?15:17;
+   ctx.font=`900 ${fs}px system-ui`;
+   const maxW=r*.55;
+   while(fs>11&&ctx.measureText(label).width>maxW){
+     fs--;
+     ctx.font=`900 ${fs}px system-ui`;
+   }
+   ctx.fillText(label,flip?-(r-18):(r-18),0);
+   ctx.restore();
  });
  ctx.beginPath();ctx.arc(cx,cy,70,0,Math.PI*2);ctx.fillStyle='#0d252b';ctx.fill();
  ctx.beginPath();ctx.arc(cx,cy,58,0,Math.PI*2);ctx.fillStyle='#f7b738';ctx.fill();
@@ -2121,6 +2220,7 @@ function exportIDoceo(){
  a.href=url;a.download=`${c.name.replace(/[^a-z0-9]+/gi,'-')}-Laser-Run-iDoceo.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
 }
 function deleteClass(){if(confirm(`Supprimer ${pc().name} ?`)){db.classes.splice(currentProf,1);write(DB,db);openProf()}} function manualStudent(){let n=prompt('Nom Prénom :');if(n){pc().students.push(n.trim());write(DB,db);renderProfClass()}} function removeStudent(i){const c=pc(),name=c.students[i];c.students.splice(i,1);if(c.nations&&name)delete c.nations[name];write(DB,db);renderProfClass()}
+
 function parseCsvLine(line,delimiter){
  const out=[];let cur='',quoted=false;
  for(let i=0;i<line.length;i++){
@@ -2128,56 +2228,140 @@ function parseCsvLine(line,delimiter){
    if(ch==='"'){
      if(quoted&&line[i+1]==='"'){cur+='"';i++}
      else quoted=!quoted;
-   }else if(ch===delimiter&&!quoted){out.push(cur.trim());cur=''}
-   else cur+=ch;
+   }else if(ch===delimiter&&!quoted){
+     out.push(cur.trim());cur='';
+   }else cur+=ch;
  }
- out.push(cur.trim());return out;
+ out.push(cur.trim());
+ return out;
 }
 function detectCsvDelimiter(text){
- const first=(text.replace(/^\uFEFF/,'').split(/\r?\n/).find(x=>x.trim())||'');
- const candidates=[';',',','\t'];
- return candidates.sort((a,b)=>(first.split(b).length-first.split(a).length))[0];
+ const lines=String(text||'').replace(/^\uFEFF/,'').split(/\r?\n/).filter(x=>x.trim()).slice(0,8);
+ const candidates=[';',',','\t','|'];
+ let best=';',bestScore=-1;
+ candidates.forEach(d=>{
+   const counts=lines.map(l=>parseCsvLine(l,d).length).filter(n=>n>1);
+   if(!counts.length)return;
+   const consistency=counts.filter(n=>n===counts[0]).length;
+   const score=consistency*100+counts.reduce((a,b)=>a+b,0);
+   if(score>bestScore){bestScore=score;best=d}
+ });
+ return best;
+}
+function cleanRosterCell(v){
+ return String(v??'').replace(/\u00A0/g,' ').replace(/\s+/g,' ').trim();
+}
+function looksLikeHeaderRow(row){
+ const s=row.join(' ').toLowerCase();
+ return /\b(nom|pr[eé]nom|nom complet|full.?name|name|firstname|lastname|first name|last name|élève|eleve|student)\b/i.test(s);
+}
+function rosterNamesFromRows(rows){
+ rows=rows.map(r=>r.map(cleanRosterCell)).filter(r=>r.some(Boolean));
+ if(!rows.length)return [];
+
+ let header=null,data=rows;
+ if(looksLikeHeaderRow(rows[0])){
+   header=rows[0].map(x=>x.toLowerCase());
+   data=rows.slice(1);
+ }
+
+ let idxFull=-1,idxNom=-1,idxPrenom=-1;
+ if(header){
+   idxFull=header.findIndex(h=>/nom.?pr[eé]nom|pr[eé]nom.?nom|nom complet|full.?name|élève|eleve|student/.test(h));
+   idxNom=header.findIndex(h=>/^(nom|lastname|last name|surname)$/.test(h));
+   idxPrenom=header.findIndex(h=>/^(pr[eé]nom|firstname|first name|given name)$/.test(h));
+ }
+
+ const names=[];
+ for(const row of data){
+   let name='';
+   if(idxFull>=0 && row[idxFull]){
+     name=row[idxFull];
+   }else if(idxNom>=0 && idxPrenom>=0 && (row[idxNom]||row[idxPrenom])){
+     name=`${row[idxNom]||''} ${row[idxPrenom]||''}`;
+   }else{
+     // Fallback : first textual cells only.
+     const textual=row.filter(v=>{
+       if(!v)return false;
+       if(/^[\d\s.,:/-]+$/.test(v))return false;
+       if(/^https?:/i.test(v))return false;
+       if(/@/.test(v))return false;
+       return true;
+     });
+     if(textual.length>=2)name=`${textual[0]} ${textual[1]}`;
+     else name=textual[0]||'';
+   }
+
+   name=cleanRosterCell(name).replace(/^["']|["']$/g,'').trim();
+   if(name && name.length>=2 && !looksLikeHeaderRow([name]))names.push(name);
+ }
+ return names;
 }
 function csvRosterNames(text){
  text=String(text||'').replace(/^\uFEFF/,'');
- const delimiter=detectCsvDelimiter(text),rows=text.split(/\r?\n/).filter(x=>x.trim()).map(x=>parseCsvLine(x,delimiter));
- const names=[];
- rows.forEach((r,i)=>{
-   r=r.map(x=>String(x||'').trim()).filter((x,j)=>j<2||x);
-   if(!r.some(Boolean))return;
-   if(i===0&&/nom|pr[eé]nom|name|firstname|lastname/i.test(r.join(' ')))return;
-   const name=(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0]||'').replace(/\s+/g,' ').trim();
-   if(name)names.push(name);
- });
- return names;
+ const delimiter=detectCsvDelimiter(text);
+ const rows=text.split(/\r?\n/).filter(x=>x.trim()).map(x=>parseCsvLine(x,delimiter));
+ return rosterNamesFromRows(rows);
+}
+async function readRosterFile(file){
+ const lower=(file.name||'').toLowerCase();
+ const mime=file.type||'';
+ const csvLike=lower.endsWith('.csv')||lower.endsWith('.txt')||
+               /text\/csv|text\/plain|application\/csv|application\/vnd\.ms-excel/i.test(mime);
+
+ if(csvLike){
+   try{
+     const names=csvRosterNames(await file.text());
+     if(names.length)return names;
+   }catch(e){}
+ }
+
+ if((lower.endsWith('.xlsx')||lower.endsWith('.xls')||!csvLike) && typeof XLSX!=='undefined'){
+   try{
+     const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+     const ws=wb.Sheets[wb.SheetNames[0]];
+     const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
+     const names=rosterNamesFromRows(rows);
+     if(names.length)return names;
+   }catch(e){}
+ }
+
+ // Some browsers give CSV files a misleading MIME.
+ try{
+   const names=csvRosterNames(await file.text());
+   if(names.length)return names;
+ }catch(e){}
+
+ return [];
 }
 roster.addEventListener('change',async e=>{
- const f=e.target.files[0];if(!f)return;
+ const f=e.target.files&&e.target.files[0];
+ if(!f)return;
+
  try{
-   let names=[];
-   const lower=f.name.toLowerCase();
-   if(lower.endsWith('.csv')||f.type==='text/csv'||lower.endsWith('.txt')){
-     names=csvRosterNames(await f.text());
-   }else{
-     if(typeof XLSX==='undefined')throw new Error('xlsx');
-     const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}),ws=wb.Sheets[wb.SheetNames[0]];
-     const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-     rows.forEach((r,i)=>{
-       r=r.map(x=>String(x).trim());
-       if(!r.some(Boolean))return;
-       if(i===0&&/nom|pr[eé]nom/i.test(r.join(' ')))return;
-       const name=(r[0]&&r[1]?`${r[0]} ${r[1]}`:r[0]||'').replace(/\s+/g,' ').trim();
-       if(name)names.push(name);
-     });
-   }
+   const names=await readRosterFile(f);
    if(!names.length)throw new Error('empty');
-   const seen=new Set(pc().students.map(x=>x.toLowerCase()));
+
+   const c=pc();
+   const seen=new Set(c.students.map(x=>cleanRosterCell(x).toLocaleLowerCase('fr')));
    let added=0;
-   names.forEach(n=>{if(!seen.has(n.toLowerCase())){pc().students.push(n);seen.add(n.toLowerCase());added++}});
-   write(DB,db);renderProfClass();
-   alert(`${names.length} athlète(s) lu(s) · ${added} ajouté(s).`);
+
+   names.forEach(raw=>{
+     const n=cleanRosterCell(raw);
+     const key=n.toLocaleLowerCase('fr');
+     if(n&&!seen.has(key)){
+       c.students.push(n);
+       seen.add(key);
+       added++;
+     }
+   });
+
+   write(DB,db);
+   renderProfClass();
+   alert(`${names.length} athlète(s) détecté(s) · ${added} ajouté(s).`);
  }catch(err){
-   alert('Impossible de lire ce fichier. Pour un CSV, utilise une colonne « Nom Prénom » ou deux colonnes « Nom » et « Prénom ». Les séparateurs ; , et tabulation sont acceptés.');
+   console.error(err);
+   alert("Impossible de lire ce fichier. CSV acceptés : « Nom Prénom » ou deux colonnes « Nom » / « Prénom », avec séparateur ; , virgule, tabulation ou |.");
  }
  e.target.value='';
 });
@@ -3420,7 +3604,7 @@ function mergeResults(obj){
 }
 
 
-/* V33 — MODE COURSE intégré et stable */
+/* V33.1 — MODE COURSE intégré et stable */
 function toggleRaceFullscreen(panelId){
  const panel=document.getElementById(panelId);
  if(!panel)return;
