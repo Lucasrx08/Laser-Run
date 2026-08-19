@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V31</title>
+<title>Laser Run 6ème · V32.1.1</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -500,7 +500,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.sportTopbar{padding:0 14px}.sportBrand{font-size:20px}.app{padding-top:74px}section:not(#profClass){width:calc(100% - 22px);padding-top:18px}.proShell{display:block}.proSidebar{position:sticky;top:72px;height:auto;z-index:20;display:flex;flex-direction:row;overflow:auto;background:#0d252b;padding:7px}.proSidebar .proSideTitle,.proSidebar .sideDivider,.proSidebar .sideFoot,.proSidebar>button:first-of-type{display:none}.proSidebar button{min-width:48px;padding:10px}.proMain{padding:16px 11px}.rolegrid{grid-template-columns:1fr}.role{min-height:190px!important}.roletitle{font-size:30px}.lessonGrid{grid-template-columns:1fr 1fr}.lesson{min-height:140px!important;padding:16px!important}.lesson .big{font-size:18px}}
 
 
-/* V31 — purification UI athlètes */
+/* V32.1 — purification UI athlètes */
 .sportTopbar{justify-content:flex-start}.sportBadge{margin-left:auto}.sportNav{display:none!important}
 /* Un seul retour contextuel par écran, discret et identique */
 .back{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:9px 12px!important;border-radius:999px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(13,37,43,.10)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
@@ -535,7 +535,7 @@ section:not(#profClass){width:min(1280px,calc(100% - 36px));margin:0 auto;paddin
 @media(max-width:650px){.studentModeHub,#l23Work{padding:12px;border-radius:20px}.modeHeader b,#l23S1Title,#l23MainTitle{font-size:18px!important}.modeHeader>span,#l23S1Title:before,#l23MainTitle:before{width:40px;height:40px;flex-basis:40px}.back{font-size:11px!important}.studentTopTools{align-items:center}}
 
 
-/* V31 — Game UI + cibles digitales + mode course plein écran */
+/* V32.1 — Game UI + cibles digitales + mode course plein écran */
 .lessonGrid{gap:18px}
 .lesson.gameLesson{
   position:relative;overflow:hidden;min-height:190px;padding:22px 22px 18px;
@@ -661,7 +661,7 @@ body.raceFullscreen .tileMain strong{font-size:clamp(18px,2vw,27px)!important}
 
 
 /* =========================================================
-   V31 — Finition professionnelle / lisibilité / alignements
+   V32.1 — Finition professionnelle / lisibilité / alignements
    ========================================================= */
 
 /* ---------- TUILES PARCOURS ---------- */
@@ -890,7 +890,7 @@ body.raceFullscreen .raceFullscreenBtn{min-height:58px}
 }
 
 
-/* V31 — L7 + Mode Course fiable */
+/* V32.1 — L7 + Mode Course fiable */
 #l23S1Title.hidden,
 #l23S1Buttons.hidden{
   display:none!important;
@@ -1318,35 +1318,6 @@ body.raceFullscreen #pcPanelPursuit .btn{
  </div>
 </section>
 
-<section id="pursuitMaster" class="hidden">
- <button class="back" onclick="show('profClass')">← Tableau de bord</button>
- <div class="top"><div><div class="title">Poursuite · Départs</div><div id="pmClass" class="sub"></div></div><span class="pill">Leçon 3</span></div>
- <div class="toolbar">
-  <button id="pmMode1" class="btn orange" onclick="setPursuitMode(1)">Athlètes 1</button>
-  <button id="pmMode2" class="btn ghost" onclick="setPursuitMode(2)">Athlètes 2</button>
- </div>
- <div class="pursuitBoard">
-  <div class="card">
-   <div class="section" style="margin-top:0">Chronomètre général</div>
-   <div id="pmTimer" class="masterTimer">00:00.0</div>
-   <div id="pmNext" class="nextNation">
-    <div class="muted">PROCHAIN DÉPART</div>
-    <div id="pmNextNation" class="country">—</div>
-    <div id="pmCountdown" class="count">Prêt</div>
-   </div>
-   <div class="toolbar">
-    <button id="pmStartBtn" class="btn orange" onclick="startPursuitMaster()">DÉMARRER</button>
-    <button class="btn ghost" onclick="pausePursuitMaster()">PAUSE</button>
-    <button class="btn red" onclick="resetPursuitMaster()">RÉINITIALISER</button>
-   </div>
-   <div class="notice">Un signal sonore retentit à chaque départ. Les écarts sont calculés automatiquement à partir des temps du Sprint individuel de la L2.</div>
-  </div>
-  <div class="card">
-   <div class="section" style="margin-top:0">Ordre des départs</div>
-   <div id="pmStarts" class="list"></div>
-  </div>
- </div>
-</section>
 <section id="qr" class="hidden">
  <button class="back" onclick="qrBack()">← Retour</button><div class="top"><div><div id="qrTitle" class="title">QR</div><div id="qrSub" class="sub"></div></div></div>
  <div class="qrLayout"><div class="card"><div id="qrInfo" class="notice"></div><div id="qrDetail" class="list"></div></div><div><div id="qrBox" class="qrbox"></div><div class="qrnav"><button class="btn ghost" onclick="prevQR()">←</button><div id="qrCount" class="qrCounter"></div><button class="btn ghost" onclick="nextQR()">→</button></div></div></div>
@@ -1426,24 +1397,41 @@ function openProfClass(i){
  currentProf=i;
  currentPcTab='overview';
  currentRankingTab='precision';
+ restoreRaceState();
  renderProfClass();
  show('profClass');
  showPcTab('overview');
 }
 function pc(){return db.classes[currentProf]}
 
+
+function resultFreshness(r,index=0){
+ const updated=Number(r&&r._updatedAt);
+ if(Number.isFinite(updated)&&updated>0)return updated;
+ const parsed=Date.parse(r&&r.date?r.date:'');
+ if(Number.isFinite(parsed))return parsed+index;
+ return index;
+}
+function latestResultFrom(arr){
+ if(!arr||!arr.length)return null;
+ let best=null,bestScore=-Infinity;
+ arr.forEach((r,i)=>{
+   const score=resultFreshness(r,i);
+   if(best===null||score>=bestScore){best=r;bestScore=score}
+ });
+ return best;
+}
+
 function latestByNameLesson(c,name,lesson){
- const arr=(c.results||[]).filter(r=>r.name===name&&Number(r.lesson||1)===Number(lesson));
- if(!arr.length)return null;
- return arr.slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))).pop();
+ return latestResultFrom((c.results||[]).filter(r=>r.name===name&&Number(r.lesson||1)===Number(lesson)));
 }
 function uniqueLessonResults(c,lesson){
- const map=new Map();
+ const grouped=new Map();
  (c.results||[]).filter(r=>Number(r.lesson||1)===Number(lesson)).forEach(r=>{
-   const old=map.get(r.name);
-   if(!old||String(r.date||'')>=String(old.date||''))map.set(r.name,r);
+   if(!grouped.has(r.name))grouped.set(r.name,[]);
+   grouped.get(r.name).push(r);
  });
- return [...map.values()];
+ return [...grouped.values()].map(latestResultFrom).filter(Boolean);
 }
 function challengeAverage(c,name,type){
  const lessons=CHALLENGE_LESSONS[type]||[];
@@ -1548,16 +1536,92 @@ function showPcTab(tab){document.querySelectorAll('.sideTab').forEach(b=>b.class
    if(btn)btn.classList.toggle('active',t===tab);
  });
  if(tab==='rankings')showRankingTab(currentRankingTab);
- if(tab==='pursuit'){resetPursuitClock();renderPursuitStarts()}
- if(tab==='mass'){renderMassPad();startTicker('mass')}
- if(tab==='relay'){renderRelayPad();startTicker('relay')}
+ if(tab==='pursuit'){
+   restoreRaceState();
+   renderPursuitStarts();
+   if(pmRunning){
+     clearInterval(pmTick);
+     pmTick=setInterval(updatePursuitClock,50);
+     const b=document.getElementById('pursuitStartBtn');if(b)b.textContent='EN COURS';
+   }else{
+     const b=document.getElementById('pursuitStartBtn');if(b)b.textContent=pmElapsed>0?'REPRENDRE':'DÉMARRER';
+   }
+ }
+ if(tab==='mass'){restoreRaceState();renderMassPad();startTicker('mass')}
+ if(tab==='relay'){restoreRaceState();renderRelayPad();startTicker('relay')}
  if(tab==='jo')renderJOPanel();
 }
 
 
 
+
 let massStarts={1:null,2:null},massTimes={},relayStart=null,relayTimes={},massTicker=null,relayTicker=null;
 let hitPadContext=null;
+
+function raceStateKey(){
+ const c=(typeof currentProf==='number'&&db.classes[currentProf])?db.classes[currentProf]:null;
+ return `laser_run_race_state_v32_1::${schoolYear()}::${c?c.name:'none'}`;
+}
+function resetRaceMemory(){
+ massStarts={1:null,2:null};
+ massTimes={};
+ relayStart=null;
+ relayTimes={};
+ if(massTicker){clearInterval(massTicker);massTicker=null}
+ if(relayTicker){clearInterval(relayTicker);relayTicker=null}
+ if(pmTick){clearInterval(pmTick);pmTick=null}
+ pursuitMode=1;
+ pmRunning=false;
+ pmElapsed=0;
+ pmStartPerf=0;
+ pmLastSignal=-1;
+ pursuitLastSpoken='';
+}
+function saveRaceState(){
+ if(typeof currentProf!=='number'||!db.classes[currentProf])return;
+ const state={
+   mass:{starts:{1:massStarts[1]||null,2:massStarts[2]||null},times:{...massTimes}},
+   relay:{start:relayStart||null,times:{...relayTimes}},
+   pursuit:{mode:pursuitMode,running:pmRunning,elapsed:pmElapsed,start:pmStartPerf||0}
+ };
+ try{localStorage.setItem(raceStateKey(),JSON.stringify(state))}catch(e){}
+}
+function restoreRaceState(){
+ resetRaceMemory();
+ if(typeof currentProf!=='number'||!db.classes[currentProf])return;
+ let state=null;
+ try{state=JSON.parse(localStorage.getItem(raceStateKey())||'null')}catch(e){}
+ if(!state)return;
+
+ if(state.mass){
+   massStarts={
+     1:state.mass.starts?.[1]||state.mass.starts?.['1']||null,
+     2:state.mass.starts?.[2]||state.mass.starts?.['2']||null
+   };
+   massTimes={...(state.mass.times||{})};
+ }
+ if(state.relay){
+   relayStart=state.relay.start||null;
+   relayTimes={...(state.relay.times||{})};
+ }
+ if(state.pursuit){
+   pursuitMode=Number(state.pursuit.mode||1)===2?2:1;
+   pmRunning=!!state.pursuit.running;
+   pmElapsed=Math.max(0,Number(state.pursuit.elapsed||0));
+   pmStartPerf=Math.max(0,Number(state.pursuit.start||0));
+
+   // Une course vieille de plus de 6 h ne doit jamais repartir automatiquement.
+   if(pmRunning&&(!pmStartPerf||Date.now()-pmStartPerf>6*60*60*1000)){
+     pmRunning=false;
+     pmStartPerf=0;
+     saveRaceState();
+   }
+ }
+}
+function clearRaceState(){
+ try{localStorage.removeItem(raceStateKey())}catch(e){}
+}
+
 
 function athleteSlots(c){
  const by={};
@@ -1574,8 +1638,7 @@ function athleteSlots(c){
  return [a1,a2];
 }
 function latestLessonResult(c,name,lesson){
- const a=(c.results||[]).filter(r=>r.name===name&&Number(r.lesson)===lesson);
- return a.length?a[a.length-1]:null;
+ return latestResultFrom((c.results||[]).filter(r=>r.name===name&&Number(r.lesson)===Number(lesson)));
 }
 function shootingSummary(c,name,lesson){
  const r=latestLessonResult(c,name,lesson);
@@ -1594,8 +1657,13 @@ function saveShotProfile(c,name,lesson,hits,time=null){
  r.shots=15;
  r.hitRate=Math.round(hits/15*100);
  if(time!=null)r.time=time;
+ if(lesson===5){
+   const nation=(c.nations||{})[name]||null;
+   if(nation&&relayTimes[nation]!=null)r.relayTime=relayTimes[nation];
+ }
+ r._updatedAt=Date.now();
  write(DB,db);
- renderProfClass();
+ // Pas de renderProfClass() ici : cela détruisait les modales et le Mode Course.
 }
 function openHitPad(name,lesson,returnNation=null){
  const c=pc(),old=latestLessonResult(c,name,lesson);
@@ -1653,14 +1721,33 @@ function safeId(s){return String(s).replace(/[^a-zA-Z0-9_-]/g,'_')}
 function massTop(slot){
  if(massStarts[slot]&&!confirm(`Redémarrer le départ Athlètes ${slot} ? Les temps déjà arrêtés de ce groupe seront effacés.`))return;
  const c=pc(),slots=athleteSlots(c);
- slots[slot-1].forEach(([name])=>delete massTimes[name]);
- massStarts[slot]=performance.now();
+ slots[slot-1].forEach(([name])=>{
+   delete massTimes[name];
+   const r=latestLessonResult(c,name,4);
+   if(r&&r.time!=null){r.time=null;r._updatedAt=Date.now()}
+ });
+ massStarts[slot]=Date.now();
+ write(DB,db);
+ saveRaceState();
  renderMassPad();
  startTicker('mass');
 }
 function massFinish(name,slot){
  if(!massStarts[slot]||massTimes[name]!=null)return;
- massTimes[name]=performance.now()-massStarts[slot];
+ massTimes[name]=Date.now()-massStarts[slot];
+
+ // Le temps est enregistré immédiatement : il ne dépend plus de la saisie des tirs.
+ const c=pc();
+ let r=latestLessonResult(c,name,4);
+ if(!r){
+   r={name,className:c.name,lesson:4,date:day(),nation:(c.nations||{})[name]||null};
+   c.results.push(r);
+ }
+ r.time=massTimes[name];
+ r._updatedAt=Date.now();
+ write(DB,db);
+ saveRaceState();
+
  const status=document.getElementById(`mass-status-${safeId(name)}`);
  const tile=document.getElementById(`mass-tile-${safeId(name)}`);
  if(status)status.textContent=`✅ ARRIVÉ · ${fmt(massTimes[name])}`;
@@ -1668,7 +1755,7 @@ function massFinish(name,slot){
 }
 function massStatus(name,slot){
  if(massTimes[name]!=null)return `✅ ARRIVÉ · ${fmt(massTimes[name])}`;
- if(massStarts[slot])return `EN COURSE · ${fmt(performance.now()-massStarts[slot])}`;
+ if(massStarts[slot])return `EN COURSE · ${fmt(Date.now()-massStarts[slot])}`;
  return 'PRÊT';
 }
 function updateMassTimers(){
@@ -1678,7 +1765,7 @@ function updateMassTimers(){
    slots[slot-1].forEach(([name])=>{
      if(massTimes[name]!=null)return;
      const el=document.getElementById(`mass-status-${safeId(name)}`);
-     if(el)el.textContent=`EN COURSE · ${fmt(performance.now()-massStarts[slot])}`;
+     if(el)el.textContent=`EN COURSE · ${fmt(Date.now()-massStarts[slot])}`;
    });
  });
 }
@@ -1703,13 +1790,15 @@ function renderMassPad(){
 function relayTop(){
  if(relayStart&&!confirm('Redémarrer le Relais des nations ? Les temps déjà arrêtés seront effacés.'))return;
  relayTimes={};
- relayStart=performance.now();
+ relayStart=Date.now();
+ saveRaceState();
  renderRelayPad();
  startTicker('relay');
 }
 function relayFinish(nation){
  if(!relayStart||relayTimes[nation]!=null)return;
- relayTimes[nation]=performance.now()-relayStart;
+ relayTimes[nation]=Date.now()-relayStart;
+ saveRaceState();
  const status=document.getElementById(`relay-status-${safeId(nation)}`);
  const tile=document.getElementById(`relay-tile-${safeId(nation)}`);
  if(status)status.textContent=`✅ ARRIVÉE · ${fmt(relayTimes[nation])}`;
@@ -1717,7 +1806,7 @@ function relayFinish(nation){
 }
 function relayStatus(nation){
  if(relayTimes[nation]!=null)return `✅ ARRIVÉE · ${fmt(relayTimes[nation])}`;
- if(relayStart)return `EN COURSE · ${fmt(performance.now()-relayStart)}`;
+ if(relayStart)return `EN COURSE · ${fmt(Date.now()-relayStart)}`;
  return 'PRÊT';
 }
 function updateRelayTimers(){
@@ -1727,7 +1816,7 @@ function updateRelayTimers(){
  nations.forEach(nation=>{
    if(relayTimes[nation]!=null)return;
    const el=document.getElementById(`relay-status-${safeId(nation)}`);
-   if(el)el.textContent=`EN COURSE · ${fmt(performance.now()-relayStart)}`;
+   if(el)el.textContent=`EN COURSE · ${fmt(Date.now()-relayStart)}`;
  });
 }
 function relayNationEditor(nation){
@@ -1774,8 +1863,14 @@ function resultDetail(r){
  return `${challenge}${challenge?' · ':''}${main} : ${r.time==null?'—':fmt(r.time)}`;
 }
 function latestStudentResults(c,name){
+ const grouped=new Map();
+ (c.results||[]).filter(r=>r.name===name).forEach(r=>{
+   const l=Number(r.lesson||1);
+   if(!grouped.has(l))grouped.set(l,[]);
+   grouped.get(l).push(r);
+ });
  const m=new Map();
- (c.results||[]).filter(r=>r.name===name).forEach(r=>{const l=Number(r.lesson||1),old=m.get(l);if(!old||String(r.date||'')>=String(old.date||''))m.set(l,r)});
+ grouped.forEach((arr,l)=>m.set(l,latestResultFrom(arr)));
  return m;
 }
 function avgChallengeFromMap(m,lessons){const vals=lessons.map(l=>m.get(l)?.stars).filter(v=>v!=null).map(Number);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null}
@@ -2057,7 +2152,7 @@ function validatePair(){
 function keyFor(n){return `${sc()[0]}|${n}|${day()}|L1`}
 function record(n){return read(RES,[]).find(r=>r.key===keyFor(n))||null}
 function ensure(n){let a=read(RES,[]),r=a.find(x=>x.key===keyFor(n));const idx=studentEntries().findIndex((x,i)=>studentNameAt(i)===n);const permanentNation=idx>=0?studentNationAt(idx):selectedNation;if(!r){r={key:keyFor(n),className:sc()[0],name:n,date:day(),nation:permanentNation,s1:null,stars:null,time:null};a.push(r);write(RES,a)}else if(permanentNation){r.nation=permanentNation;saveRecord(r)}return r}
-function saveRecord(r){let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
+function saveRecord(r){r._updatedAt=Date.now();let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
 function renderPair(){
  const work=document.getElementById('pairWork');
  const s1box=document.getElementById('s1Buttons');
@@ -2199,7 +2294,7 @@ function l23Cfg(){
 }
 function l23Key(name){return `${sc()[0]}|${name}|L${currentLesson}`}
 function l23Record(name){return read(RES,[]).find(r=>r.key===l23Key(name))||null}
-function l23Save(r){let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
+function l23Save(r){r._updatedAt=Date.now();let a=read(RES,[]),i=a.findIndex(x=>x.key===r.key);if(i>=0)a[i]=r;else a.push(r);write(RES,a)}
 function l23Ensure(name){
  let r=l23Record(name);
  if(!r)r={key:l23Key(name),className:sc()[0],name,date:day(),lesson:currentLesson,nation:studentNationAt(studentEntries().findIndex((x,i)=>studentNameAt(i)===name)),challenge:null,stars:null,time:null,misses:0,place:null};
@@ -2278,6 +2373,7 @@ const L23_CRITERIA={
  ]
 };
 function startL23Challenge(i){
+ if(currentLesson===7)return alert('La Leçon 7 ne comporte pas de Défi Étoile.');
  l23active={i,name:studentNameAt(i)};chxp1=null;chxp2=null;chLed=0;chBreath=[0,0,0,0,0];
  const c=l23Cfg(),r=l23Record(l23active.name);
  chTitle.textContent=c.s1;chName.textContent=`${l23active.name} · ${studentNationAt(i)||'Nation non attribuée'}`;chTheme.textContent=c.theme;
@@ -2325,6 +2421,7 @@ function renderBreathTargets(){
 }
 function cycleBreath(i){chBreath[i]=(chBreath[i]+1)%3;renderBreathTargets()}
 function saveL23Challenge(){
+ if(currentLesson===7)return alert('Aucun Défi Étoile n’est enregistré en Leçon 7.');
  let r=l23Ensure(l23active.name);r.date=day();r.nation=studentNationAt(l23active.i)||null;
  if(currentLesson===2||currentLesson===5){
   if(!chLed)return alert('Sélectionne la LED maximale atteinte.');
@@ -2744,6 +2841,7 @@ function pursuitStartsForMode(mode=pursuitMode){
 }
 function setPursuitMode(mode){
  pursuitMode=Number(mode);
+ saveRaceState();
  document.getElementById('pursuitMode1Btn').classList.toggle('active',pursuitMode===1);
  document.getElementById('pursuitMode2Btn').classList.toggle('active',pursuitMode===2);
  resetPursuitClock();
@@ -2767,7 +2865,7 @@ function renderPursuitStarts(){
  updatePursuitClock();
 }
 function pursuitClockNow(){
- return pmRunning ? pmElapsed+(performance.now()-pmStartPerf) : pmElapsed;
+ return pmRunning ? pmElapsed+(Date.now()-pmStartPerf) : pmElapsed;
 }
 
 function pursuitSpeak(text,rate=1.08){
@@ -2869,8 +2967,9 @@ function startPursuitClock(){
  const starts=pursuitStartsForMode();
  if(!starts.length)return alert('Aucun départ disponible. Il faut d’abord récupérer les résultats du Sprint L2.');
  if(pmRunning)return;
- pmRunning=true;pmStartPerf=performance.now();pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
+ pmRunning=true;pmStartPerf=Date.now();pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
  document.getElementById('pursuitStartBtn').textContent='EN COURS';
+ saveRaceState();
  // La nation la plus lente du Sprint part à 0 ; les meilleures partent ensuite selon leur avance au Sprint.
  if(pmElapsed===0){pursuitBeep(.55,900);if(navigator.vibrate)navigator.vibrate([160,70,160])}
  clearInterval(pmTick);
@@ -2879,15 +2978,17 @@ function startPursuitClock(){
 }
 function pausePursuitClock(){
  if(!pmRunning)return;
- pmElapsed+=performance.now()-pmStartPerf;
- pmRunning=false;
+ pmElapsed+=Date.now()-pmStartPerf;
+ pmRunning=false;pmStartPerf=0;
  clearInterval(pmTick);pmTick=null;
+ saveRaceState();
  document.getElementById('pursuitStartBtn').textContent='REPRENDRE';
  updatePursuitClock();
 }
 function resetPursuitClock(){
  clearInterval(pmTick);pmTick=null;
  pmRunning=false;pmStartPerf=0;pmElapsed=0;pmLastSignal=-1;pursuitLastSpoken='';if('speechSynthesis' in window)window.speechSynthesis.cancel();
+ saveRaceState();
  const timer=document.getElementById('pursuitTimerDisplay');if(timer)timer.textContent='00:00.0';
  const btn=document.getElementById('pursuitStartBtn');if(btn)btn.textContent='DÉMARRER';
  const next=document.getElementById('pursuitNextNation'),count=document.getElementById('pursuitCountdown');
@@ -3082,7 +3183,7 @@ function mergeResults(obj){
 }
 
 
-/* V31 — MODE COURSE intégré et stable */
+/* V32.1 — MODE COURSE intégré et stable */
 function toggleRaceFullscreen(panelId){
  const panel=document.getElementById(panelId);
  if(!panel)return;
@@ -3108,6 +3209,15 @@ function leaveRaceFullscreen(){
  document.body.classList.remove('raceFullscreen');
  document.documentElement.classList.remove('raceFullscreenRoot');
  document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
+}
+
+
+function offlineModulesStatus(){
+ return {
+   xlsx:typeof XLSX!=='undefined',
+   qrScan:typeof jsQR!=='undefined',
+   qrGenerate:typeof qrcode!=='undefined'
+ };
 }
 
 if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{let reg=await navigator.serviceWorker.register('./service-worker.js');reg.update()}catch(e){}})}

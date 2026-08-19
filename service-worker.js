@@ -1,5 +1,64 @@
-const CACHE='laser-run-v31-l7-mode-course-20260819';
-const CORE=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
-self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{let cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp)).catch(()=>{});return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});
+const CACHE='laser-run-v32-1-securisee-20260819';
+
+const CORE=[
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
+
+const OPTIONAL_EXTERNAL=[
+  'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
+  'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
+  'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'
+];
+
+self.addEventListener('install',event=>{
+  self.skipWaiting();
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    await cache.addAll(CORE);
+
+    // Les dépendances externes sont mises en cache si Internet est disponible.
+    // Un échec sur l'une d'elles ne bloque jamais l'installation de la PWA.
+    await Promise.allSettled(
+      OPTIONAL_EXTERNAL.map(async url=>{
+        const response=await fetch(url,{cache:'no-store'});
+        if(response && response.ok)await cache.put(url,response.clone());
+      })
+    );
+  })());
+});
+
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+
+  event.respondWith((async()=>{
+    const cached=await caches.match(event.request);
+    if(cached)return cached;
+
+    try{
+      const response=await fetch(event.request);
+      if(response && response.ok){
+        const cache=await caches.open(CACHE);
+        cache.put(event.request,response.clone()).catch(()=>{});
+      }
+      return response;
+    }catch(err){
+      if(event.request.mode==='navigate'){
+        const fallback=await caches.match('./index.html');
+        if(fallback)return fallback;
+      }
+      throw err;
+    }
+  })());
+});
