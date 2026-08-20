@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Laser Run 6ème · V45.1</title>
+<title>Laser Run 6ème · V45.2</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -3568,23 +3568,21 @@ function crystalLevelForStudent(c,name){
 }
 function exportIDoceo(){
  const c=pc(),rows=c.students.slice().sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'}));
- const lines=[['Nom Prénom','Précision /4','Rapidité /4','Respiration /4','Réussite tir %','Niveau tir /4','Cristaux','Niveau cristaux /4']];
+ const lines=[['Nom Prénom','Précision','Rapidité','Respiration','Réussite au tir','Niveau cristaux']];
  rows.forEach(name=>{
    const map=latestStudentResults(c,name);
-   const precision=avgChallengeFromMap(map,[1,4]);
-   const rapidity=avgChallengeFromMap(map,[2,5]);
-   const respiration=avgChallengeFromMap(map,[3,6]);
+   const precision=levelForStars(avgChallengeFromMap(map,[1,4]));
+   const rapidity=levelForStars(avgChallengeFromMap(map,[2,5]));
+   const respiration=levelForStars(avgChallengeFromMap(map,[3,6]));
    const shooting=profileGlobalShooting(c,name),pct=shooting.pct;
-   const score=v=>v==null?'':Number(v.toFixed(1));
+   const crystalLevel=crystalLevelForStudent(c,name);
    lines.push([
      name,
-     score(precision),
-     score(rapidity),
-     score(respiration),
-     pct==null?'':pct,
-     pct==null?'':levelForPercent(pct),
-     studentCrystalContribution(c,name),
-     crystalLevelForStudent(c,name)||''
+     precision||'',
+     rapidity||'',
+     respiration||'',
+     pct==null?'':pct+' %',
+     crystalLevel||''
    ]);
  });
  const csv='\ufeff'+lines.map(row=>row.map(csvEscape).join(';')).join('\r\n');
