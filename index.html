@@ -2561,7 +2561,39 @@ const LESSON_MAIN_NAMES={
 
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.body.dataset.screen=id;scrollTo(0,0)}
+let displayModeScrollY=0;
+function syncViewportSize(){
+ const viewport=window.visualViewport;
+ const height=Math.round(viewport?viewport.height:window.innerHeight);
+ const width=Math.round(viewport?viewport.width:window.innerWidth);
+ document.documentElement.style.setProperty('--app-height',height+'px');
+ document.documentElement.style.setProperty('--app-width',width+'px');
+}
+function rememberDisplayModeScroll(){
+ if(!document.body.classList.contains('raceFullscreen')&&!document.body.classList.contains('nationDrawFullscreenBody')){
+   displayModeScrollY=window.scrollY||document.documentElement.scrollTop||0;
+ }
+}
+function restoreDisplayModeScroll(){
+ const y=displayModeScrollY;
+ requestAnimationFrame(()=>window.scrollTo(0,y));
+}
+function leaveDisplayModes(restoreScroll=true){
+ const raceActive=document.body.classList.contains('raceFullscreen');
+ const nationActive=document.body.classList.contains('nationDrawFullscreenBody');
+ leaveRaceFullscreen(false);
+ leaveNationFullscreen(false);
+ if(restoreScroll&&(raceActive||nationActive))restoreDisplayModeScroll();
+}
+function show(id){
+ leaveDisplayModes(false);
+ document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
+ const screen=document.getElementById(id);
+ if(!screen)return;
+ screen.classList.remove('hidden');
+ document.body.dataset.screen=id;
+ requestAnimationFrame(()=>window.scrollTo(0,0));
+}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))} function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)} function day(){return new Date().toISOString().slice(0,10)}
 function fmt(ms){ms=Math.max(0,ms||0);let m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),d=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${d}`}
 function updateNet(){let on=navigator.onLine;document.getElementById('netdot').className=on?'okdot':'baddot';document.getElementById('nettext').textContent=on?'Internet disponible':'Mode hors connexion'} addEventListener('online',updateNet);addEventListener('offline',updateNet);updateNet();
@@ -2844,7 +2876,9 @@ function showRankingTab(type){
  if(type==='globe')renderGlobe('rankingContent',false);
  else renderChallengeRanking(type);
 }
-function showPcTab(tab){document.querySelectorAll('.sideTab').forEach(b=>b.classList.toggle('active',b.dataset.pctab===tab));
+function showPcTab(tab){
+ leaveDisplayModes(false);
+ document.querySelectorAll('.sideTab').forEach(b=>b.classList.toggle('active',b.dataset.pctab===tab));
  currentPcTab=tab;
  ['overview','students','results','rankings','pursuit','mass','relay','jo','export'].forEach(t=>{
    const panel=document.getElementById('pcPanel'+t.charAt(0).toUpperCase()+t.slice(1));
@@ -3438,20 +3472,28 @@ function availableDrawNations(){
 function toggleNationFullscreen(){
  const panel=document.getElementById('nationDrawPanel');
  if(!panel)return;
- const active=panel.classList.toggle('nationDrawFullscreen');
- document.body.classList.toggle('nationDrawFullscreenBody',active);
- document.documentElement.classList.toggle('nationDrawFullscreenRoot',active);
+ const active=panel.classList.contains('nationDrawFullscreen');
+ if(active){leaveNationFullscreen(true);return}
+ leaveDisplayModes(false);
+ rememberDisplayModeScroll();
+ syncViewportSize();
+ panel.classList.add('nationDrawFullscreen');
+ document.body.classList.add('nationDrawFullscreenBody');
+ document.documentElement.classList.add('nationDrawFullscreenRoot');
  const btn=document.getElementById('nationFullscreenBtn');
- if(btn)btn.textContent=active?'✕ QUITTER':'⛶ PLEIN ÉCRAN';
+ if(btn){btn.textContent='✕ QUITTER';btn.setAttribute('aria-pressed','true');btn.setAttribute('aria-label','Quitter le plein écran')}
  setTimeout(()=>drawNationWheel(),40);
 }
-function leaveNationFullscreen(){
+function leaveNationFullscreen(restoreScroll=true){
  const panel=document.getElementById('nationDrawPanel');
+ const active=document.body.classList.contains('nationDrawFullscreenBody')||Boolean(panel&&panel.classList.contains('nationDrawFullscreen'));
  if(panel)panel.classList.remove('nationDrawFullscreen');
  document.body.classList.remove('nationDrawFullscreenBody');
  document.documentElement.classList.remove('nationDrawFullscreenRoot');
  const btn=document.getElementById('nationFullscreenBtn');
- if(btn)btn.textContent='⛶ PLEIN ÉCRAN';
+ if(btn){btn.textContent='⛶ PLEIN ÉCRAN';btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label','Ouvrir la roue en plein écran')}
+ syncViewportSize();
+ if(active&&restoreScroll)restoreDisplayModeScroll();
 }
 
 function openNationDraw(){
@@ -5313,25 +5355,63 @@ function toggleRaceFullscreen(panelId){
  const active=document.body.classList.contains('raceFullscreen') &&
               panel.classList.contains('raceFullscreenActive');
 
- document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
-
  if(active){
-   document.body.classList.remove('raceFullscreen');
-   document.documentElement.classList.remove('raceFullscreenRoot');
+   leaveRaceFullscreen(true);
    return;
  }
 
+ leaveDisplayModes(false);
+ rememberDisplayModeScroll();
+ syncViewportSize();
+ document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
  document.body.classList.add('raceFullscreen');
  document.documentElement.classList.add('raceFullscreenRoot');
  panel.classList.add('raceFullscreenActive');
+ document.querySelectorAll('.raceFullscreenBtn').forEach(btn=>{
+   const selected=btn.closest('.raceScreen')===panel;
+   btn.textContent=selected?'✕ QUITTER':'⛶ MODE COURSE';
+   btn.setAttribute('aria-pressed',selected?'true':'false');
+   btn.setAttribute('aria-label',selected?'Quitter le mode course':'Ouvrir le mode course');
+ });
  window.scrollTo(0,0);
 }
 
-function leaveRaceFullscreen(){
+function leaveRaceFullscreen(restoreScroll=true){
+ const active=document.body.classList.contains('raceFullscreen');
  document.body.classList.remove('raceFullscreen');
  document.documentElement.classList.remove('raceFullscreenRoot');
  document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
+ document.querySelectorAll('.raceFullscreenBtn').forEach(btn=>{
+   btn.textContent='⛶ MODE COURSE';
+   btn.setAttribute('aria-pressed','false');
+   btn.setAttribute('aria-label','Ouvrir le mode course');
+ });
+ syncViewportSize();
+ if(active&&restoreScroll)restoreDisplayModeScroll();
 }
+
+syncViewportSize();
+window.addEventListener('resize',syncViewportSize,{passive:true});
+window.addEventListener('orientationchange',()=>setTimeout(()=>{
+ syncViewportSize();
+ if(document.body.classList.contains('nationDrawFullscreenBody'))drawNationWheel();
+},160),{passive:true});
+if(window.visualViewport)window.visualViewport.addEventListener('resize',syncViewportSize,{passive:true});
+window.addEventListener('pagehide',()=>leaveDisplayModes(false));
+window.addEventListener('popstate',()=>leaveDisplayModes(false));
+window.addEventListener('pageshow',event=>{
+ syncViewportSize();
+ if(event.persisted)leaveDisplayModes(false);
+});
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Escape')return;
+ const hitPad=document.getElementById('hitPadModal');
+ const shot=document.getElementById('shotModal');
+ if(hitPad&&!hitPad.classList.contains('hidden')){closeHitPad();return}
+ if(shot&&!shot.classList.contains('hidden')){closeShotModal();return}
+ if(document.body.classList.contains('nationDrawFullscreenBody')){leaveNationFullscreen(true);return}
+ if(document.body.classList.contains('raceFullscreen'))leaveRaceFullscreen(true);
+});
 
 
 function offlineModulesStatus(){
