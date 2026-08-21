@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0d252b">
+<meta name="theme-color" content="#323c3a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
@@ -2140,6 +2140,7 @@ body.raceFullscreen #pcPanelRelay .tileMain b{
 }
 </style>
 
+<link rel="stylesheet" href="theme-v47.css">
 </head>
 <body>
 <div class="app">
@@ -2148,11 +2149,46 @@ body.raceFullscreen #pcPanelRelay .tileMain b{
 <div class="sportBadge"><span class="liveDot"></span> EPS · LE BON SAUVEUR</div>
 </div>
 <section id="home">
- <div class="top"><div><div class="brand">Laser Run 6ème</div><div class="sub">Application EPS - Le Bon Sauveur - Créé par L. RIGAUX</div></div></div>
+ <div class="top homeHero">
+  <div class="homeHeroCopy">
+   <span class="homeEyebrow"><i></i> SAISON EPS · 6ᵉ</span>
+   <div class="brand">Laser Run <em>6e</em></div>
+   <div class="sub">Application EPS - Le Bon Sauveur - Créé par L. RIGAUX</div>
+   <div class="homeHeroStats" aria-hidden="true"><span><b>7</b> leçons</span><span><b>3</b> défis</span><span><b>1</b> globe</span></div>
+  </div>
+  <div class="homeArena" aria-hidden="true">
+   <div class="arenaGrid"></div>
+   <div class="arenaTarget"><i></i><b></b></div>
+   <svg class="arenaAthlete" viewBox="0 0 360 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="arenaTrail" d="M20 170C79 139 114 141 155 151"/>
+    <path class="arenaTrail short" d="M48 198C98 174 124 174 164 180"/>
+    <circle class="athleteHead" cx="218" cy="48" r="19"/>
+    <path class="athleteBody" d="M204 72L174 119L207 139L239 83L204 72Z"/>
+    <path class="athleteLine" d="M203 82L166 94L129 76"/>
+    <path class="athleteLine accent" d="M128 76L114 75"/>
+    <path class="athleteLine" d="M231 88L257 118L291 106"/>
+    <path class="athleteLine" d="M196 133L154 165L105 181"/>
+    <path class="athleteLine accent" d="M106 181L87 177"/>
+    <path class="athleteLine" d="M211 136L250 166L296 163"/>
+    <path class="athleteLine accent" d="M296 163L314 156"/>
+   </svg>
+   <span class="arenaChip">READY</span>
+  </div>
+ </div>
  <div class="statusbar"><span id="netdot" class="okdot"></span><span id="nettext" class="muted"></span><span class="muted">· Les données de séance restent enregistrées sur l’appareil.</span></div>
  <div class="rolegrid">
-  <button class="role profrole" onclick="teacherGate()"><div class="roleicon">👨‍🏫</div><div><div class="roletitle">Professeur</div><div class="roledesc">Créer les classes, importer les athlètes, diffuser les listes et récupérer les résultats.</div></div></button>
-  <button class="role studentrole" onclick="openStudentHome()"><div class="roleicon">🏃</div><div><div class="roletitle">Athlètes</div><div class="roledesc">Classes installées → leçon → binôme → situations.</div></div></button>
+  <button class="role profrole" onclick="teacherGate()">
+   <span class="roleNumber">01</span>
+   <div class="roleicon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="15" r="7"/><path d="M11 39c1-10 6-15 13-15s12 5 13 15"/><path d="M33 9l7 4-7 4"/><path d="M40 13v15"/></svg></div>
+   <div class="roleCopy"><span class="roleKicker">MODE ENSEIGNANT</span><div class="roletitle">Professeur</div><div class="roledesc">Créer les classes, importer les athlètes, diffuser les listes et récupérer les résultats.</div></div>
+   <span class="roleEntry">ENTRER <b>→</b></span>
+  </button>
+  <button class="role studentrole" onclick="openStudentHome()">
+   <span class="roleNumber">02</span>
+   <div class="roleicon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="30" cy="9" r="5"/><path d="M27 16l-8 9 8 6 7-11"/><path d="M20 23l-9 2"/><path d="M26 31l-7 10"/><path d="M29 31l10 7"/></svg></div>
+   <div class="roleCopy"><span class="roleKicker">MODE ÉQUIPE</span><div class="roletitle">Athlètes</div><div class="roledesc">Classes installées → leçon → binôme → situations.</div></div>
+   <span class="roleEntry">JOUER <b>→</b></span>
+  </button>
  </div>
 </section>
 
