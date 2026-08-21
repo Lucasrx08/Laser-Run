@@ -1,4 +1,4 @@
-LASER RUN 6e — V47.4 FINALE PROFESSIONNELLE
+LASER RUN 6e — V47.6 FINALE PROFESSIONNELLE
 
 INSTALLATION SUR GITHUB PAGES
 - Décompresser l’archive.
@@ -24,12 +24,15 @@ RÉFÉRENCE DES MODES
 Notice officielle Décathlon :
 https://support.decathlon.fr/cible-de-tir-laser-entretien-et-reparation-notice-reparation
 
-CORRECTIONS V47.4
+CORRECTIONS V47.6
 - Vue course fixée au cadre de l’écran, y compris après un changement de page ou de zoom.
 - Remise à zéro de la position de défilement avant l’ouverture d’une course.
-- Historique des trois passages au tir compact, complet et sans superposition.
-- Console de tir agrandie avec cible, LEDs, mode actif et résultat parfaitement lisibles.
-- Présentation distincte du mode physique de la cible et de la règle pédagogique.
+- Écrans de tir entièrement simplifiés : un mode, cinq grandes cibles et un résultat.
+- Suppression de la fausse console électronique, de l’échelle des modes et des informations répétées.
+- Même présentation dans les situations principales et dans tous les Défis Étoile.
+- Historique des trois passages compact, complet et sans superposition.
+- Résultat et temps passé au tir clairement affichés pour chaque passage.
+- Titre « Jeux Olympiques » contrasté sur la carte de finale.
 - Logique des courses centralisée sur les protocoles officiels des modes 1, 2 et 3.
 - Cache hors ligne renouvelé pour forcer le chargement de la version finale.
 

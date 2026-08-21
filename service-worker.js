@@ -1,4 +1,4 @@
-const CACHE='laser-run-v47-4-final-course-view-20260821';
+const CACHE='laser-run-v47-6-simple-shooting-20260821';
 const CORE=['./','./index.html','./theme-v47.css','./manifest.json','./icon-192.png','./icon-512.png','./apple-touch-icon-180.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});

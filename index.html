@@ -2450,7 +2450,7 @@ body.raceFullscreen #pcPanelRelay .tileMain b{
    <div class="section" style="margin-bottom:10px">Tirs précédents</div>
    <div id="l1History" class="grid3"></div>
   </div>
-  <div id="shootPanel" class="hidden"><div class="section targetProtocolHeading" style="text-align:center"><span id="l1ReloadRule"><span class="targetProtocolMode">CIBLE · MODE 2 · BIATHLON</span><span class="targetProtocolRule">RÈGLE DE L’ÉPREUVE · 5 TOUCHES AVANT DE REPARTIR</span></span></div><div id="dots" class="fivehits"></div><div style="max-width:820px;margin:20px auto"><button class="shoot hit" style="width:100%" onclick="validateTouch()">● CIBLE TOUCHÉE</button></div><div id="l1ShootHelp" class="muted" style="text-align:center">Chaque touche allume une LED verte. Après la cinquième, l’athlète repart.</div></div>
+  <div id="shootPanel" class="hidden"><div class="section targetProtocolHeading" style="text-align:center"><span id="l1ReloadRule"><span class="targetProtocolRule">RÈGLE · 5 TOUCHES AVANT DE REPARTIR</span></span></div><div id="dots" class="fivehits"></div><div style="max-width:820px;margin:20px auto"><button class="shoot hit" style="width:100%" onclick="validateTouch()">● CIBLE TOUCHÉE</button></div><div id="l1ShootHelp" class="muted" style="text-align:center">Chaque touche allume une cible verte. Après la cinquième, l’athlète repart.</div></div>
   <button id="raceAction" class="mainAction" onclick="raceAction()">DÉMARRER</button>
  </div>
 </section>
@@ -2516,7 +2516,7 @@ body.raceFullscreen #pcPanelRelay .tileMain b{
    <div id="r23History" class="grid3"></div>
   </div>
   <div id="r23ShootPanel" class="hidden">
-   <div class="section targetProtocolHeading" style="text-align:center"><span id="r23ReloadRule"><span class="targetProtocolMode">CIBLE · MODE 1 · TOUCHÉ / MANQUÉ</span><span class="targetProtocolRule">RÈGLE DE L’ÉPREUVE · 5 RECHARGEMENTS MAXIMUM</span></span></div>
+   <div class="section targetProtocolHeading" style="text-align:center"><span id="r23ReloadRule"><span class="targetProtocolRule">RÈGLE · 5 RECHARGEMENTS MAXIMUM</span></span></div>
    <div id="r23Dots" class="fivehits"></div>
    <div class="grid2" style="max-width:850px;margin:20px auto">
     <button type="button" class="shoot hit" onclick="r23Shot(true)">◎ CIBLE TOUCHÉE</button>
@@ -4325,7 +4325,7 @@ function goStar(){if(!xp2)return alert('Choisis un critère à conseiller avant 
 const LASER_TARGET_MODES={
  1:{name:'TOUCHÉ / MANQUÉ',detail:'Un résultat pour chaque tir'},
  2:{name:'BIATHLON',detail:'5 touches pour valider'},
- 3:{name:'PENTATHLON',detail:'5 touches · 50 s maximum'},
+ 3:{name:'PENTATHLON MODERNE',detail:'5 touches · 50 s maximum'},
  4:{name:'ALÉATOIRE',detail:'Signal aléatoire · fenêtre de 3 s'},
  5:{name:'VITESSE',detail:'Paliers de 5 · 4 · 3 · 2 s'}
 };
@@ -4339,7 +4339,7 @@ const MAIN_TARGET_PROTOCOLS=Object.freeze({
  7:{mode:3,name:'PENTATHLON MODERNE',flow:'timedHits',rule:'5 touches en 50 s dès la première touche',help:'Le délai de 50 secondes démarre à la première touche. Les tirs restent libres pendant ce délai.'}
 });
 function mainTargetProtocol(lesson=currentLesson){return MAIN_TARGET_PROTOCOLS[Number(lesson)]||MAIN_TARGET_PROTOCOLS[2]}
-function targetProtocolMarkup(protocol){return `<span class="targetProtocolMode">CIBLE · MODE ${protocol.mode} · ${esc(protocol.name)}</span><span class="targetProtocolRule">RÈGLE DE L’ÉPREUVE · ${esc(protocol.rule)}</span>`}
+function targetProtocolMarkup(protocol){return `<span class="targetProtocolRule">RÈGLE · ${esc(protocol.rule)}</span>`}
 function laserCount(value,singular,plural=`${singular}s`){return `${value} ${value===1?singular:plural}`}
 function laserTargetMarkup(states,options={}){
  const mode=Number(options.mode||1),cfg=LASER_TARGET_MODES[mode]||LASER_TARGET_MODES[1];
@@ -4347,30 +4347,24 @@ function laserTargetMarkup(states,options={}){
  const hits=values.filter(v=>v===1).length,misses=values.filter(v=>v===2).length;
  const interactive=Boolean(options.interactive),action=options.action||'',base=Number(options.actionBase||0);
  const selected=Number(options.selected||0);
- const leds=values.map((state,i)=>{
+ const speedLabels=['LIBRE','5 S','4 S','3 S','2 S'];
+ const targets=values.map((state,i)=>{
    const number=i+1,stateName=state===1?'touchée':state===2?'ratée':'à renseigner';
-   const classes=`laserLed laserLed${number} ${state===1?'isHit':state===2?'isMiss':'isPending'} ${selected===number?'isSelected':''}`;
-   const symbol=state===1?'✓':state===2?'×':number;
-   if(interactive)return `<button type="button" class="${classes}" onclick="${action}(${i+base})" aria-label="LED ${number}, ${stateName}"><span>${symbol}</span></button>`;
-   return `<span class="${classes}" aria-label="LED ${number}, ${stateName}"><span>${symbol}</span></span>`;
+   const classes=`shotTarget ${state===1?'isHit':state===2?'isMiss':'isPending'} ${selected===number?'isSelected':''}`;
+   const stateMark=state===1?'✓':state===2?'×':'';
+   const target=interactive
+     ?`<button type="button" class="${classes}" onclick="${action}(${i+base})" aria-label="Cible ${number}, ${stateName}" aria-pressed="${selected===number?'true':'false'}"><span class="shotTargetNumber">${number}</span><span class="shotTargetState" aria-hidden="true">${stateMark}</span></button>`
+     :`<span class="${classes}" role="img" aria-label="Cible ${number}, ${stateName}"><span class="shotTargetNumber">${number}</span><span class="shotTargetState" aria-hidden="true">${stateMark}</span></span>`;
+   return `<div class="shotTargetCell">${target}${mode===5?`<small>${speedLabels[i]}</small>`:''}</div>`;
  }).join('');
- const readout=mode===5?`LED <strong>${selected||'—'}</strong>`:`<strong>${hits}</strong><small>/5</small>`;
  const status=options.status||`${laserCount(hits,'touche')}${misses?` · ${laserCount(misses,'ratée','ratées')}`:''}`;
- const footer=mode===5
-   ?'<span><b>LED 1</b> libre</span><span><b>LED 2</b> 5 s</span><span><b>LED 3</b> 4 s</span><span><b>LED 4</b> 3 s</span><span><b>LED 5</b> 2 s</span>'
-   :interactive
-    ?'<span class="laserTargetHint">Touchez une LED : neutre → touchée → ratée</span>'
-    :`<span class="laserTargetHint">${esc(cfg.detail)}</span>`;
- return `<div class="laserTargetDevice laserMode${mode} ${interactive?'isInteractive':''}">
-   <div class="laserTargetFace" aria-label="Cible électronique de tir laser, mode ${mode}">
-    <div class="laserTargetBezel"><div class="laserSensor"><i></i><b></b></div>${leds}</div>
-    <span class="laserPowerLed"></span>
+ const score=mode===5?`LED ${selected||'—'}`:`${hits}/5`;
+ return `<div class="shotBoard shotMode${mode} ${interactive?'isInteractive':''}">
+   <div class="shotBoardHead">
+    <div class="shotBoardMode"><span>MODE ${mode}</span><strong>${esc(cfg.name)}</strong></div>
+    <div class="shotBoardResult"><strong>${score}</strong><span class="laserTargetStatus">${esc(status)}</span></div>
    </div>
-   <div class="laserTargetConsole">
-    <div class="laserTargetHead"><div><span class="laserModeBadge">MODE ${mode}</span><b>${cfg.name}</b></div><div class="laserModeScale">${[1,2,3,4,5].map(n=>`<span class="${n===mode?'active':''}">${n}</span>`).join('')}</div></div>
-    <div class="laserTargetReadout"><div>${readout}</div><span class="laserTargetStatus">${esc(status)}</span></div>
-    <div class="laserTargetFooter ${mode===5?'speedScale':''}">${footer}</div>
-   </div>
+   <div class="shotTargetGrid" aria-label="Résultats des cinq cibles">${targets}</div>
   </div>`;
 }
 function renderTargets(){targets.classList.add('laserTargetHost');targets.innerHTML=laserTargetMarkup(s1,{mode:1,interactive:true,action:'cycle'});const hits=s1.filter(x=>x===1).length;s1Score.textContent=`${hits} / 5`;const stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;starDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);starText.textContent=stars===4?'Objectif maximal atteint : 4 étoiles de précision.':`${stars} étoile(s) de précision.`}
@@ -4427,7 +4421,7 @@ function renderL1History(){
  wrap.classList.remove('hidden');
  box.innerHTML=race.series.map((serie,i)=>{
    const dots=Array.from({length:5},()=>'<span class="shotHistoryDot hit"></span>').join('');
-   return `<div class="shotHistoryCard"><b>Tir ${i+1}</b><div class="shotHistoryDots">${dots}</div><div class="shotTime">${fmt(serie.duration)}</div><div class="muted">temps passé au tir</div></div>`;
+   return `<div class="shotHistoryCard"><div class="shotHistoryHead"><b>PASSAGE ${i+1}</b><span>5/5</span></div><div class="shotHistoryDots">${dots}</div><div class="shotRangeTime"><small>TEMPS AU TIR</small><strong>${fmt(serie.duration)}</strong></div></div>`;
  }).join('');
 }
 function raceAction(){
@@ -4789,10 +4783,9 @@ function renderR23History(){
    const dots=serie.shots.map(v=>`<span class="shotHistoryDot ${v?'hit':'miss'}"></span>`).join('');
    const hits=serie.shots.filter(Boolean).length;
    return `<div class="shotHistoryCard">
-     <b>Tir ${i+1}</b>
+     <div class="shotHistoryHead"><b>PASSAGE ${i+1}</b><span>${hits}/5</span></div>
      <div class="shotHistoryDots">${dots}</div>
-     <div class="shotTime">${hits}/5 · ${fmt(serie.duration)}</div>
-     <div class="muted">${mainTargetProtocol().flow==='timedHits'?'cibles validées · temps écoulé':'résultat · temps au tir'}</div>
+     <div class="shotRangeTime"><small>TEMPS AU TIR</small><strong>${fmt(serie.duration)}</strong></div>
    </div>`;
  }).join('');
 }
