@@ -2358,3 +2358,805 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
     margin-top: 10px;
   }
 }
+
+/* =========================================================
+   V47.3 — Scènes hors cadre + cible électronique 5 modes
+   ========================================================= */
+
+/* Le panneau d'attribution peut être ouvert sans être rogné par la carte. */
+#pcPanelStudents > .card {
+  overflow: visible !important;
+}
+
+/* Les scènes déplacées directement dans body ne dépendent plus d'un parent
+   avec overflow, transform ou backdrop-filter (cas critique Safari/iPad). */
+body.raceFullscreen > .raceScreen.raceFullscreenActive,
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 300000 !important;
+  width: 100vw !important;
+  height: var(--app-height, 100dvh) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: var(--app-height, 100dvh) !important;
+  margin: 0 !important;
+  transform: none !important;
+  contain: none !important;
+  isolation: isolate;
+  overscroll-behavior: none !important;
+}
+
+body.raceFullscreen > .raceScreen.raceFullscreenActive {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  gap: 7px !important;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left)) !important;
+  overflow: hidden !important;
+}
+
+body.raceFullscreen > #pcPanelMass.raceScreen.raceFullscreenActive,
+body.raceFullscreen > #pcPanelRelay.raceScreen.raceFullscreenActive,
+body.raceFullscreen > #pcPanelPursuit.raceScreen.raceFullscreenActive {
+  width: 100vw !important;
+  height: var(--app-height, 100dvh) !important;
+  min-height: 0 !important;
+  max-height: var(--app-height, 100dvh) !important;
+}
+
+body.raceFullscreen > #pcPanelMass.raceScreen.raceFullscreenActive #massPad,
+body.raceFullscreen > #pcPanelRelay.raceScreen.raceFullscreenActive #relayPad,
+body.raceFullscreen > #pcPanelPursuit.raceScreen.raceFullscreenActive .pursuitGrid {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 14% 8%, rgba(199,219,223,.68), transparent 31rem),
+    radial-gradient(circle at 89% 12%, rgba(247,183,56,.14), transparent 27rem),
+    linear-gradient(145deg, #f0ece7, #e7efef) !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawHead {
+  position: relative !important;
+  inset: auto !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  margin: 0 0 5px !important;
+  padding: 0 2px 5px !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawHead .section {
+  font-size: clamp(20px, 2.1vw, 29px) !important;
+  line-height: 1 !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawHead .muted {
+  font-size: clamp(10px, 1vw, 13px) !important;
+  line-height: 1.15 !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawLayout {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) clamp(245px, 22vw, 320px) !important;
+  gap: 9px !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationWheelSide {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) 42px 44px 36px !important;
+  gap: 5px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationWheelWrap {
+  width: min(
+    calc(100vw - clamp(245px, 22vw, 320px) - 48px),
+    calc(var(--app-height, 100dvh) - 196px)
+  ) !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  align-self: center !important;
+  justify-self: center !important;
+  aspect-ratio: 1 !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawResult,
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationSpinBtn,
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen #nationUndoBtn {
+  width: min(100%, 650px) !important;
+  margin: 0 auto !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawResult {
+  min-height: 42px !important;
+  height: 42px !important;
+  padding: 4px 10px !important;
+  font-size: clamp(13px, 1.4vw, 18px) !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationSpinBtn {
+  min-height: 44px !important;
+  height: 44px !important;
+  padding: 5px 11px !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen #nationUndoBtn {
+  min-height: 36px !important;
+  height: 36px !important;
+  padding: 4px 9px !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationAthletesSide {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 9px !important;
+  overflow: hidden !important;
+}
+
+body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationAthleteList {
+  height: calc(100% - 38px) !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+}
+
+/* ---------- Une vraie cible électronique, commune aux 5 modes ---------- */
+
+.targetset.laserTargetHost,
+.fivehits.laserTargetHost {
+  display: block !important;
+  width: 100% !important;
+  max-width: 880px !important;
+  margin: 14px auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.laserTargetDevice {
+  --target-accent: var(--game-amber);
+  width: 100%;
+  min-width: 0;
+  min-height: 188px;
+  display: grid;
+  grid-template-columns: clamp(172px, 22vw, 214px) minmax(0, 1fr);
+  gap: 13px;
+  padding: 13px;
+  color: var(--game-white);
+  background:
+    radial-gradient(circle at 13px 13px, #83908d 0 2px, #111817 3px 5px, transparent 6px),
+    radial-gradient(circle at calc(100% - 13px) 13px, #83908d 0 2px, #111817 3px 5px, transparent 6px),
+    radial-gradient(circle at 13px calc(100% - 13px), #83908d 0 2px, #111817 3px 5px, transparent 6px),
+    radial-gradient(circle at calc(100% - 13px) calc(100% - 13px), #83908d 0 2px, #111817 3px 5px, transparent 6px),
+    linear-gradient(145deg, #35413e 0%, #151d1b 47%, #0c1211 100%);
+  border: 2px solid #56635f;
+  border-radius: 25px;
+  box-shadow:
+    0 10px 0 #070c0b,
+    0 23px 36px rgba(0,0,0,.27),
+    inset 0 1px rgba(255,255,255,.13);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.laserMode2 { --target-accent: #37d37a; }
+.laserMode3 { --target-accent: #5fd7e7; }
+.laserMode4 { --target-accent: #b889ff; }
+.laserMode5 { --target-accent: var(--game-amber); }
+
+.laserTargetFace {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  align-self: center;
+  border: 2px solid rgba(255,255,255,.14);
+  border-radius: 19px;
+  background: linear-gradient(145deg, #202b29, #0a100f);
+  box-shadow: inset 0 0 0 5px #090f0e, inset 0 1px rgba(255,255,255,.1);
+}
+
+.laserTargetBezel {
+  position: absolute;
+  inset: 12px;
+  border: 5px solid #0a1110;
+  border-radius: 15px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.6), transparent 32%),
+    linear-gradient(145deg, #d8ebee, #9bbbc0);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.18),
+    inset 0 0 0 3px rgba(29,40,38,.25),
+    0 8px 15px rgba(0,0,0,.32);
+}
+
+.laserSensor {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 62%;
+  width: 49%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle,
+      var(--target-accent) 0 8%,
+      #f4f8f7 9% 17%,
+      #17201e 18% 31%,
+      #f4f8f7 32% 41%,
+      #17201e 42% 57%,
+      #f4f8f7 58% 64%,
+      #111817 65% 100%);
+  border: 4px solid #070c0b;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.72), 0 8px 16px rgba(0,0,0,.35);
+}
+
+.laserSensor i,
+.laserSensor b {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  margin: 0;
+  padding: 0;
+  background: rgba(7,12,11,.48);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.2);
+}
+
+.laserSensor i { top: 4%; bottom: 4%; left: 50%; width: 2px; transform: translateX(-50%); }
+.laserSensor b { left: 4%; right: 4%; top: 50%; height: 2px; transform: translateY(-50%); }
+
+.laserLed {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  z-index: 5;
+  top: 8%;
+  width: clamp(28px, 3.6vw, 37px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 0 !important;
+  color: #edf7f6;
+  background: #394542;
+  border: 3px solid #101816 !important;
+  border-radius: 50% !important;
+  outline: 2px solid rgba(255,255,255,.42) !important;
+  box-shadow: inset 0 0 0 4px rgba(0,0,0,.2), 0 4px 8px rgba(0,0,0,.32);
+  font-size: clamp(10px, 1.1vw, 13px);
+  line-height: 1;
+  font-weight: 1000;
+  transform: translateX(-50%);
+  transition: transform .13s ease, background .13s ease, box-shadow .13s ease;
+}
+
+.laserLed span { position: relative; z-index: 2; }
+.laserLed1 { left: 10%; }
+.laserLed2 { left: 30%; }
+.laserLed3 { left: 50%; }
+.laserLed4 { left: 70%; }
+.laserLed5 { left: 90%; }
+
+.laserLed.isPending {
+  color: #ffe3a0;
+  background: #3a4542;
+  box-shadow: inset 0 0 0 4px #242d2b, 0 4px 8px rgba(0,0,0,.32), 0 0 10px rgba(247,183,56,.10);
+}
+
+.laserLed.isHit {
+  color: #fff;
+  background: #1fbd66;
+  outline-color: #b9ffd3 !important;
+  box-shadow: inset 0 0 0 4px #0a7b3a, 0 0 15px rgba(44,230,114,.72), 0 4px 8px rgba(0,0,0,.35);
+}
+
+.laserLed.isMiss {
+  color: #fff;
+  background: #ef554b;
+  outline-color: #ffd3cf !important;
+  box-shadow: inset 0 0 0 4px #a4251f, 0 0 15px rgba(239,85,75,.67), 0 4px 8px rgba(0,0,0,.35);
+}
+
+.laserLed.isSelected {
+  outline: 4px solid var(--game-amber) !important;
+  outline-offset: 3px !important;
+  transform: translateX(-50%) scale(1.08);
+}
+
+.laserTargetDevice.isInteractive .laserLed { cursor: pointer; }
+.laserTargetDevice.isInteractive .laserLed:active { transform: translateX(-50%) scale(.9); }
+
+.laserPowerLed {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--target-accent);
+  box-shadow: 0 0 10px var(--target-accent);
+}
+
+.laserTargetConsole {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 9px;
+  padding: 5px 5px 4px 0;
+}
+
+.laserTargetHead {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.11);
+}
+
+.laserTargetHead > div:first-child {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.laserModeBadge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 0 9px;
+  color: var(--game-charcoal-deep);
+  background: var(--target-accent);
+  border-radius: 8px;
+  font-size: clamp(9px, .9vw, 11px);
+  font-weight: 1000;
+  letter-spacing: .09em;
+}
+
+.laserTargetHead b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #f7fbfa;
+  font-size: clamp(13px, 1.5vw, 19px);
+  line-height: 1;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.laserModeScale {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(5, 25px);
+  gap: 3px;
+  padding: 3px;
+  background: #080d0c;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+}
+
+.laserModeScale span {
+  height: 23px;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,.46);
+  background: #222c2a;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.laserModeScale span.active {
+  color: var(--game-charcoal-deep);
+  background: var(--target-accent);
+  box-shadow: 0 0 11px color-mix(in srgb, var(--target-accent) 55%, transparent);
+}
+
+.laserTargetReadout {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(13px, 2vw, 24px);
+  padding: 8px clamp(11px, 1.8vw, 19px);
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    #0b1110;
+  background-size: 18px 18px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 13px;
+}
+
+.laserTargetReadout > div {
+  min-width: clamp(86px, 10vw, 123px);
+  color: var(--target-accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: clamp(18px, 2.2vw, 30px);
+  line-height: 1;
+  font-weight: 1000;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--target-accent) 45%, transparent);
+}
+
+.laserTargetReadout > div strong { font-size: 1.55em; }
+.laserTargetReadout > div small { margin-left: 2px; font-size: .58em; }
+.laserTargetReadout > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255,255,255,.76);
+  font-size: clamp(11px, 1.15vw, 14px);
+  line-height: 1.18;
+  font-weight: 800;
+}
+
+.laserTargetFooter {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,.56);
+  font-size: clamp(9px, .9vw, 11px);
+  line-height: 1.15;
+  text-align: center;
+}
+
+.laserTargetFooter.speedScale {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.laserTargetFooter.speedScale span {
+  min-width: 0;
+  padding: 4px 2px;
+  background: rgba(255,255,255,.055);
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.laserTargetFooter.speedScale b { display: block; color: var(--target-accent); }
+
+@media (hover: hover) {
+  .laserTargetDevice.isInteractive .laserLed:hover {
+    transform: translateX(-50%) translateY(-2px) scale(1.06);
+    filter: brightness(1.09);
+  }
+}
+
+/* ---------- Vues athlète : le mode course tient dans la hauteur iPad ---------- */
+
+@media (min-width: 700px) {
+  body[data-screen="race"],
+  body[data-screen="l23race"] {
+    height: var(--app-height, 100dvh) !important;
+    max-height: var(--app-height, 100dvh) !important;
+    overflow: hidden !important;
+  }
+
+  body[data-screen="race"] .sportTopbar,
+  body[data-screen="l23race"] .sportTopbar {
+    display: none !important;
+  }
+
+  body[data-screen="race"] .app,
+  body[data-screen="l23race"] .app {
+    height: var(--app-height, 100dvh) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body[data-screen="race"] #race,
+  body[data-screen="l23race"] #l23race {
+    width: calc(100% - 18px) !important;
+    height: var(--app-height, 100dvh) !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    gap: 6px !important;
+    padding: max(7px, env(safe-area-inset-top)) 0 max(8px, env(safe-area-inset-bottom)) !important;
+    overflow: hidden !important;
+  }
+
+  body[data-screen="race"] #race > .back,
+  body[data-screen="l23race"] #l23race > .back {
+    min-height: 34px !important;
+    height: 34px !important;
+    justify-self: start;
+    margin: 0 !important;
+    padding: 0 12px !important;
+  }
+
+  body[data-screen="race"] #race > .top,
+  body[data-screen="l23race"] #l23race > .top {
+    min-height: 84px !important;
+    margin: 0 !important;
+    padding: 12px 20px !important;
+    border-radius: 20px !important;
+  }
+
+  body[data-screen="race"] #race > .top .title,
+  body[data-screen="l23race"] #l23race > .top .title {
+    color: var(--game-white) !important;
+    font-size: clamp(31px, 4.2vw, 50px) !important;
+    line-height: .94 !important;
+  }
+
+  body[data-screen="race"] #race > .card,
+  body[data-screen="l23race"] #l23race > .card {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 10px 13px !important;
+    overflow: hidden !important;
+  }
+
+  body[data-screen="race"] #race .timer,
+  body[data-screen="l23race"] #l23race .timer {
+    flex: none;
+    margin: 0 0 7px !important;
+    padding: 5px 12px 7px !important;
+    font-size: min(7vw, 9.5dvh) !important;
+    line-height: .92 !important;
+    border-radius: 15px !important;
+  }
+
+  body[data-screen="race"] #race .stats,
+  body[data-screen="l23race"] #l23race .stats {
+    flex: none;
+    gap: 7px !important;
+  }
+
+  body[data-screen="race"] #race .stat,
+  body[data-screen="l23race"] #l23race .stat {
+    min-height: 63px !important;
+    padding: 6px 8px !important;
+    font-size: clamp(11px, 1.2vw, 15px) !important;
+  }
+
+  body[data-screen="race"] #race .stat b,
+  body[data-screen="l23race"] #l23race .stat b {
+    margin-top: 3px !important;
+    font-size: clamp(20px, 2.2vw, 29px) !important;
+    line-height: 1 !important;
+  }
+
+  body[data-screen="race"] #shootPanel:not(.hidden),
+  body[data-screen="l23race"] #r23ShootPanel:not(.hidden) {
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  body[data-screen="race"] #shootPanel .section,
+  body[data-screen="l23race"] #r23ShootPanel .section {
+    flex: none;
+    margin: 5px 0 !important;
+    font-size: clamp(13px, 1.5vw, 18px) !important;
+  }
+
+  body[data-screen="race"] #shootPanel > div[style],
+  body[data-screen="l23race"] #r23ShootPanel > .grid2 {
+    flex: none;
+    margin: 8px auto !important;
+  }
+
+  body[data-screen="race"] #shootPanel .shoot,
+  body[data-screen="l23race"] #r23ShootPanel .shoot {
+    min-height: 54px !important;
+    padding: 9px 12px !important;
+    font-size: clamp(15px, 1.7vw, 21px) !important;
+  }
+
+  body[data-screen="race"] #l1HistoryWrap,
+  body[data-screen="l23race"] #r23HistoryWrap {
+    max-height: 118px;
+    overflow: auto;
+  }
+
+  body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)) #l1HistoryWrap,
+  body[data-screen="l23race"] #l23race .card:has(#r23ShootPanel:not(.hidden)) #r23HistoryWrap {
+    display: none !important;
+  }
+
+  body[data-screen="race"] #race .mainAction,
+  body[data-screen="l23race"] #l23race .mainAction {
+    flex: none;
+    min-height: 48px !important;
+    margin-top: 7px !important;
+    padding: 9px 12px !important;
+  }
+}
+
+@media (min-width: 700px) and (max-height: 740px) {
+  body[data-screen="race"] #race > .top,
+  body[data-screen="l23race"] #l23race > .top {
+    min-height: 68px !important;
+    padding: 8px 16px !important;
+  }
+
+  body[data-screen="race"] #race > .top .title,
+  body[data-screen="l23race"] #l23race > .top .title {
+    font-size: clamp(27px, 3.8vw, 40px) !important;
+  }
+
+  body[data-screen="race"] #race .stat,
+  body[data-screen="l23race"] #l23race .stat { min-height: 54px !important; }
+
+  body[data-screen="race"] .laserTargetDevice,
+  body[data-screen="l23race"] .laserTargetDevice {
+    min-height: 139px;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 9px;
+    padding: 8px;
+    border-radius: 19px;
+    box-shadow: 0 7px 0 #070c0b, 0 13px 22px rgba(0,0,0,.23), inset 0 1px rgba(255,255,255,.12);
+  }
+
+  body[data-screen="race"] .laserTargetBezel,
+  body[data-screen="l23race"] .laserTargetBezel { inset: 8px; }
+
+  body[data-screen="race"] .laserLed,
+  body[data-screen="l23race"] .laserLed { width: 27px; }
+
+  body[data-screen="race"] .laserTargetConsole,
+  body[data-screen="l23race"] .laserTargetConsole { gap: 5px; padding-top: 2px; }
+
+  body[data-screen="race"] .laserTargetHead,
+  body[data-screen="l23race"] .laserTargetHead { padding-bottom: 4px; }
+
+  body[data-screen="race"] .laserTargetReadout,
+  body[data-screen="l23race"] .laserTargetReadout { padding: 4px 9px; }
+
+  body[data-screen="race"] .laserTargetFooter,
+  body[data-screen="l23race"] .laserTargetFooter { min-height: 17px; }
+}
+
+@media (max-width: 760px) {
+  .laserTargetDevice {
+    min-height: 168px;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 9px;
+    padding: 9px;
+  }
+
+  .laserTargetConsole { gap: 6px; padding-top: 2px; }
+  .laserTargetHead { padding-bottom: 5px; }
+  .laserTargetHead b { white-space: normal; }
+  .laserModeScale { grid-template-columns: repeat(5, 20px); }
+  .laserModeScale span { height: 20px; }
+  .laserTargetReadout { padding: 6px 9px; }
+}
+
+@media (max-width: 560px) {
+  .laserTargetDevice {
+    grid-template-columns: 138px minmax(0, 1fr);
+    min-height: 154px;
+    padding: 8px;
+    border-radius: 19px;
+  }
+
+  .laserTargetHead { display: block; }
+  .laserTargetHead > div:first-child { margin-bottom: 5px; }
+  .laserModeScale { width: max-content; }
+  .laserTargetReadout { grid-template-columns: 72px minmax(0, 1fr); gap: 6px; }
+  .laserTargetReadout > div { min-width: 0; }
+  .laserTargetFooter.speedScale span { font-size: 8px; }
+}
+
+/* Portrait étroit : la roue reste entière et seule la liste défile. */
+@media (min-width: 700px) and (max-width: 900px) {
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawLayout {
+    grid-template-columns: minmax(0, 1fr) 235px !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationWheelWrap {
+    width: min(
+      calc(100vw - 283px),
+      calc(var(--app-height, 100dvh) - 196px)
+    ) !important;
+  }
+}
+
+/* Téléphone : défilement dans la scène, jamais dans la page arrière. */
+@media (max-width: 699px) {
+  body.raceFullscreen > .raceScreen.raceFullscreenActive,
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen {
+    display: block !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawHead {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    height: auto !important;
+    min-height: 48px !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawHeadActions {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen #nationFullscreenBtn {
+    min-width: 0 !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationDrawLayout {
+    height: auto !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    overflow: visible !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationWheelSide {
+    height: auto !important;
+    grid-template-rows: auto auto auto auto !important;
+    overflow: visible !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationWheelWrap {
+    width: min(88vw, 520px) !important;
+  }
+
+  body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationAthletesSide {
+    height: 320px !important;
+  }
+}

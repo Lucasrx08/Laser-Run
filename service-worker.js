@@ -1,5 +1,5 @@
-const CACHE='laser-run-v47-1-display-fix-20260821';
-const CORE=['./','./index.html','./theme-v47.css','./manifest.json','./icon-192.png','./icon-512.png'];
+const CACHE='laser-run-v47-3-fullscreen-target-20260821';
+const CORE=['./','./index.html','./theme-v47.css','./manifest.json','./icon-192.png','./icon-512.png','./apple-touch-icon-180.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{let cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp)).catch(()=>{});return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});

@@ -6,7 +6,11 @@
 <meta name="theme-color" content="#323c3a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Laser Run 6e">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="shortcut icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png">
 <title>Laser Run 6e</title>
 <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -2446,7 +2450,7 @@ body.raceFullscreen #pcPanelRelay .tileMain b{
    <div class="section" style="margin-bottom:10px">Tirs précédents</div>
    <div id="l1History" class="grid3"></div>
   </div>
-  <div id="shootPanel" class="hidden"><div class="section" style="text-align:center">Valider 5 touches avant de repartir</div><div id="dots" class="fivehits"></div><div style="max-width:520px;margin:20px auto"><button class="shoot hit" style="width:100%" onclick="validateTouch()">◎ CIBLE TOUCHÉE</button></div><div class="muted" style="text-align:center">Rechargements illimités et non comptabilisés. Le chronomètre continue pendant le tir.</div></div>
+  <div id="shootPanel" class="hidden"><div class="section" style="text-align:center">MODE 2 · BIATHLON — Valider 5 touches avant de repartir</div><div id="dots" class="fivehits"></div><div style="max-width:520px;margin:20px auto"><button class="shoot hit" style="width:100%" onclick="validateTouch()">● CIBLE TOUCHÉE</button></div><div class="muted" style="text-align:center">Chaque touche allume une LED verte. Après la cinquième, l’athlète repart.</div></div>
   <button id="raceAction" class="mainAction" onclick="raceAction()">DÉMARRER</button>
  </div>
 </section>
@@ -2562,10 +2566,27 @@ const LESSON_MAIN_NAMES={
 const XP_ADVICE={pieds:'Place un pied devant l’autre et garde tes appuis immobiles pendant les cinq tirs.',bras:'Tiens le pistolet à deux mains et garde le bras légèrement fléchi.',regard:'Ferme un œil, fixe la cible et garde le même alignement du regard.'};
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}} function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
 let displayModeScrollY=0;
+let nationDisplayPortal=null;
+let raceDisplayPortal=null;
+function moveToDisplayLayer(element){
+ if(!element||element.parentNode===document.body)return null;
+ const marker=document.createComment('display-mode-origin');
+ element.parentNode.insertBefore(marker,element);
+ document.body.appendChild(element);
+ return {element,marker};
+}
+function restoreDisplayLayer(portal){
+ if(!portal)return null;
+ const {element,marker}=portal;
+ if(marker&&marker.parentNode){
+   marker.parentNode.insertBefore(element,marker);
+   marker.remove();
+ }
+ return null;
+}
 function syncViewportSize(){
- const viewport=window.visualViewport;
- const height=Math.round(viewport?viewport.height:window.innerHeight);
- const width=Math.round(viewport?viewport.width:window.innerWidth);
+ const height=Math.max(320,Math.round(window.innerHeight||document.documentElement.clientHeight||768));
+ const width=Math.max(320,Math.round(window.innerWidth||document.documentElement.clientWidth||1024));
  document.documentElement.style.setProperty('--app-height',height+'px');
  document.documentElement.style.setProperty('--app-width',width+'px');
 }
@@ -3477,6 +3498,7 @@ function toggleNationFullscreen(){
  leaveDisplayModes(false);
  rememberDisplayModeScroll();
  syncViewportSize();
+ nationDisplayPortal=moveToDisplayLayer(panel);
  panel.classList.add('nationDrawFullscreen');
  document.body.classList.add('nationDrawFullscreenBody');
  document.documentElement.classList.add('nationDrawFullscreenRoot');
@@ -3490,6 +3512,7 @@ function leaveNationFullscreen(restoreScroll=true){
  if(panel)panel.classList.remove('nationDrawFullscreen');
  document.body.classList.remove('nationDrawFullscreenBody');
  document.documentElement.classList.remove('nationDrawFullscreenRoot');
+ nationDisplayPortal=restoreDisplayLayer(nationDisplayPortal);
  const btn=document.getElementById('nationFullscreenBtn');
  if(btn){btn.textContent='⛶ PLEIN ÉCRAN';btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label','Ouvrir la roue en plein écran')}
  syncViewportSize();
@@ -3504,7 +3527,10 @@ function openNationDraw(){
  document.getElementById('pcStudents').classList.add('hidden');
  renderNationDrawAthletes();
  drawNationWheel();
- document.getElementById('nationDrawPanel').scrollIntoView({behavior:'smooth',block:'start'});
+ requestAnimationFrame(()=>{
+   const panel=document.getElementById('nationDrawPanel');
+   if(panel&&!panel.classList.contains('hidden')&&!panel.classList.contains('nationDrawFullscreen'))toggleNationFullscreen();
+ });
 }
 function closeNationDraw(){
  if(nationWheelSpinning)return;
@@ -4288,7 +4314,47 @@ function renderXP(prefix){document.getElementById(prefix+'Criteria').innerHTML=c
 function chooseCriterion(prefix,c){if(prefix==='xp1')xp1=c;else xp2=c;renderXP(prefix)}
 function goXP2(){if(!xp1)return alert('Choisis un critère à conseiller avant de passer au Défi XP 2.');xp1Card.classList.add('hidden');xp2Card.classList.remove('hidden');renderXP('xp2')}
 function goStar(){if(!xp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');xp2Card.classList.add('hidden');starCard.classList.remove('hidden');renderTargets()}
-function renderTargets(){targets.innerHTML=s1.map((v,i)=>`<button class="target digitalTarget ${v===1?'hit':v===2?'miss':''}" onclick="cycle(${i})"><span>${i+1}</span></button>`).join('');const hits=s1.filter(x=>x===1).length;s1Score.textContent=`${hits} / 5`;const stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;starDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);starText.textContent=stars===4?'Objectif maximal atteint : 4 étoiles de précision.':`${stars} étoile(s) de précision.`}
+const LASER_TARGET_MODES={
+ 1:{name:'TOUCHÉ / MANQUÉ',detail:'Un résultat pour chaque tir'},
+ 2:{name:'BIATHLON',detail:'5 touches pour valider'},
+ 3:{name:'PENTATHLON',detail:'5 touches · 50 s maximum'},
+ 4:{name:'ALÉATOIRE',detail:'Signal aléatoire · fenêtre de 3 s'},
+ 5:{name:'VITESSE',detail:'Paliers de 5 · 4 · 3 · 2 s'}
+};
+function laserCount(value,singular,plural=`${singular}s`){return `${value} ${value===1?singular:plural}`}
+function laserTargetMarkup(states,options={}){
+ const mode=Number(options.mode||1),cfg=LASER_TARGET_MODES[mode]||LASER_TARGET_MODES[1];
+ const values=Array.from({length:5},(_,i)=>Number(states&&states[i])||0);
+ const hits=values.filter(v=>v===1).length,misses=values.filter(v=>v===2).length;
+ const interactive=Boolean(options.interactive),action=options.action||'',base=Number(options.actionBase||0);
+ const selected=Number(options.selected||0);
+ const leds=values.map((state,i)=>{
+   const number=i+1,stateName=state===1?'touchée':state===2?'ratée':'à renseigner';
+   const classes=`laserLed laserLed${number} ${state===1?'isHit':state===2?'isMiss':'isPending'} ${selected===number?'isSelected':''}`;
+   const symbol=state===1?'✓':state===2?'×':number;
+   if(interactive)return `<button type="button" class="${classes}" onclick="${action}(${i+base})" aria-label="LED ${number}, ${stateName}"><span>${symbol}</span></button>`;
+   return `<span class="${classes}" aria-label="LED ${number}, ${stateName}"><span>${symbol}</span></span>`;
+ }).join('');
+ const readout=mode===5?`LED <strong>${selected||'—'}</strong>`:`<strong>${hits}</strong><small>/5</small>`;
+ const status=options.status||`${laserCount(hits,'touche')}${misses?` · ${laserCount(misses,'ratée','ratées')}`:''}`;
+ const footer=mode===5
+   ?'<span><b>LED 1</b> libre</span><span><b>LED 2</b> 5 s</span><span><b>LED 3</b> 4 s</span><span><b>LED 4</b> 3 s</span><span><b>LED 5</b> 2 s</span>'
+   :interactive
+    ?'<span class="laserTargetHint">Touchez une LED : neutre → touchée → ratée</span>'
+    :`<span class="laserTargetHint">${esc(cfg.detail)}</span>`;
+ return `<div class="laserTargetDevice laserMode${mode} ${interactive?'isInteractive':''}">
+   <div class="laserTargetFace" aria-label="Cible électronique de tir laser, mode ${mode}">
+    <div class="laserTargetBezel"><div class="laserSensor"><i></i><b></b></div>${leds}</div>
+    <span class="laserPowerLed"></span>
+   </div>
+   <div class="laserTargetConsole">
+    <div class="laserTargetHead"><div><span class="laserModeBadge">MODE ${mode}</span><b>${cfg.name}</b></div><div class="laserModeScale">${[1,2,3,4,5].map(n=>`<span class="${n===mode?'active':''}">${n}</span>`).join('')}</div></div>
+    <div class="laserTargetReadout"><div>${readout}</div><span>${esc(status)}</span></div>
+    <div class="laserTargetFooter ${mode===5?'speedScale':''}">${footer}</div>
+   </div>
+  </div>`;
+}
+function renderTargets(){targets.classList.add('laserTargetHost');targets.innerHTML=laserTargetMarkup(s1,{mode:1,interactive:true,action:'cycle'});const hits=s1.filter(x=>x===1).length;s1Score.textContent=`${hits} / 5`;const stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;starDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);starText.textContent=stars===4?'Objectif maximal atteint : 4 étoiles de précision.':`${stars} étoile(s) de précision.`}
 function cycle(i){s1[i]=(s1[i]+1)%3;renderTargets()}
 function saveS1(){if(s1.includes(0)&&!confirm('Certaines cibles sont neutres. Valider quand même ?'))return;let hits=s1.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;let r=ensure(active.name);r.nation=studentNationAt(active.i)||null;r.s1=hits;r.stars=stars;saveRecord(r);openPair()}
 function startRace(i){
@@ -4327,7 +4393,9 @@ function updateStats(){
 }
 function renderDots(){
  const box=document.getElementById('dots');
- box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot raceDot ${race&&i<race.hits?'on':''}"><span>${i+1}</span></div>`).join('');
+ box.classList.add('laserTargetHost');
+ const states=Array.from({length:5},(_,i)=>race&&i<race.hits?1:0);
+ box.innerHTML=laserTargetMarkup(states,{mode:2,status:laserCount(race?.hits||0,'touche validée','touches validées')});
 }
 function renderL1History(){
  const wrap=document.getElementById('l1HistoryWrap'),box=document.getElementById('l1History');
@@ -4502,7 +4570,7 @@ function chGoStar(){
  if(!chxp2)return alert('Choisis un critère à conseiller avant de passer au Défi Étoile.');
  chXP2Card.classList.add('hidden');chStarCard.classList.remove('hidden');
  chSpeedStar.classList.toggle('hidden',!(currentLesson===2||currentLesson===5));chBreathStar.classList.toggle('hidden',!(currentLesson===3||currentLesson===4||currentLesson===6||currentLesson===7));
- if(currentLesson===2||currentLesson===5){chStarNotice.innerHTML='Le coach <b>ne donne plus de conseil</b>. Le tireur dispose de <b>5 rechargements maximum</b> pour atteindre la LED la plus élevée en <b>50 secondes</b>.';renderLedButtons()}
+ if(currentLesson===2||currentLesson===5){chStarNotice.innerHTML='Place la cible en <b>MODE 5 · VITESSE</b>. Après la première touche, le temps diminue à chaque niveau : <b>5 s, 4 s, 3 s puis 2 s</b>. Note la LED maximale atteinte.';renderLedButtons()}
  else{
   chStarNotice.innerHTML=currentLesson===4
    ?'Le coach <b>ne donne plus de conseil</b>. Après les 40 m et l’accélération finale, le tireur dispose de <b>5 rechargements maximum</b>. Vert = cible touchée, rouge = cible non touchée.'
@@ -4515,12 +4583,15 @@ function speedStarsForLed(led){
  return led>=5?4:led===4?3:led===3?2:led===2?1:0
 }
 function renderLedButtons(){
- chLedButtons.innerHTML=[1,2,3,4,5].map(n=>`<button class="target ${chLed===n?'hit':''}" onclick="setLed(${n})"><span style="font-size:26px;font-weight:900">${n}</span></button>`).join('');
+ chLedButtons.classList.add('laserTargetHost');
+ const states=Array.from({length:5},(_,i)=>chLed&&i<chLed?1:0);
+ chLedButtons.innerHTML=laserTargetMarkup(states,{mode:5,interactive:true,action:'setLed',actionBase:1,selected:chLed,status:chLed?`Niveau ${chLed} atteint`:'Sélectionne la LED maximale'});
  const stars=speedStarsForLed(chLed);chStarDisplay.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chStarText.textContent=chLed?`LED ${chLed} atteinte · ${stars} étoile(s) de rapidité.`:'Sélectionne la LED maximale atteinte.'
 }
 function setLed(n){chLed=n;renderLedButtons()}
 function renderBreathTargets(){
- chBreathTargets.innerHTML=chBreath.map((v,i)=>`<button class="target digitalTarget ${v===1?'hit':v===2?'miss':''}" onclick="cycleBreath(${i})"><span>${i+1}</span></button>`).join('');
+ chBreathTargets.classList.add('laserTargetHost');
+ chBreathTargets.innerHTML=laserTargetMarkup(chBreath,{mode:1,interactive:true,action:'cycleBreath'});
  const hits=chBreath.filter(x=>x===1).length,stars=hits>=5?4:hits===4?3:hits===3?2:hits===2?1:0;
  chBreathScore.textContent=`${hits} / 5`;chBreathStars.textContent='★'.repeat(stars)+'☆'.repeat(4-stars);chBreathText.textContent=`${stars} étoile(s) de ${currentLesson===4?'précision':'respiration'}.`
 }
@@ -4576,18 +4647,24 @@ function startL23Race(i){
  const reloadRule=document.getElementById('r23ReloadRule');
  const shotsLabel=document.getElementById('r23ShotsLabel');
  const missBtn=document.getElementById('r23MissBtn');
- if(reloadRule)reloadRule.textContent=(currentLesson===6||currentLesson===7)?'50 secondes à partir de la 1re cible touchée · valide les 5 cibles':'5 rechargements maximum';
+ if(reloadRule)reloadRule.textContent=(currentLesson===6||currentLesson===7)
+   ?'MODE 3 · PENTATHLON — 50 secondes dès la 1re touche'
+   :currentLesson===5
+    ?'MODE 2 · BIATHLON — valide les 5 touches'
+    :'MODE 1 · TOUCHÉ / MANQUÉ — 5 rechargements maximum';
  if(shotsLabel)shotsLabel.textContent=(currentLesson===6||currentLesson===7)?'Touches':'Rechargements';
  if(missBtn)missBtn.classList.toggle('hidden',currentLesson===6||currentLesson===7);
  const shootHelp=document.getElementById('r23ShootHelp');
  if(shootHelp)shootHelp.textContent=(currentLesson===6||currentLesson===7)
    ? 'Le chrono de 50 secondes démarre au moment où la première cible est touchée.'
-   : 'Le chronomètre continue pendant tout le passage au tir.';
+   :currentLesson===5
+    ? 'Chaque touche allume une LED verte. Après la cinquième, l’athlète repart.'
+    : 'Chaque tir est validé touché ou raté. Le chronomètre continue pendant tout le passage au tir.';
  const mainNotice=document.querySelector('#l23race .notice');
  if(mainNotice){
    const notes={
-    4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 2 · 5 rechargements à chaque passage.',
-    5:'Relais des nations · 4 boucles de 150 m par athlète · 3 passages au tir en mode 3 · obtenir 5 touches avant de repartir.',
+    4:'Mass-start · 4 boucles de 150 m · 3 passages au tir en mode 1 · 5 rechargements à chaque passage.',
+    5:'Relais des nations · 4 boucles de 150 m par athlète · 3 passages au tir en mode 2 · obtenir 5 touches avant de repartir.',
     6:'Qualification aux JO · 4 boucles de 150 m · 3 passages au tir en mode 3 · les 50 secondes démarrent à la première cible touchée · rechargements illimités.',
     7:'Jeux Olympiques · 4 boucles de 150 m · 3 passages au tir en mode 3 · les 50 secondes démarrent à la première cible touchée · rechargements illimités.'
    };
@@ -4658,23 +4735,21 @@ function r23Stats(){
 function renderR23Dots(){
  const box=document.getElementById('r23Dots');
  if(!box)return;
+ box.classList.add('laserTargetHost');
  const arr=l23race?.currentShots||[];
  if(currentLesson===6||currentLesson===7){
    const hits=l23race?.hits||0;
    const timedOut=Boolean(l23race?.l6TimedOut);
-   box.innerHTML=Array.from({length:5},(_,i)=>{
-     if(i<hits)return `<div class="dot raceDot on"><span>${i+1}</span></div>`;
-     if(timedOut)return `<div class="dot raceDot missdot"><span>${i+1}</span></div>`;
-     return `<div class="dot raceDot"><span>${i+1}</span></div>`;
-   }).join('');
+   const states=Array.from({length:5},(_,i)=>i<hits?1:timedOut?2:0);
+   box.innerHTML=laserTargetMarkup(states,{mode:3,status:timedOut?`${hits}/5 · temps écoulé`:`${hits}/5 · chrono 50 s`});
  }else if(currentLesson===5){
    const hits=arr.filter(Boolean).length;
-   box.innerHTML=Array.from({length:5},(_,i)=>`<div class="dot ${i<hits?'on':''}"></div>`).join('');
+   const states=Array.from({length:5},(_,i)=>i<hits?1:0);
+   box.innerHTML=laserTargetMarkup(states,{mode:2,status:`${hits}/5 touches validées`});
  }else{
-   box.innerHTML=Array.from({length:5},(_,i)=>{
-    if(i>=arr.length)return '<div class="dot"></div>';
-    return `<div class="dot ${arr[i]?'on':'missdot'}"></div>`;
-   }).join('');
+   const states=Array.from({length:5},(_,i)=>i>=arr.length?0:arr[i]?1:2);
+   const hits=states.filter(v=>v===1).length,misses=states.filter(v=>v===2).length;
+   box.innerHTML=laserTargetMarkup(states,{mode:1,status:`${laserCount(hits,'touche')} · ${laserCount(misses,'ratée','ratées')}`});
  }
 }
 
@@ -5366,6 +5441,7 @@ function toggleRaceFullscreen(panelId){
  document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
  document.body.classList.add('raceFullscreen');
  document.documentElement.classList.add('raceFullscreenRoot');
+ raceDisplayPortal=moveToDisplayLayer(panel);
  panel.classList.add('raceFullscreenActive');
  document.querySelectorAll('.raceFullscreenBtn').forEach(btn=>{
    const selected=btn.closest('.raceScreen')===panel;
@@ -5381,6 +5457,7 @@ function leaveRaceFullscreen(restoreScroll=true){
  document.body.classList.remove('raceFullscreen');
  document.documentElement.classList.remove('raceFullscreenRoot');
  document.querySelectorAll('.raceScreen').forEach(x=>x.classList.remove('raceFullscreenActive'));
+ raceDisplayPortal=restoreDisplayLayer(raceDisplayPortal);
  document.querySelectorAll('.raceFullscreenBtn').forEach(btn=>{
    btn.textContent='⛶ MODE COURSE';
    btn.setAttribute('aria-pressed','false');
