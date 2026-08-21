@@ -2360,6 +2360,221 @@ body.nationDrawFullscreenBody .nationDrawPanel.nationDrawFullscreen .nationAthle
 }
 
 /* =========================================================
+   V47.4 — Finition course : lisibilité, protocoles vérifiés
+   ========================================================= */
+
+.targetProtocolHeading > span,
+.targetProtocolHeading #l1ReloadRule,
+.targetProtocolHeading #r23ReloadRule {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.targetProtocolMode,
+.targetProtocolRule {
+  min-height: 31px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  border-radius: 9px;
+  font-size: clamp(11px, 1.15vw, 15px);
+  line-height: 1.05;
+  font-style: normal;
+  font-weight: 1000;
+  letter-spacing: .045em;
+  text-align: center;
+}
+
+.targetProtocolMode {
+  color: var(--game-charcoal-deep);
+  background: var(--game-amber);
+  box-shadow: 0 4px 0 #bd8115;
+}
+
+.targetProtocolRule {
+  color: var(--game-white);
+  background: rgba(255,255,255,.09);
+  border: 1px solid rgba(255,255,255,.16);
+}
+
+@media (min-width: 700px) {
+  /* Pendant le tir, l'écran devient une vraie console dédiée. */
+  body[data-screen="race"] #race:has(#shootPanel:not(.hidden)),
+  body[data-screen="l23race"] #l23race:has(#r23ShootPanel:not(.hidden)) {
+    grid-template-rows: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  body[data-screen="race"] #race:has(#shootPanel:not(.hidden)) > .back,
+  body[data-screen="race"] #race:has(#shootPanel:not(.hidden)) > .top,
+  body[data-screen="l23race"] #l23race:has(#r23ShootPanel:not(.hidden)) > .back,
+  body[data-screen="l23race"] #l23race:has(#r23ShootPanel:not(.hidden)) > .top {
+    display: none !important;
+  }
+
+  body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)),
+  body[data-screen="l23race"] #l23race .card:has(#r23ShootPanel:not(.hidden)) {
+    height: 100% !important;
+    padding: 9px 13px !important;
+  }
+
+  body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)) .timer,
+  body[data-screen="l23race"] #l23race .card:has(#r23ShootPanel:not(.hidden)) .timer {
+    margin-bottom: 5px !important;
+    padding: 4px 10px 6px !important;
+    font-size: min(5vw, 7.5dvh) !important;
+  }
+
+  body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)) .stat,
+  body[data-screen="l23race"] #l23race .card:has(#r23ShootPanel:not(.hidden)) .stat {
+    min-height: 50px !important;
+    padding: 4px 7px !important;
+  }
+
+  body[data-screen="race"] #shootPanel .targetProtocolHeading,
+  body[data-screen="l23race"] #r23ShootPanel .targetProtocolHeading,
+  body[data-screen="l23race"] #r23ShootPanel > .section {
+    margin: 7px 0 5px !important;
+  }
+
+  body[data-screen="race"] #dots.fivehits.laserTargetHost,
+  body[data-screen="l23race"] #r23Dots.fivehits.laserTargetHost {
+    width: min(100%, 820px) !important;
+    max-width: 820px !important;
+    margin: 10px auto !important;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetDevice,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetDevice {
+    min-height: 208px;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 13px;
+    padding: 12px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserLed,
+  body[data-screen="l23race"] #r23ShootPanel .laserLed {
+    width: 35px;
+    font-size: 12px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetHead b,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetHead b {
+    overflow: visible;
+    text-overflow: clip;
+    font-size: clamp(15px, 1.55vw, 21px);
+    white-space: normal;
+  }
+
+  body[data-screen="race"] #shootPanel .laserModeScale,
+  body[data-screen="l23race"] #r23ShootPanel .laserModeScale {
+    grid-template-columns: repeat(5, 29px);
+  }
+
+  body[data-screen="race"] #shootPanel .laserModeScale span,
+  body[data-screen="l23race"] #r23ShootPanel .laserModeScale span {
+    height: 27px;
+    font-size: 11px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetReadout > div,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetReadout > div {
+    font-size: clamp(23px, 2.5vw, 34px);
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetReadout > span,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetReadout > span {
+    font-size: clamp(12px, 1.2vw, 16px);
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetFooter,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetFooter {
+    min-height: 25px;
+    font-size: clamp(10px, 1vw, 13px);
+  }
+
+  body[data-screen="race"] #shootPanel > div[style],
+  body[data-screen="l23race"] #r23ShootPanel > .grid2 {
+    width: min(100%, 820px) !important;
+    max-width: 820px !important;
+  }
+}
+
+/* À très faible hauteur (zoom important), priorité absolue à la cible et aux
+   commandes actives ; le résultat du tir reste affiché dans la console. */
+@media (min-width: 700px) and (max-height: 520px) {
+  body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)) > .timer,
+  body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)) > .stats,
+  body[data-screen="l23race"] #l23race .card:has(#r23ShootPanel:not(.hidden)) > .timer,
+  body[data-screen="l23race"] #l23race .card:has(#r23ShootPanel:not(.hidden)) > .stats {
+    display: none !important;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetDevice,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetDevice {
+    min-height: 166px;
+    grid-template-columns: 148px minmax(0, 1fr);
+    gap: 9px;
+    padding: 8px;
+  }
+
+  body[data-screen="race"] #dots.fivehits.laserTargetHost,
+  body[data-screen="l23race"] #r23Dots.fivehits.laserTargetHost {
+    margin: 6px auto !important;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetBezel,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetBezel {
+    inset: 8px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserLed,
+  body[data-screen="l23race"] #r23ShootPanel .laserLed {
+    width: 29px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetConsole,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetConsole {
+    gap: 5px;
+    padding-top: 1px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetHead,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetHead {
+    padding-bottom: 4px;
+  }
+
+  body[data-screen="race"] #shootPanel .laserTargetReadout,
+  body[data-screen="l23race"] #r23ShootPanel .laserTargetReadout {
+    padding: 4px 8px;
+  }
+
+  body[data-screen="race"] #shootPanel .shoot,
+  body[data-screen="l23race"] #r23ShootPanel .shoot {
+    min-height: 48px !important;
+  }
+}
+
+@media (max-width: 699px) {
+  .targetProtocolHeading > span,
+  .targetProtocolHeading #l1ReloadRule,
+  .targetProtocolHeading #r23ReloadRule {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .targetProtocolMode,
+  .targetProtocolRule {
+    width: 100%;
+  }
+}
+
+/* =========================================================
    V47.3 — Scènes hors cadre + cible électronique 5 modes
    ========================================================= */
 
@@ -2897,9 +3112,14 @@ body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationAth
 
   body[data-screen="race"] #race,
   body[data-screen="l23race"] #l23race {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1200 !important;
     width: calc(100% - 18px) !important;
+    max-width: none !important;
     height: var(--app-height, 100dvh) !important;
     min-height: 0 !important;
+    margin: 0 auto !important;
     display: grid !important;
     grid-template-rows: auto auto minmax(0, 1fr) !important;
     gap: 6px !important;
@@ -3002,8 +3222,84 @@ body.nationDrawFullscreenBody > .nationDrawPanel.nationDrawFullscreen .nationAth
 
   body[data-screen="race"] #l1HistoryWrap,
   body[data-screen="l23race"] #r23HistoryWrap {
-    max-height: 118px;
-    overflow: auto;
+    flex: none;
+    width: 100%;
+    height: auto !important;
+    max-height: none !important;
+    margin-top: 7px !important;
+    overflow: visible !important;
+  }
+
+  body[data-screen="race"] #l1HistoryWrap > .section,
+  body[data-screen="l23race"] #r23HistoryWrap > .section {
+    margin: 0 0 5px !important;
+    font-size: clamp(13px, 1.35vw, 17px) !important;
+    line-height: 1 !important;
+  }
+
+  body[data-screen="race"] #l1History,
+  body[data-screen="l23race"] #r23History {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  body[data-screen="race"] .shotHistoryCard,
+  body[data-screen="l23race"] .shotHistoryCard {
+    min-width: 0;
+    min-height: 55px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "historyTitle historyTime"
+      "historyDots historyDots";
+    align-items: center;
+    gap: 3px 7px;
+    padding: 7px 9px !important;
+    border-radius: 12px !important;
+    text-align: left;
+    overflow: hidden;
+  }
+
+  body[data-screen="race"] .shotHistoryCard > b,
+  body[data-screen="l23race"] .shotHistoryCard > b {
+    grid-area: historyTitle;
+    font-size: clamp(10px, 1vw, 13px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  body[data-screen="race"] .shotHistoryDots,
+  body[data-screen="l23race"] .shotHistoryDots {
+    grid-area: historyDots;
+    justify-content: flex-start;
+    gap: 4px;
+    margin: 1px 0 0 !important;
+  }
+
+  body[data-screen="race"] .shotHistoryDot,
+  body[data-screen="l23race"] .shotHistoryDot {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    border-width: 2px;
+  }
+
+  body[data-screen="race"] .shotTime,
+  body[data-screen="l23race"] .shotTime {
+    grid-area: historyTime;
+    min-width: 0;
+    justify-self: end;
+    margin: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(9px, .9vw, 12px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  body[data-screen="race"] .shotHistoryCard > .muted,
+  body[data-screen="l23race"] .shotHistoryCard > .muted {
+    display: none !important;
   }
 
   body[data-screen="race"] #race .card:has(#shootPanel:not(.hidden)) #l1HistoryWrap,

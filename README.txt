@@ -1,52 +1,39 @@
-LASER RUN 6ème — V14 ERGONOMIE & CLASSEMENTS
+LASER RUN 6e — V47.4 FINALE PROFESSIONNELLE
 
-REFONTE ERGONOMIQUE
-- Espace professeur transformé en tableau de bord unique par classe.
-- Onglets accessibles sans revenir en arrière :
-  Vue générale / Élèves / Résultats / Classements / Poursuite / Export.
-- Scanner les résultats et diffuser les classes restent accessibles directement en haut.
-- Après un scan de résultats, retour automatique dans la classe ouverte.
-- Espace élèves simplifié : après la classe, accès direct aux leçons.
-- QR résultats accessible directement depuis l’écran des leçons.
-- Administration élève reste protégée par le code enseignant.
+INSTALLATION SUR GITHUB PAGES
+- Décompresser l’archive.
+- Déposer tous les fichiers directement à la racine du dépôt GitHub.
+- Ne créer aucun sous-dossier et ne renommer aucun fichier.
+- Activer GitHub Pages sur la branche principale et le dossier racine.
 
-CLASSEMENTS DÉFIS ÉTOILE
-- 4 onglets : Précision / Rapidité / Respiration / Globe de cristal.
-- Précision = moyenne L1 + L4.
-- Rapidité = moyenne L2 + L5.
-- Respiration = moyenne L3 + L6.
-- Chaque moyenne finale repose sur 2 Défis Étoile.
-- Tant qu’un seul défi est réalisé, la moyenne est affichée comme provisoire.
-- Les décimales sont conservées (ex. 3,5 étoiles).
+INSTALLATION SUR IPAD
+- Ouvrir une première fois l’adresse GitHub Pages dans Safari avec Internet.
+- Actualiser la page après la mise à jour du dépôt.
+- Utiliser Partager → Sur l’écran d’accueil.
+- L’application installée dispose de son icône et conserve ses données sur l’appareil.
 
-GLOBE DE CRISTAL
-- Les cristaux sont calculés à partir du classement individuel de la situation principale de chaque leçon.
-- Chaque élève rapporte ses cristaux à sa nation.
-- L1 à L6 :
-  places 1 à 4 = 4 cristaux ;
-  places 5 à 8 = 3 cristaux ;
-  place 9 jusqu’au dernier = 2 cristaux.
-- L7 Jeux Olympiques :
-  places 1 à 4 = 12 cristaux ;
-  places 5 à 8 = 9 cristaux ;
-  place 9 jusqu’au dernier = 6 cristaux.
-- Classement général par nation avec détail des cristaux L1 à L7.
+MODES DE LA CIBLE ÉLECTRONIQUE — SITUATIONS PRINCIPALES
+- Leçon 1 : mode 2 BIATHLON — obtenir 5 touches avant de repartir.
+- Leçons 2, 3 et 4 : mode 1 TOUCHÉ / MANQUÉ — 5 rechargements maximum.
+- Leçon 5 : mode 2 BIATHLON — obtenir 5 touches avant de repartir.
+- Leçons 6 et 7 : mode 3 PENTATHLON MODERNE — obtenir 5 touches en 50 secondes ; le délai démarre à la première touche.
+- Défis de rapidité des leçons 2 et 5 : mode 5 VITESSE.
+- Le mode 4 ALÉATOIRE n’est pas utilisé car aucune situation actuelle ne reprend son protocole.
 
-POURSUITE
-- Chronomètre professeur reconstruit.
-- Deux modes : Biathlètes 1 / Biathlètes 2.
-- Les temps du Sprint L2 sont récupérés depuis les résultats professeur.
-- Le meilleur temps part à 0.
-- Les autres départs utilisent l’écart réel au meilleur.
-- Chronomètre général, prochain départ, compte à rebours, bips 3-2-1 et signal de départ.
-- Si pairSlot manque dans d’anciens résultats, l’application utilise un ordre de secours par nation.
+RÉFÉRENCE DES MODES
+Notice officielle Décathlon :
+https://support.decathlon.fr/cible-de-tir-laser-entretien-et-reparation-notice-reparation
 
-QR RÉSULTATS
-- Nouveau format compact LR14R pour alléger fortement les QR.
-- Les données inutiles au professeur (historique détaillé des tirs) ne sont plus placées dans les QR.
-- Découpage conservé en QR lisibles de taille modérée.
-- Compatibilité de lecture maintenue avec LR10R à LR14R.
+CORRECTIONS V47.4
+- Vue course fixée au cadre de l’écran, y compris après un changement de page ou de zoom.
+- Remise à zéro de la position de défilement avant l’ouverture d’une course.
+- Historique des trois passages au tir compact, complet et sans superposition.
+- Console de tir agrandie avec cible, LEDs, mode actif et résultat parfaitement lisibles.
+- Présentation distincte du mode physique de la cible et de la règle pédagogique.
+- Logique des courses centralisée sur les protocoles officiels des modes 1, 2 et 3.
+- Cache hors ligne renouvelé pour forcer le chargement de la version finale.
 
-MOTEUR PRÉVU POUR LA SUITE
-- Les classements sont déjà prêts pour L4, L5, L6 et L7.
-- Les cristaux du Globe se calculeront automatiquement dès que ces leçons produiront leurs résultats.
+DONNÉES ET CONFIDENTIALITÉ
+- Les classes, résultats et réglages restent enregistrés localement dans le navigateur.
+- Aucun compte ni serveur externe n’est requis pour utiliser l’application.
+- Les exports, QR codes et sauvegardes restent sous le contrôle de l’enseignant.
